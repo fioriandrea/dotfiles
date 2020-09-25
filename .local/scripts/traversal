@@ -1,0 +1,266 @@
+#!/bin/awk -f
+
+function help(    oldofs) {
+    oldofs = OFS
+    OFS = "\n"
+    print programname " [options]",
+    "",
+    "Traverses a graph.",
+    "",
+    "DESCRIPTION",
+    "",
+    "Graph are specified as parent-child pairs (similarly to tsort), for example:",
+    "",
+    "1 2",
+    "1 3",
+    "2 4",
+    "2 5",
+    "",
+    "OPTIONS",
+    "",
+    "h        Prints help",
+    "",
+    "ALGO     Sets the algorithm to use (available algorithms are:",
+    "         preorder (pre), postorder (post), levelorder (level),",
+    "         topological sorting (topo)).",
+    "         default is " type
+    OFS = oldofs
+}
+
+function printError(message) {
+    printf("%s: %s", programname, message) | "cat 1>&2"
+}
+
+function processCLIArgs(    i, j) {
+    type = "post"
+    for (i = 1; i < ARGC; ++i) {
+        if (ARGV[i] == "h") {
+            help()
+            exit 0
+        } else if (ARGV[i] == "pre" || ARGV[i] == "post" || ARGV[i] == "level" || ARGV[i] == "topo") {
+            type = ARGV[i]
+        } else {
+            break
+        }
+    }
+    for (j = 1; j < i; ++j) {
+        ARGV[j] = ""
+    }
+}
+
+# deque data structure
+
+function deque(deq) {
+    deq["start"] = 0
+    deq["end"] = 0
+}
+
+function dlength(deq) {
+    return deq["end"] - deq["start"]
+}
+
+function push(deq, elem) {
+    deq[deq["end"]++] = elem
+}
+
+function pop(deq, elem) {
+    if (dlength(deq) > 0) {
+        return deq[--deq["end"]]
+    }
+}
+
+function last(deq) {
+    if (dlength(deq) > 0) {
+        return deq[deq["end"] - 1]
+    }
+}
+
+function unshift(deq, elem) {
+    deq[--deq["start"]] = elem
+}
+
+function shift(deq) {
+    if (dlength(deq)) {
+        return deq[deq["start"]++]
+    }
+}
+
+function first(deq) {
+    if (dlength(deq)) {
+        return deq[deq["first"]]
+    }
+}
+
+# graph data structure
+
+function graph(gr) {
+    split("", gr)
+}
+
+function hasNode(gr, node) {
+    return node in gr
+}
+
+function nchildren(gr, node) {
+    return gr[node, "nchildren"]
+}
+
+function nthchild(gr, node, i) {
+    return gr[node, "child", i]
+}
+
+function addNode(gr, node) {
+    gr[node] = 1
+    gr[node, "nchildren"] = 0
+}
+
+function addChild(gr, node, child) {
+    if (!hasNode(gr, node)) {
+        addNode(gr, node)
+    }
+    if (!hasNode(gr, child)) {
+        addNode(gr, child)
+    }
+    gr[node, "child", ++gr[node, "nchildren"]] = child
+}
+
+# algorithms
+
+function postorder(gr, starting, deq, startedjobs, done,    node, childrenDone, i, child) {
+    push(deq, starting)
+    while (dlength(deq) > 0) {
+        node = last(deq)
+        if (done[node]) {
+            pop(deq)
+            continue
+        }
+        startedjobs[node] = 1
+        childrenDone = 1
+        for (i = nchildren(gr, node); i >= 1; --i) {
+            child = nthchild(gr, node, i)
+            if (startedjobs[child]) {
+                printError(sprintf("cycle detected at %s\n", child))
+                continue
+            }
+            if (!done[child]) {
+                childrenDone = 0
+                push(deq, child)
+            }
+        }
+        if (childrenDone) {
+            printf("%s\n", node)
+            pop(deq)
+            done[node] = 1
+            delete startedjobs[node]
+        }
+    }
+}
+
+function preorder(gr, starting, deq, visited,    node, i, child) {
+    push(deq, starting)
+    visited[starting] = 1
+    while (dlength(deq) > 0) {
+        node = pop(deq)
+        printf("%s\n", node)
+        for (i = nchildren(gr, node); i >= 1; --i) {
+            child =  nthchild(gr, node, i)
+            if (visited[child]) {
+                continue
+            }
+            visited[child] = 1
+            push(deq, child)
+        }
+    }
+}
+
+function levelorder(gr, starting, deq, visited,    node, i, j, nlevel, delim) {
+    push(deq, starting)
+    visited[starting] = 1
+    while (dlength(deq) > 0) {
+        nlevel = dlength(deq)
+        delim = ""
+        for (i = 1; i <= nlevel; ++i) {
+            node = shift(deq)
+            printf("%s%s", delim, node)
+            delim = " "
+            for (j = nchildren(gr, node); j >= 1; --j) {
+                child =  nthchild(gr, node, j)
+                if (visited[child]) {
+                    continue
+                }
+                visited[child] = 1
+                push(deq, child)
+            }
+        }
+        printf("\n")
+    }
+}
+
+function algorithm(type, gr, root) {
+    delete deq
+    delete startedjobs
+    delete visited
+    deque(deq)
+    if (type == "post") {
+        delete done
+        postorder(gr, root, deq, startedjobs, done)
+    } else if (type == "topo") {
+        postorder(gr, root, deq, startedjobs, done)
+    } else if (type == "pre") {
+        preorder(gr, root, deq, visited)
+    } else if (type == "level") {
+        levelorder(gr, root, deq, visited)
+    }
+}
+
+function printPathDelimiter(type, delimiter) {
+    if (type == "post" || type == "pre" || type == "level") {
+        printf("%s", delimiter)
+    }
+}
+
+# main
+
+BEGIN {
+    programname = "traversal"
+    processCLIArgs()
+}
+
+{
+    gsub(/^\s+/, "")
+    gsub(/\s$/, "")
+    if (length($0) == 0)
+        next
+
+    for (i = 1; i <= NF; ++i) {
+        if (length(prevroot) == 0) {
+            if (!($i in leaves)) {
+                roots[$i] = 1
+                ++nroots
+            }
+            prevroot = $i
+        } else {
+            leaves[$i] = 1
+            if ($i in roots && nroots > 1) {
+                delete roots[$i]
+                --nroots
+            }
+            addChild(gr, prevroot, $i)
+            prevroot = ""
+        }
+    }
+}
+
+END {
+    delete leaves
+    if (prevroot) {
+        printError(sprintf("odd number of tokens\n"))
+        exit 1
+    }
+    delim = ""
+    for (root in roots) {
+        printPathDelimiter(type, delim)
+        algorithm(type, gr, root)
+        delim = "\n"
+    }
+}

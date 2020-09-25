@@ -1,0 +1,53 @@
+#!/bin/bash
+
+print_help() {
+    cat <<EOF
+usage: ${0##*/} [options]
+
+-h                  show this help
+-H HOURS            wait for HOURS hours before performing action
+-m MINUTES          wait for MINUTES minutes before performing action
+-s SECONDS          wait for SECONDS seconds before performing action
+-t TIMESTR          wait for TIMESTR before performing action
+EOF
+}
+
+(($# == 0)) && print_help && exit 0
+
+hours=0
+minutes=0
+seconds=0
+while getopts ':hH:m:s:t:' o; do
+    case $o in
+        h) print_help && exit 0 ;;
+        H) hours=$OPTARG ;;
+        m) minutes=$OPTARG ;;
+        s) seconds=$OPTARG ;;
+        t) 
+            IFS=':' read -r hours minutes seconds <<< "$OPTARG"
+            shopt -s extglob
+            hours=${hours##+(0)}
+            minutes=${minutes##+(0)}
+            seconds=${seconds##+(0)}
+            shopt -u extglob
+            ;;
+        :) echo "must supply argument to '$OPTARG'" >&2 && exit 1 ;;
+        ?) echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
+    esac
+done
+
+shift "$((OPTIND - 1))"
+
+nsecs=$((hours * 60 * 60 + minutes * 60 + seconds))
+
+for ((i = nsecs; i >= 0; i--)); do
+    sleep 1 &
+    hours=$((i / (60 * 60)))
+    minutes=$(((i - hours * 60 * 60) / 60))
+    seconds=$((i - hours * 60 * 60 - minutes * 60))
+    printf '\r%02d:%02d:%02d' "$hours" "$minutes" "$seconds"
+    ((i <= 0)) && break
+    wait
+done
+
+printf '\n'

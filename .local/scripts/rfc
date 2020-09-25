@@ -1,0 +1,4 @@
+#!/bin/bash
+
+doc=${1//[[:alpha:]]/}
+exec w3m -no-cookie "https://www.rfc-editor.org/rfc/rfc$doc.html"

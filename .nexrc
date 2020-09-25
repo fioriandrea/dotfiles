@@ -1,0 +1,6 @@
+source $HOME/.exrc
+
+set cedit=
+set filec=	
+set ruler
+set verbose

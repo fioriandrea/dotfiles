@@ -1,0 +1,5 @@
+#!/bin/bash
+
+dir=$(ffd)
+[[ -d $dir ]] || dir=${dir%/*}
+printf '%s\n' "$dir"

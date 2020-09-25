@@ -1,0 +1,57 @@
+!! XTerm
+
+XTerm*termName: xterm-256color
+XTerm*renderFont: true
+XTerm*faceName: xft:Monospace:style=Medium:size=24
+XTerm*utf8: true
+XTerm*locale: false
+XTerm*metaSendsEscape: true
+XTerm*savelines: 1024
+
+XTerm.vt100.translations: #override \n\
+    Ctrl <Key>-: smaller-vt-font() \n\
+    Ctrl <Key>+: larger-vt-font() \n\
+    Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+    Ctrl Shift <Key>V: insert-selection(CLIPBOARD)
+
+! double-click to select whole URLs
+XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
+
+!! colors
+
+! special
+*.foreground:   #ffffff
+*.background:   #000000
+*.cursorColor:  #ff00ff
+
+! black
+*.color0: #000000
+*.color8: #79A9FF
+
+! red
+*.color1: #ff5555
+*.color9: #ff6e67
+
+! green
+*.color2: #50fa7b
+*.color10: #5af78e
+
+! yellow
+*.color3: #f1fa8c
+*.color11: #f4f99d
+
+! blue
+*.color4: #6790EB
+*.color12: #79A9FF
+
+! magenta
+*.color5: #ff79c6
+*.color13: #ff92d0
+
+! cyan
+*.color6: #8be9fd
+*.color14: #9aedfe
+
+! white
+*.color7: #bfbfbf
+*.color15: #e6e6e6

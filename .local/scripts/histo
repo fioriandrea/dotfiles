@@ -1,0 +1,263 @@
+#!/bin/awk -f
+
+function help(    oldofs) {
+    oldofs = OFS
+    OFS = "\n"
+    print "histo [options]",
+    "",
+    "Generate histogram from data read from stdin.",
+    "By default, it reads data, sorts it numerically and counts occurrences.",
+    "",
+    "h        Prints help",
+    "ec       Read externally counted data. Input is in the form COUNT VALUE (like the output of uniq -c)",
+    "rf       Read data from a list of files. To indicate the end of the list, -- must be passed after the files",
+    "b        Bucket mode. Use buckets for your input. Works only with numeric inputs",
+    "ni N     Specify number of intervals (buckets) for bucket mode. Default is " bucketIntervals,
+    "wl N     Specify the maximum word length for a datapoint. Default is " maxWordLength,
+    "mb N     Specify the height assigned to the bucket with the maximum frequency. Default is " maxBar,
+    "s S      Specify the symbol used for the histogram. Default is " symbol,
+    "ai N     Specify number of axis intervals",
+    "ha       Hide axes",
+    "t        Show axis on top",
+    "tb       Show axes both on top and on bottom",
+    "p        Show percentages instead of counts",
+    "tot      Show total",
+    "avg      Show average",
+    "exp      Show expected value",
+    "",
+    "EXAMPLE: awk 'BEGIN {for (i = 1; i < 1000; i++) print (rand() > 0.5 ? 1 : -1)}' | histo s ? tot avg p"
+    OFS = oldofs
+}
+
+function max(n, k) {
+    return n > k ? n : k
+}
+
+function min(n, k) {
+    return n > k ? k : n
+}
+
+function rep(ch, n,    res) {
+    while (n-- > 0)
+        res = res ch
+    return res
+}
+
+function percentage(count) {
+    return 100 * count / total;
+}
+
+function expectedValue(    ev) {
+    ev = 0
+    for (i = 1; i <= dataCount; i++) {
+        ev += data[i, "name"] * data[i, "count"] / total
+    }
+    return ev
+}
+
+function processWord(count, word, trunc,    ellipsis) {
+    ellipsis = "..."
+    if (trunc && length(word) > maxWordLength) {
+        word = substr(word, 1, maxWordLength - length(ellipsis)) ellipsis
+    } 
+    return sprintf("%s (%s)", word, showPercentages ? percentage(count) "%" : count)
+}
+
+function makeBar(count) {
+    count = int((count / maxCount) * maxBar)
+    return rep(symbol, count)
+}
+
+function printHistoLine(word, count,    ws, bar) {
+    ws = rep(" ", padding - length(word))
+    bar = makeBar(count)
+    printf("%s%s %s\n", ws, word, bar)
+}
+
+function printData() {
+    for (i = 1; i <= wordCount; i++) {
+        word = words[i, "word"]
+        count = words[i, "count"]
+        printHistoLine(word, count)
+    }
+}
+
+function printAxisLine(    stepb, ssep, sep) {
+    stepb = int(maxBar / axisIntervals)
+    printf("%s", rep("-", padding))
+    ssep = rep("-", stepb - 1)
+    for (i = 0; i <= maxBar; i += stepb) {
+        printf("%s+", sep)
+        sep = ssep
+    }
+    printf("\n")
+}
+
+function printAxisNumbers(    stepn, stepb, ii) {
+    stepb = int(maxBar / axisIntervals)
+    stepn = maxCount / axisIntervals
+    printf("%s", rep(" ", padding))
+    i = 0
+    for (k = 1; k <= axisIntervals + 1; k++) {
+        ii = showPercentages ? sprintf("%.2f", percentage(i)) : int(i)
+        printf("%s", ii)
+        if (k <= axisIntervals) {
+            printf(rep(" ", stepb - length(ii)))
+        }
+        i += stepn
+    }
+    printf("\n")
+}
+
+function limitAxisIntervals() {
+   axisIntervals = min(axisIntervals, maxCount)
+}
+
+function printBottomAxis() {
+    printAxisLine()
+    printAxisNumbers()
+}
+
+function printTopAxis() {
+    printAxisNumbers()
+    printAxisLine()
+}
+
+function collectData(    i, sep) {
+    while (filesCat " | " countCommand | getline > 0) {
+        dataCount++
+        total += $1
+        maxCount = max(maxCount + 0, $1)
+        data[dataCount, "count"] = $1
+        for (i = 2; i <= NF; i++) {
+            data[dataCount, "name"] = data[dataCount, "name"] sep $i
+            sep = " "
+        }
+    }
+}
+
+function processStandardData(   count, name, word) {
+    for (i = 1; i <= dataCount; i++) {
+        count = data[i, "count"]
+        name = data[i, "name"]
+        wordCount++
+        word = processWord(count, name, 1)
+        padding = max(padding + 0, length(word))
+        words[wordCount, "word"] = word
+        words[wordCount, "count"] = count
+    }
+}
+
+function processBucketData(    minNum, maxNum, n, step, numi, closed, word, count) {
+    minNum = data[1, "name"]
+    maxNum = data[dataCount, "name"]
+    step = (maxNum - minNum) / bucketIntervals
+    numi = 1
+    wordCount = 1
+    n = minNum
+    for (i = 1; i <= bucketIntervals; i++) {
+        closed = (i == bucketIntervals)
+        count = 0
+        while (numi < dataCount) {
+            if (data[numi, "name"] >= n + step)
+                break
+            count += data[numi, "count"]
+            numi++
+        }
+        if (closed) {
+            count += data[numi, "count"]
+            numi++
+        }
+        word = processWord(count, sprintf("%.2f - %.2f" (closed ? "]" : ")"), n, n + step), 0)
+        words[wordCount, "word"] = word
+        words[wordCount, "count"] = count
+        padding = max(padding + 0, length(word))
+        maxCount = max(maxCount + 0, count)
+        wordCount++
+        n += step
+    }
+}
+
+BEGIN {
+    countCommand = "sort -g | uniq -c"
+    filesCat = "cat"
+    maxBar = 30
+    maxWordLength = 10
+    symbol = "*"
+    bucketMode = 0
+    bucketIntervals = 10
+    axisIntervals = 2
+    hideAxis = 0
+    topBottomAxes = 0
+    topAxis = 0
+    showPercentages = 0
+    showTotal = 0
+    showAverage = 0
+    showExpectedValue = 0
+    
+    for (i = 1; i < ARGC; i++) {
+        if (ARGV[i] == "h") {
+            help()
+            exit 0
+        } else if (ARGV[i] == "ec") {
+            countCommand = "cat"
+        } else if (ARGV[i] == "rf") {
+            i++
+            while (i < ARGC && ARGV[i] != "--")
+                filesCat = filesCat " " ARGV[i++]
+        } else if (ARGV[i] == "b") {
+            bucketMode = 1
+        } else if (ARGV[i] == "ni") {
+            bucketIntervals = ARGV[++i]
+        } else if (ARGV[i] == "wl") {
+            maxWordLength = ARGV[++i]
+        } else if (ARGV[i] == "mb") {
+            maxBar = ARGV[++i]
+        } else if (ARGV[i] == "s") {
+            symbol = ARGV[++i]
+        } else if (ARGV[i] == "ai") {
+            axisIntervals = ARGV[++i]
+        } else if (ARGV[i] == "ha") {
+            hideAxis = 1
+        } else if (ARGV[i] == "tb") {
+            topBottomAxes = ARGV[++i]
+        } else if (ARGV[i] == "t") {
+            topAxis = 1
+        } else if (ARGV[i] == "p") {
+            showPercentages = 1
+        } else if (ARGV[i] == "tot") {
+            showTotal = 1
+        } else if (ARGV[i] == "avg") {
+            showAverage = 1
+        } else if (ARGV[i] == "exp") {
+            showExpectedValue = 1
+        } else {
+            printf("unknown option '%s'\n", ARGV[i]) | "cat 1>&2"
+            exit 1
+        }
+    }
+    ARGC = 1
+
+    collectData()
+
+    if (bucketMode) {
+        processBucketData()
+    } else {
+        processStandardData()
+    }
+
+    limitAxisIntervals()
+
+    if ((topAxis || topBottomAxes) && !hideAxis)
+        printTopAxis()
+    printData()
+    if (!topAxis && !hideAxis)
+        printBottomAxis()
+
+    if (showTotal)
+        print "total", total
+    if (showAverage)
+        print "average", total / dataCount
+    if (showExpectedValue)
+        print "expected value", expectedValue()
+}

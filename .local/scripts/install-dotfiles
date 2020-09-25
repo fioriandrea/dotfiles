@@ -1,0 +1,116 @@
+#!/bin/bash
+
+print_help() {
+    cat << EOF
+install-dotfiles [options]
+
+Install dotfiles found in a git repo.
+
+-h    Show this help
+-r    Specify the repo. Default is $repo
+-d    Specify the destination folder. Default is $destination
+-c    Specify separate-git-dir. Default is $confdir
+-b    Specify a backup directory. By default, a temporary one will be created
+EOF
+}
+
+print_summary() {
+    local outfd
+    [[ $1 -eq 0 ]] && outfd=1 || outfd=2
+    {
+        printf '\nInstallation of %s dotfiles ' "$repo"
+        if [[ $1 -eq 0 ]]; then
+            printf 'completed succesfully'
+        else
+            printf 'failed'
+        fi
+        printf '\n'
+        cat <<EOF
+
+Summary:
+
+Backup directory: $backup
+Destination directory: $destination
+Git directory: $confdir
+EOF
+    } >&"$outfd"
+}
+
+clean_exit() {
+    print_summary "$?"
+    rm -rf "$tmpdir" 2>/dev/null
+}
+
+git_bare() {
+    # $1 -> destination
+    # $2 -> confdir
+    /usr/bin/git --git-dir="$1/$2" --work-tree="$1" "${@:3}"
+}
+
+clone_dotfiles() {
+    # $1 -> path to repo
+    # $2 -> directory to copy to
+    # $3 -> separate-git-dir (.myconf)
+    /usr/bin/git clone --bare "$1" "$2/$3"
+}
+
+die() {
+    printf '%s: %s\n' "$0" "$1" >&2
+    exit 1
+}
+
+cmdexists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+repo=https://github.com/fioriandrea/dotfiles
+destination=$HOME
+confdir=.myconf
+backup=
+
+while getopts ':hr:d:c:b:' o; do
+    case $o in
+        h) print_help ; exit 0 ;;
+        r) repo=$OPTARG ;;
+        d) destination=$OPTARG ;;
+        c) confdir=$OPTARG ;;
+        b) backup=$OPTARG ;;
+        :) die "must supply argument to '$OPTARG'" ;;
+        ?) die "unknown option '$OPTARG'" ;;
+    esac
+done
+
+shift "$((OPTIND - 1))"
+
+cmdexists rsync || die 'missing dependency rsync'
+cmdexists git || die 'missing dependency git'
+
+[[ -d $destination ]] || die "$destination is not a directory"
+
+if [[ -z $backup ]]; then
+    backup=$(mktemp -d)
+else
+    mkdir -p "$backup"
+fi
+[[ -d $backup ]] || die 'failed to create backup directory'
+
+tmpdir=$(mktemp -d)
+[[ -d $tmpdir ]] || die 'failed to create tmpdir'
+
+trap 'clean_exit' EXIT
+
+shopt -s extglob
+backup=${backup%%+(/)}
+tmpdir=${tmpdir%%+(/)}
+destination=${destination%%+(/)}
+
+confdirpath=$destination/$confdir
+[[ -d $confdirpath ]] && {
+    cp -r "$confdirpath" "$backup/$confdir" || exit 1
+    rm -rf "$confdirpath" || exit 1
+}
+
+clone_dotfiles "$repo" "$tmpdir" "$confdir" || exit 1
+git_bare "$tmpdir" "$confdir" checkout || exit 1
+git_bare "$tmpdir" "$confdir" config --local status.showUntrackedFiles no || exit 1
+rsync --archive --progress --backup-dir "$backup" "$tmpdir"/ "$destination" || exit 1
