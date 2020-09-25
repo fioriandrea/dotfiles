@@ -1,0 +1,30 @@
+#!/bin/sh
+
+print_help() {
+    cat << EOF
+shufwall [options]
+
+Sets background.
+The default behaviour is to take a file from "'$WALLPAPER_DIR'" and set it as a wallpaper.
+
+-h    Show this help
+-f    Specify wallpaper file instead of picking one at random
+-d    Specify wallpaper directory instead of the default "'$WALLPAPER_DIR
+EOF
+}
+
+wallpaperFile=
+wallpaperDir=$WALLPAPER_DIR
+while getopts ':hf:d:' o; do
+    case $o in
+        h) print_help && exit 0 ;;
+        f) wallpaperFile=$OPTARG ;;
+        d) wallpaperDir=$OPTARG ;;
+        :) echo "must supply argument to '$OPTARG'" >&2 && exit 1 ;;
+        ?) echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
+    esac
+done
+
+[ -z "$wallpaperFile" ] && wallpaperFile=$(shuf -n1 -e "$wallpaperDir"/*)
+
+[ -f "$wallpaperFile" ] && feh --no-fehbg --bg-fill "$wallpaperFile"

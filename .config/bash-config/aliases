@@ -1,0 +1,18 @@
+alias ls='ls --color=auto'
+alias la='ls -a'
+alias ll='ls -la'
+alias l='ls'
+alias l.="ls -A | grep -E '^\.'"
+alias cd..='cd ..'
+alias pdw="pwd"
+alias grep='grep --color=auto'
+alias diff='diff --color=auto'
+
+alias pacman='pacman --color auto'
+alias yay='yay --color auto'
+alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
+
+alias mirror='sudo reflector -f 30 -l 30 --number 10 --verbose --save /etc/pacman.d/mirrorlist'
+alias mirrord='sudo reflector --latest 50 --number 20 --sort delay --save /etc/pacman.d/mirrorlist'
+alias mirrors='sudo reflector --latest 50 --number 20 --sort score --save /etc/pacman.d/mirrorlist'
+alias mirrora='sudo reflector --latest 50 --number 20 --sort age --save /etc/pacman.d/mirrorlist'

@@ -1,0 +1,56 @@
+#!/bin/awk -f
+
+function treeprint(tree, root, level, lastchild, closedlevels,    i, j) {
+    if (!root)
+        return
+    if (level > 0) {
+        for (j = 1; j <= level - 1; j++) {
+            printf("%s   ", j in closedlevels ? " " : pipe)
+        }
+        printf("%s%s%s%s", lastchild ? el : tee, dash, dash, dash)
+    }
+    if (lastchild)
+        closedlevels[level] = 1
+    printf("%s\n", root)
+    for (i = 1; i <= tree[root, "nchildren"]; i++) {
+        lastchild = i == tree[root, "nchildren"]
+        treeprint(tree, tree[root, i], level + 1, lastchild, closedlevels)
+    }
+    delete closedlevels[level]
+}
+
+function errorprint(message) {
+    printf("%s: %s", programname, message) | "cat 1>&2"
+}
+
+BEGIN {
+    programname = "treeprint"
+    tee = "├"
+    dash = "─"
+    pipe = "│"
+    el = "└"
+    nnodes = 0
+}
+
+nnodes == 0 {
+    root = $1
+}
+
+{
+    for (i = 1; i <= NF; i++) {
+        if (nnodes != 0 && nnodes % 2 != 0) {
+            nchildren = ++tree[prevnode, "nchildren"]
+            tree[prevnode, nchildren] = $i
+        }
+        prevnode = $i
+        nnodes++
+    }
+}
+
+END {
+    if (nnodes % 2 != 0) {
+        errorprint("missing left hand side child")
+        exit(1)
+    }
+    treeprint(tree, root)
+}

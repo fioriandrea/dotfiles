@@ -1,0 +1,37 @@
+#!/bin/bash
+
+die() {
+    printf '%s\n' "$@" >&2
+    exit 1
+}
+
+cmdexists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+file=/dev/stdin
+linenr=1
+while getopts ':f:l:' o; do
+    case $o in
+        f) file=$OPTARG ;;
+        l) linenr=$OPTARG ;;
+        :) die "must supply argument to '$OPTARG'" ;;
+        ?) die "unknown option '$OPTARG'" ;;
+    esac
+done
+
+cmdexists bat || die "missing dependency bat"
+[[ -e $file ]] || die "file '$file' does not exist"
+positiveintre='^[0-9]+$'
+[[ $linenr =~ $re ]] || die "invalid line number '$linenr'"
+
+shopt -s checkwinsize; (:)
+center=$((LINES / 2))
+start=$((linenr - center > 0 ? linenr - center : 1))
+end=$((start + LINES))
+bat --highlight-line "$linenr" \
+    --paging never \
+    --color always \
+    --number \
+    --line-range "$start":"$end" \
+    "$file"

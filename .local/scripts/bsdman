@@ -1,0 +1,31 @@
+#!/bin/sh
+
+manpage() {
+    w3m -no-cookie "https://man.openbsd.org/$1"
+}
+
+kflag=
+while getopts ":k" o; do
+    case $o in
+        k) kflag=1 ;;
+        ?) echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [ -n "$kflag" ]; then
+    manpage "?query=$1&apropos=1&sec=0&arch=default&manpath=OpenBSD-current"
+    return
+fi
+
+first=true
+for arg in "$@"; do
+    if [ "$first" = "true" ]; then
+        set --
+        first=false
+    fi
+    set -- "$arg" "$@"
+done
+
+echo "$1${2:+.$2}"

@@ -1,0 +1,11 @@
+{
+    "workbench.startupEditor": "newUntitledFile",
+    "editor.fontSize": 18,
+    "editor.tabSize": 4,
+    "editor.wordWrap": "on",
+    "terminal.integrated.fontSize": 18,
+    "vim.useCtrlKeys": true,
+    "vim.useSystemClipboard": true,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "window.zoomLevel": -1
+}

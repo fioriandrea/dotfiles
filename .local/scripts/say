@@ -1,0 +1,38 @@
+#!/bin/sh
+
+print_help() {
+    cat << EOF
+say [options] arg
+
+Text-to-speech script
+
+-h    Prints help
+-l    Sets language
+-f    Read file instead of arg
+EOF
+}
+
+[ "$#" = 0 ] && print_help && exit 0
+
+lang="en"
+file=
+text=
+while getopts ':hl:f:' o; do
+    case $o in
+        h) print_help && exit 0 ;;
+        f) file=$OPTARG ;;
+        l) lang=$OPTARG ;;
+        :) echo "must supply argument to '$OPTARG'" >&2 && exit 1 ;;
+        ?) echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [ -f "$file" ]; then
+    text=$(cat "$file")
+else
+    text=$1
+fi
+
+curl -s -G --data-urlencode "text=$text" "https://speech.botiumbox.com/api/tts/$lang?&tts=marytts" -H "accept: audio/wav" | mpv -

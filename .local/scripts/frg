@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# file, linenr and rest can be considered splitter's return values
+splitter() {
+    local regex
+    local line
+    local matches
+
+    regex='(.+?):([0-9]+):(.*)'
+    matches=()
+    read -r line
+    for ((i = 0; i < 3; i++)); do
+        matches+=("$(rg "$regex" --only-matching --replace '$'$((i + 1)) <<< "$line")")
+    done
+    file="${matches[0]}"
+    linenr="${matches[1]}"
+    rest="${matches[2]}"
+}
+
+export -f splitter
+
+fzfargs=(
+    --ansi
+    --multi
+    --query ''
+    --preview $'printf \'%s\' {} | { splitter; fpreviewer -f "$file" -l "$linenr" ; }'
+)
+
+rgargs=(
+    --line-number
+    --no-heading
+    --with-filename
+    --color=always
+    --line-buffered
+    "$@"
+)
+
+[[ -n $FRG_RELOAD ]] && fzfargs+=(--bind "change:reload(rg ${rgargs[*]} -- {q} || true)" --disabled)
+
+FZF_DEFAULT_COMMAND="rg ${rgargs[*]} ''" fzf "${fzfargs[@]}" | \
+    while IFS= read -r; do
+        splitter <<< "$REPLY"
+        printf '%s\n' "$file"
+    done

@@ -1,0 +1,78 @@
+#!/bin/sh
+
+print_help() {
+    cat << EOF
+${0##*/} [options] ...filelist
+
+Upload filelist to 0x0.st (The null pointer, https://github.com/mia-0/0x0)
+
+-h    Prints help
+-t    Uploads files as archives (tar). Default for directories
+-x    Uploads files as gzipped archives (tgz)
+-d    Debug flag, do not upload files and do not delete temporary files
+EOF
+}
+
+upload_file() {
+    [ -z "$dflag" ] || { printf 'debug\n'; return ; }
+    curl -s -F "file=@$1" https://0x0.st
+}
+
+print_upload_file() {
+    printf '%s' "$1 -> "
+    upload_file "$1"
+}
+
+make_tmp() {
+    [ -z "$tmpDir" ] && tmpDir="$(mktemp -d)"
+}
+
+make_tarball() {
+    make_tmp
+    tarballName="$(basename "$(realpath "$1")")"
+    fileName="$tmpDir/$tarballName.tar"
+    tar -c -f "$fileName" "$1"
+}
+
+make_tarballgz() {
+    make_tarball "$1"
+    gzip -c "$fileName" > "${fileName%.tar}.tgz"
+    fileName="${fileName%.tar}.tgz"
+}
+
+delete_tmp() {
+    [ -z "$dflag" ] || return
+    [ -d "$tmpDir" ] && rm -rf "$tmpDir"
+}
+
+[ "$#" -eq 0 ] && print_help && exit 0
+
+tflag=
+xflag=
+dflag=
+while getopts ':htxd' o; do
+    case $o in
+        h) print_help && exit 0 ;;
+        t) tflag=1 ;;
+        d) dflag=1 ;;
+        x) xflag=1 ;;
+        ?) echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
+    esac
+done
+
+shift "$((OPTIND - 1))"
+
+trap 'delete_tmp' EXIT
+
+tmpDir=
+tarballName=
+while [ -f "$1" ] || [ -d "$1" ]; do
+    fileName="$1"
+    if [ -n "$xflag" ]; then
+        make_tarballgz "$fileName"
+    elif [ -n "$tflag" ] || [ -d "$fileName" ]; then
+        make_tarball "$fileName"
+    fi
+    print_upload_file "$fileName"
+    shift
+done

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+repeat=1
+file=/usr/share/sounds/freedesktop/stereo/complete.oga
+while getopts ':r:f:' o; do
+    case $o in
+        r) repeat=$OPTARG ;;
+        f) file=$OPTARG ;;
+        :) echo "must supply argument to '$OPTARG'" >&2 && exit 1 ;;
+        ?) echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
+    esac
+done
+
+shift "$((OPTIND - 1))"
+
+while [ "$repeat" -gt 0 ]; do
+    paplay "$file"
+    repeat=$((repeat - 1))
+done

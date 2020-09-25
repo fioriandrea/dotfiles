@@ -1,0 +1,58 @@
+#!/bin/bash
+
+error_exit() {
+	echo "$1" >&2
+	if [[ -z $2 ]]; then
+		exit 1
+	else
+		exit "$2"
+	fi
+}
+
+format=png
+fname=screenshot-$(date +%F_%T)
+destination=/tmp
+options=()
+
+print_help() {
+	cat <<EOF
+usage: ${0##*/} [option] [...args]
+
+-h|--help         show this help
+-s                allows mouse selection
+-f FORMAT         use FORMAT instead of default $format. FORMAT has to be a valid image MIME type
+-d DESTINATION    use DESTINATION instead of default $destination
+EOF
+}
+
+while (($# > 0)); do
+	case $1 in
+		-s)
+			options+=(-s)
+			shift
+		;;
+		-f)
+            (($# < 2)) && error_exit "error: must supply format"
+
+			shift
+			format="$1"
+			shift
+		;;
+		-d)
+            (($# < 2)) && error_exit "error: must supply format"
+			shift
+            destination=$(cd "$1"; pwd)
+            destination=${destination%/}
+			shift
+		;;
+		-h|--help)
+			print_help
+			exit 0
+		;;
+		*)
+            error_exit "unknown option $1"
+		;;
+	esac
+done
+
+scrot "${options[@]}" "$destination/$fname.$format" -e 'xclip -selection clipboard -t image/'"$format"' $f'
