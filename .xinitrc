@@ -16,4 +16,6 @@ then
 	/usr/bin/VBoxClient-all
 fi
 
+. ~/.xprofile
+
 ssh-agent i3

@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# ~/.xprofile
+# This file runs when a DM logs you into a graphical session.
+
+
+#Authentication dialog
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
+
+#feh sets wallpaper
+feh --bg-fill /"$WALLPAPER_DIR/$WALLPAPER_NAME" &
+
+# set screensaver tieìmeout
+xset s 100 & 
