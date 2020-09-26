@@ -255,6 +255,7 @@ bindsym control+mod1+f exec --no-startup-id $BROWSER;focus
 
 #editor
 bindsym $mod+F2 exec $TERMINAL -e $EDITOR; focus
+bindsym $mod+e exec $TERMINAL -e $EDITOR; focus
 
 
 #
