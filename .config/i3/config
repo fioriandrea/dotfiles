@@ -252,9 +252,6 @@ exec_always --no-startup-id autotiling
 
 # applications that are not installed will not start
 
-#Authentication dialog
-exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-
 # bluetooth
 exec --no-startup-id blueberry-tray
 
@@ -263,9 +260,6 @@ exec --no-startup-id nm-applet
 
 # volume
 exec --no-startup-id pasystray
-
-#feh sets wallpaper
-exec --no-startup-id feh --bg-fill /"$WALLPAPER_DIR/$WALLPAPER_NAME" &
 
 #####################################################################################################################
 #################                          applications keyboard shortcuts                          #################
@@ -372,18 +366,16 @@ bindsym mod1+Down exec --no-startup-id variety --resume
 #microphone toggle
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute 1 toggle
 
-bindsym XF86AudioRaiseVolume exec --no-startup-id "amixer -D pulse sset Master '5%+'"
-bindsym XF86AudioLowerVolume exec --no-startup-id "amixer -D pulse sset Master '5%-'"
-bindsym XF86AudioMute exec --no-startup-id "amixer -D pulse set Master toggle"
+bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -D pulse sset Master '5%+' && pkill -RTMIN+10 i3blocks
+
+bindsym XF86AudioLowerVolume exec --no-startup-id amixer -D pulse sset Master '5%-' && pkill -RTMIN+10 i3blocks
+
+bindsym XF86AudioMute exec --no-startup-id amixer -D pulse set Master toggle && pkill -RTMIN+10 i3blocks
 #https://github.com/acrisci/playerctl/
-bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
-bindsym XF86AudioNext exec --no-startup-id playerctl next
-bindsym XF86AudioPrev exec --no-startup-id playerctl previous
-bindsym XF86AudioStop exec --no-startup-id playerctl stop
-#bindsym XF86AudioPlay exec --no-startup-id "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
-#bindsym XF86AudioNext exec --no-startup-id "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
-#bindsym XF86AudioPrev exec --no-startup-id "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous"
-#bindsym XF86AudioStop exec --no-startup-id "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop"
+#bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
+#bindsym XF86AudioNext exec --no-startup-id playerctl next
+#bindsym XF86AudioPrev exec --no-startup-id playerctl previous
+#bindsym XF86AudioStop exec --no-startup-id playerctl stop
 
 
 #####################################################################################################################
@@ -468,12 +460,12 @@ bar {
     height 40
     workspace_buttons yes
     font pango:Noto Sans 24
-    separator_symbol " | "
 
     position top
 
-    #status_command i3status
-    status_command i3status -c ~/.config/i3/i3status.conf
+    #status_command i3status -c ~/.config/i3/i3status.conf
+    
+    status_command i3blocks
 
     ##START THEMING BAR
 
