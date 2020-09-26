@@ -1,0 +1,27 @@
+#! /bin/awk -f
+
+
+BEGIN {
+    discharging_icon = "🔋"
+    charging_icon = "🔌"
+    full_icon =" ⚡"
+    not_charging_icon = "🛑"
+    unknown_icon = "♻"
+
+    while (("battery-info" | getline) > 0) {
+        $3 = tolower($3)
+        
+        if ($3 == "discharging")
+            icon = discharging_icon
+        else if ($3 == "charging")
+            icon = charging_icon
+        else if ($3 == "full")
+            icon = full_icon
+        else if ($3 == "not charging")
+            icon = not_charging_icon
+        else
+            icon = unknown_icon
+    }
+    
+    printf("%s %d%% %s\n", icon, $2, $4)
+}

@@ -1,4 +1,4 @@
-command="$XDG_CONFIG_HOME/i3blocks/scripts/$BLOCK_NAME.sh"
+command="$XDG_CONFIG_HOME/i3blocks/scripts/$BLOCK_NAME"
 separator_block_width=15
 markup=pango
 
