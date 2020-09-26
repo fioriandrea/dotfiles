@@ -258,9 +258,6 @@ exec --no-startup-id blueberry-tray
 # network
 exec --no-startup-id nm-applet
 
-# volume
-exec --no-startup-id pasystray
-
 #####################################################################################################################
 #################                          applications keyboard shortcuts                          #################
 #####################################################################################################################
@@ -280,9 +277,6 @@ bindsym control+mod1+b exec --no-startup-id $FILE_MANAGER;focus
 
 #System monitor
 bindsym control+Shift+Escape exec --no-startup-id $TERMINAL -e htop;focus
-
-#pavucontrol
-bindsym control+mod1+u exec --no-startup-id pavucontrol
 
 #xkill
 bindsym --release $mod+Escape exec xkill
