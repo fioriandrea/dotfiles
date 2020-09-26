@@ -1,10 +1,3 @@
-#####################################################################################################################
-#####################################################################################################################
-#################                          Start of all the settings                                #################
-#####################################################################################################################
-#####################################################################################################################
-
-
 # KEY DEFINITIONS TO REMEMBER
 
 # $Mod = WINDOWS key or Super key or Mod4
@@ -18,9 +11,9 @@
 # Print = PRINT key
 # Tab = TAB key
 
-#####################################################################################################################
-#################                          Define the $mod variable/key                             #################
-#####################################################################################################################
+#
+## Define the $mod variable/key
+#
 
 # Key to rule them all : Super(Windows) or Alt key?
 
@@ -57,10 +50,9 @@ bindsym $mod+Shift+8 move container to workspace 8; workspace 8
 bindsym $mod+Shift+9 move container to workspace 9; workspace 9
 bindsym $mod+Shift+0 move container to workspace 10; workspace 10
 
-#####################################################################################################################
-#################                          Define the movements keys - variables                    #################
-#####################################################################################################################
-
+#
+## Define the movements keys - variables
+#
 
 #This is setup for qwerty
 set $up k
@@ -68,9 +60,9 @@ set $down j
 set $left h
 set $right l
 
-#####################################################################################################################
-#################                          3 menu                                                   #################
-#####################################################################################################################
+#
+## menus
+#
 
 # start dmenu
 bindsym $mod+shift+d exec --no-startup-id dmenu_run -i -nb '#191919' -nf '#fea63c' -sb '#fea63c' -sf '#191919' -fn 'NotoMonoRegular:bold:pixelsize=36'
@@ -93,10 +85,9 @@ mode "$mode_system" {
     bindsym Escape mode "default"
 }
 
-#####################################################################################################################
-#################                          reload changed configuration                             #################
-#####################################################################################################################
-
+#
+## reload changed configuration
+#
 
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
@@ -104,19 +95,17 @@ bindsym $mod+Shift+r restart
 # reload the configuration file
 bindsym $mod+Shift+c reload
 
-
-#####################################################################################################################
-#################                          Stopping an application                                  #################
-#####################################################################################################################
+#
+## Stopping an application
+#
 
 # kill focused window
 bindsym $mod+Shift+q kill
 bindsym $mod+q kill
 
-#####################################################################################################################
-#################                          Moving around in i3                                      #################
-#####################################################################################################################
-
+#
+## Moving around in i3
+#
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -148,13 +137,9 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
-
-
-
-#####################################################################################################################
-#################                          moving around workspaces                                 #################
-#####################################################################################################################
-
+#
+## moving around workspaces
+#
 
 # next/previous workspace
 
@@ -170,12 +155,9 @@ bindsym Mod1+Ctrl+Left workspace prev
 for_window [urgent=latest] focus
 
 
-
-
-
-#####################################################################################################################
-#################                          Tiling parameters                                        #################
-#####################################################################################################################
+#
+## Tiling parameters
+#
 
 # orientation for new workspaces
 default_orientation horizontal
@@ -192,11 +174,9 @@ bindsym $mod+f fullscreen toggle
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
 
-
-#####################################################################################################################
-#################                          resize                                                   #################
-#####################################################################################################################
-
+#
+## resize
+#
 
 # resize window (you can also use the mouse for that)
 
@@ -225,13 +205,9 @@ mode "resize" {
         bindsym Escape mode "default"
 }
 
-
-
-
-
-#####################################################################################################################
-#################                          choose the font                                          #################
-#####################################################################################################################
+#
+## choose the font
+#
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -239,9 +215,9 @@ mode "resize" {
 font pango:Noto Mono Regular 23
 
 
-#####################################################################################################################
-#################           autostart   -    execute applications at boot time                      #################
-#####################################################################################################################
+#
+## autostart - execute applications at boot time
+#
 
 # USER APPLICATIONS TO START AT BOOT
 
@@ -258,9 +234,9 @@ exec --no-startup-id blueberry-tray
 # network
 exec --no-startup-id nm-applet
 
-#####################################################################################################################
-#################                          applications keyboard shortcuts                          #################
-#####################################################################################################################
+#
+## applications keyboard shortcuts
+#
 
 # terminal
 bindsym $mod+Return exec --no-startup-id $TERMINAL;focus
@@ -290,30 +266,21 @@ bindsym control+mod1+f exec --no-startup-id $BROWSER;focus
 bindsym $mod+F2 exec $TERMINAL -e $EDITOR; focus
 
 
-#####################################################################################################################
-#################                          screenshots                                              #################
-#####################################################################################################################
+#
+## screenshots
+#
 
 bindsym Print --release exec "scrot /tmp/screenshot-$(date +%F_%T).jpeg -e 'xclip -selection clipboard -t image/jpeg $f'"
 
-#bindsym shift+Print exec --no-startup-id shutter
-
-
-
-
-
-#####################################################################################################################
-#################                          floating or tiled                                        #################
-#####################################################################################################################
-
+#
+## floating or tiled
+#
 
 #floating enabled from some programs - find with xprop
 
 for_window [class="Blueberry.py"] floating enable
 for_window [class="Font-manager"] floating enable
 for_window [class="Pavucontrol"] floating disable
-
-for_window [instance="variety"] floating disable
 
 for_window [title="Copying"] floating enable
 for_window [title="Deleting"] floating enable
@@ -323,41 +290,10 @@ for_window [window_role="pop-up"] floating enable
 for_window [window_role="^Preferences$"] floating enable
 for_window [window_role="setup"] floating enable
 
+#
+## audio settings
+#
 
-#####################################################################################################################
-#################                          give focus to applications                               #################
-#####################################################################################################################
-
-for_window [class="Termite"] focus
-
-#####################################################################################################################
-#################                          variety for your wallpapers                              #################
-#####################################################################################################################
-
-
-#Variety keybindings mod1 = ALT
-# trash wallpaper
-bindsym mod1+t exec --no-startup-id variety -t
-# next wallpaper
-bindsym mod1+n exec --no-startup-id variety -n
-bindsym mod1+Right exec --no-startup-id variety -n
-# previous wallpaper
-bindsym mod1+p exec --no-startup-id variety -p
-bindsym mod1+Left exec --no-startup-id variety -p
-# favorite wallpaper
-bindsym mod1+f exec --no-startup-id variety -f
-# pause wallpaper
-bindsym mod1+Up exec --no-startup-id variety --pause
-# resume wallpaper
-bindsym mod1+Down exec --no-startup-id variety --resume
-
-
-#####################################################################################################################
-#################                          audio settings                                           #################
-#####################################################################################################################
-
-
-#microphone toggle
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute 1 toggle
 
 bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -D pulse sset Master '5%+' && pkill -RTMIN+10 i3blocks
@@ -365,35 +301,24 @@ bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -D pulse sset Master '5
 bindsym XF86AudioLowerVolume exec --no-startup-id amixer -D pulse sset Master '5%-' && pkill -RTMIN+10 i3blocks
 
 bindsym XF86AudioMute exec --no-startup-id amixer -D pulse set Master toggle && pkill -RTMIN+10 i3blocks
-#https://github.com/acrisci/playerctl/
-#bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
-#bindsym XF86AudioNext exec --no-startup-id playerctl next
-#bindsym XF86AudioPrev exec --no-startup-id playerctl previous
-#bindsym XF86AudioStop exec --no-startup-id playerctl stop
 
-
-#####################################################################################################################
-#################                          xbacklight                                               #################
-#####################################################################################################################
+#
+## xbacklight
+#
 
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 3 # increase screen brightness
 bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 3 # decrease screen brightness
 
-
-
-#####################################################################################################################
-#################                          bar toggle                                               #################
-#####################################################################################################################
-
+#
+## bar toggle
+#
 
 # bar toggle, hide or show
 bindsym $mod+b bar mode toggle
 
-
-#####################################################################################################################
-#################                          border control                                           #################
-#####################################################################################################################
-
+#
+## border control
+#
 
 # Border control
 hide_edge_borders both
@@ -414,40 +339,16 @@ new_float normal
 #new_float none
 
 
-
-
-#####################################################################################################################
-#################                          Popups  control                                          #################
-#####################################################################################################################
+#
+## popups control
+#
 
 #Popups during fullscreen mode
 popup_during_fullscreen smart
 
-
-#####################################################################################################################
-#################                          i3 gaps next                                             #################
-#####################################################################################################################
-
-# Settings for I3 next gap git
-# https://github.com/Airblader/i3/tree/gaps-next
-# delete or uncomment the following lines if you do not have it or do not
-# want it
-
-
-for_window [class="^.*"] border pixel 2
-gaps inner 5
-gaps outer 5
-#smart_gaps on
-#smart_borders on
-
-
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#################                          bar appearance                                           #################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
+#
+## bar appearance
+#
 
 bar {
 
@@ -457,8 +358,6 @@ bar {
 
     position top
 
-    #status_command i3status -c ~/.config/i3/i3status.conf
-    
     status_command i3blocks
 
     ##START THEMING BAR
@@ -495,23 +394,25 @@ bar {
 
     ##STOP THEMING WM
 
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-########################################               THE   END          ###########################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
+#
+## i3 gaps next
+#
+
+# Settings for I3 next gap git
+# https://github.com/Airblader/i3/tree/gaps-next
+# delete or uncomment the following lines if you do not have it or do not
+# want it
 
 
+for_window [class="^.*"] border pixel 2
+gaps inner 5
+gaps outer 5
+#smart_gaps on
+#smart_borders on
 
-#####################################################################################################################
-#################                          Scratchpad                                               #################
-#####################################################################################################################
+#
+## scratchpad
+#
 
 # move the currently focused window to the scratchpad
 bindsym $mod+Shift+minus move scratchpad
