@@ -1,0 +1,25 @@
+#! /bin/bash
+
+numre='^[0-9]+$'
+helpre='^(-h|--help)$'
+
+if [[ $1 =~ $numre ]]
+then
+    depth=$1
+elif [[ $1 =~ $helpre ]]
+then
+    echo "usage: rename-spaces [depth]"
+    exit 0
+else
+    depth=1
+fi
+
+find . -maxdepth "$depth" -regextype posix-extended -regex '.*[ \n\t].*' -print0 | while IFS= read -r -d '' line
+do
+    newname=$(tr '[ \n\t]' '_' <<< "$line")
+    newname=${newname:0:-1}
+    if [[ $newname != $line ]]
+    then
+        echo "mv \"$line\" \"$newname\""
+    fi
+done

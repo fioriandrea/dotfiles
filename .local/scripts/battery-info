@@ -1,0 +1,19 @@
+#! /bin/bash
+
+for battery in /sys/class/power_supply/BAT?
+do
+	# Get its remaining capacity and charge status.
+	capacity="$(< "$battery/capacity")"
+    status_string="$(< "$battery/status")"
+    charge_now="$(< "$battery/charge_now")"
+    current_now="$(< "$battery/current_now")"
+
+    estimated_time="$(awk '{
+        time = $1 / $2
+        hours = int(time)
+        minutes = int((time - hours) * 60)
+        printf("%02d:%02d\n", hours, minutes)
+    }' <<< "$charge_now $current_now")"
+
+   echo "${battery##*/} $capacity $status_string $estimated_time" 
+done

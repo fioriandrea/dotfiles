@@ -1,0 +1,75 @@
+#! /bin/awk -f
+
+function printHelp() {
+    print "brightness-set -- set screen brightness"
+    print "brightness-set [+|-]NUM"
+    print "if neither + or - is in front of NUM, NUM is interpreted as a percentage, otherwise as an increment (or decrement)"
+}
+
+function printError(msg) {
+    print msg | "cat 1>&2"
+}
+
+function usageError() {
+    printError("usage: brightness-set [+|-]NUM")
+}
+
+function trim(str) {
+    sub(/[ \t\n]+$/, "", str)
+    sub(/^[ \t\n]+/, "", str)
+    return str
+}
+
+function map(n, r1, r2, r3, r4,    m, q) {
+    m = (r3 - r4) / (r1 - r2)
+    q = r4 - r2 * m
+    return m * n + q
+}
+
+function limit(n, l, h) {
+    if (n < l)
+        return l
+    else if (n > h)
+        return h
+    else
+        return n
+}
+
+BEGIN {
+    if (ARGC != 2) {
+        usageError()
+        exit 1
+    }
+    
+    if (ARGV[1] == "-h" || ARGV[1] == "--help") {
+        printHelp();
+        exit 0
+    }
+    
+    num = trim(ARGV[1])
+
+    if (num !~ /^[+-]?[0-9]+(\.[0-9]+)?$/) {
+        printError("Wrong number format: " num)
+        usageError()
+        exit 1
+    }
+
+    dir = "/sys/class/backlight/intel_backlight"
+    maxPath = dir "/max_brightness"
+    currentPath = dir "/brightness"
+
+    getline maxBrightness < maxPath
+
+    if (num ~ /^[+-]/) {
+        getline current < currentPath
+        wanted = map(current, 0, maxBrightness, 0, 100) + num
+        close(currentPath)
+    } else {
+        wanted = num
+    }
+    
+    wanted = limit(wanted, 0, 100)
+    wanted = map(wanted, 0, 100, 0, maxBrightness)
+    wanted = int(wanted)
+    print wanted > currentPath
+}
