@@ -3,7 +3,7 @@ separator_block_width=15
 markup=pango
 
 [temperature]
-interval=20
+interval=30
 
 [volume]
 interval=once
@@ -13,7 +13,7 @@ signal=10
 interval=60
 
 [battery]
-interval=5
+interval=20
 
 [clock]
 interval=30
