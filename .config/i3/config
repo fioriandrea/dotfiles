@@ -315,9 +315,12 @@ bindsym $mod+b bar mode toggle
 hide_edge_borders both
 bindsym $mod+shift+b exec --no-startup-id i3-msg border toggle
 
+# default border pixel 
+for_window [class="^.*"] border pixel 5
+
 #changing border style
 bindsym $mod+t border normal
-bindsym $mod+y border 1pixel
+bindsym $mod+y border pixel 5
 bindsym $mod+u border none
 
 
@@ -375,11 +378,12 @@ bar {
 
 # Window color settings
 # class                 border  backgr. text    indicator
-client.focused          #6790EB #6790EB #e5e5e5 #6790EB
-client.unfocused        #222222 #222222 #aaaaaa #222222
-client.focused_inactive #222222 #222222 #a9a9a9 #222222
-client.placeholder      #222222 #222222 #aaaaaa #222222
-client.urgent           #d42121 #d42121 #f7f7f7 #d42121
+#6e4af0
+client.focused          #6e4af0 #6e4af0 #e5e5e5 #d42121
+client.unfocused        #222222 #222222 #aaaaaa #dddddd
+client.focused_inactive #222222 #222222 #a9a9a9 #dddddd
+client.placeholder      #222222 #222222 #aaaaaa #dddddd
+client.urgent           #d42121 #d42121 #f7f7f7 #6e4af0
 
 client.background       #242424
 
@@ -394,8 +398,6 @@ client.background       #242424
 # delete or uncomment the following lines if you do not have it or do not
 # want it
 
-
-for_window [class="^.*"] border pixel 2
 gaps inner 5
 gaps outer 5
 #smart_gaps on
