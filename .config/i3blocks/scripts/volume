@@ -15,11 +15,11 @@ case "$BLOCK_BUTTON" in
     1|2|3) eval "$GUI_AUDIO_CONTROL &";;
 esac
 
-[ $(pamixer --get-mute) = true ] && echo "$muteicon" && exit
-
 vol="$(pamixer --get-volume)"
 
-if [ "$vol" -gt "70" ]; then
+if [ "$(pamixer --get-mute)" = "true" ]; then
+    icon="$muteicon"
+elif [ "$vol" -gt "70" ]; then
 	icon="$highicon"
 elif [ "$vol" -lt "30" ]; then
 	icon="$zeroicon"
