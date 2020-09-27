@@ -21,7 +21,7 @@
 # Mod1 = Alt key on keyboard
 
 #Set Alt key
-#sjt $mod Mod1
+#set $mod Mod1
 
 #set Super key
 set $mod Mod4
@@ -54,7 +54,6 @@ bindsym $mod+Shift+0 move container to workspace 10; workspace 10
 ## Define the movements keys - variables
 #
 
-#This is setup for qwerty
 set $up k
 set $down j
 set $left h
@@ -65,7 +64,7 @@ set $right l
 #
 
 # start dmenu
-bindsym $mod+shift+d exec --no-startup-id dmenu_run -i -nb '#191919' -nf '#fea63c' -sb '#fea63c' -sf '#191919' -fn 'NotoMonoRegular:bold:pixelsize=36'
+bindsym $mod+shift+d exec --no-startup-id program-menu
 
 #Backup exit
 #Press ctrl+alt+x - check toolbar for next choices
@@ -231,16 +230,10 @@ exec --no-startup-id nm-applet
 
 # terminal
 bindsym $mod+Return exec --no-startup-id $TERMINAL;focus
-bindsym $mod+KP_Enter exec --no-startup-id $TERMINAL;focus
 bindsym control+mod1+t exec --no-startup-id $TERMINAL; focus
-bindsym control+mod1+Return exec --no-startup-id $TERMINAL; focus
-bindsym control+mod1+KP_Enter exec --no-startup-id $TERMINAL; focus
 
 #file manager
-bindsym $mod+F8 exec --no-startup-id $FILE_MANAGER;focus
 bindsym $mod+Shift+Return exec --no-startup-id $FILE_MANAGER;focus
-bindsym $mod+Shift+KP_Enter exec --no-startup-id $FILE_MANAGER;focus
-bindsym control+mod1+b exec --no-startup-id $FILE_MANAGER;focus
 
 #System monitor
 bindsym control+Shift+Escape exec --no-startup-id $TERMINAL -e htop;focus
@@ -249,12 +242,10 @@ bindsym control+Shift+Escape exec --no-startup-id $TERMINAL -e htop;focus
 bindsym --release $mod+Escape exec xkill
 
 #browser
-bindsym $mod+F1 exec --no-startup-id $BROWSER;focus
 bindsym $mod+w exec --no-startup-id $BROWSER;focus
 bindsym control+mod1+f exec --no-startup-id $BROWSER;focus
 
 #editor
-bindsym $mod+F2 exec $TERMINAL -e $EDITOR; focus
 bindsym $mod+e exec $TERMINAL -e $EDITOR; focus
 
 
@@ -262,44 +253,23 @@ bindsym $mod+e exec $TERMINAL -e $EDITOR; focus
 ## screenshots
 #
 
-bindsym Print --release exec "scrot /tmp/screenshot-$(date +%F_%T).jpeg -e 'xclip -selection clipboard -t image/jpeg $f'"
-
-#
-## floating or tiled
-#
-
-#floating enabled from some programs - find with xprop
-
-for_window [class="Blueberry.py"] floating enable
-for_window [class="Font-manager"] floating enable
-for_window [class="Pavucontrol"] floating disable
-
-for_window [title="Copying"] floating enable
-for_window [title="Deleting"] floating enable
-for_window [title="Moving"] floating enable
-
-for_window [window_role="pop-up"] floating enable
-for_window [window_role="^Preferences$"] floating enable
-for_window [window_role="setup"] floating enable
+bindsym Print --release exec screenshot
 
 #
 ## audio settings
 #
 
 bindsym XF86AudioMicMute exec --no-startup-id pamixer --source 1 --toggle-mute
-
 bindsym XF86AudioRaiseVolume exec --no-startup-id pamixer --increase 5 && pkill -RTMIN+10 i3blocks
-
 bindsym XF86AudioLowerVolume exec --no-startup-id pamixer --decrease 5 && pkill -RTMIN+10 i3blocks
-
 bindsym XF86AudioMute exec --no-startup-id pamixer --toggle-mute && pkill -RTMIN+10 i3blocks
 
 #
 ## xbacklight
 #
 
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 3 # increase screen brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 3 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 3
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 3
 
 #
 ## bar toggle
