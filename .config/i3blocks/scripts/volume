@@ -12,7 +12,7 @@ highicon="🔊"
 #2 middle
 #3 right
 case "$BLOCK_BUTTON" in
-    1|2|3) eval "$GUI_AUDIO_CONTROL &";;
+    1|2|3) eval "$TERMINAL -e $AUDIO_CONTROL";;
 esac
 
 vol="$(pamixer --get-volume)"

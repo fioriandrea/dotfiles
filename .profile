@@ -4,7 +4,7 @@ export GUI_EDITOR="gvim"
 export BROWSER="firefox"
 export READER="xreader"
 export FILE_MANAGER="thunar"
-export GUI_AUDIO_CONTROL="pavucontrol"
+export AUDIO_CONTROL="pulsemixer"
 # you need to put the wallpaper here
 export WALLPAPER_DIR="$HOME/.local/share/wallpapers"
 export WALLPAPER_NAME="wallpaper.jpg"
