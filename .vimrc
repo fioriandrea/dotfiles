@@ -45,10 +45,9 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 function! Smart_TabComplete()
   let line = getline('.')                         " current line
 
-  let substr = strpart(line, -1, col('.')+1)      " from the start of the current
-                                                  " line to one character right
-                                                  " of the cursor
-  let substr = matchstr(substr, "[^ \t]*$")       " word till cursor
+  let substr = strpart(line, -1, col('.'))      " from the start of the current
+                                                " to where the cursor is
+  let substr = matchstr(substr, "[^ \t]*$")       " word till cursor (remove leading blanks)
   if (strlen(substr)==0)                          " nothing to match on empty string
     return "\<tab>"
   endif
