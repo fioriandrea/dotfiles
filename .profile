@@ -3,7 +3,7 @@ export EDITOR="vim"
 export GUI_EDITOR="gvim"
 export BROWSER="firefox"
 export READER="xreader"
-export FILE_MANAGER="thunar"
+export FILE_MANAGER="ranger"
 export AUDIO_CONTROL="pulsemixer"
 # you need to put the wallpaper here
 export WALLPAPER_DIR="$HOME/.local/share/wallpapers"

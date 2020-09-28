@@ -233,7 +233,7 @@ bindsym $mod+Return exec --no-startup-id $TERMINAL;focus
 bindsym control+mod1+t exec --no-startup-id $TERMINAL; focus
 
 #file manager
-bindsym $mod+Shift+Return exec --no-startup-id $FILE_MANAGER;focus
+bindsym $mod+Shift+Return exec --no-startup-id $TERMINAL -e $FILE_MANAGER;focus
 
 #System monitor
 bindsym control+Shift+Escape exec --no-startup-id $TERMINAL -e htop;focus
