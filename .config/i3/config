@@ -259,7 +259,7 @@ bindsym Print --release exec screenshot
 ## audio settings
 #
 
-bindsym XF86AudioMicMute exec --no-startup-id pamixer --source 1 --toggle-mute
+bindsym XF86AudioMicMute exec --no-startup-id pamixer --source 1 --toggle-mute && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioRaiseVolume exec --no-startup-id pamixer --increase 5 && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioLowerVolume exec --no-startup-id pamixer --decrease 5 && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioMute exec --no-startup-id pamixer --toggle-mute && pkill -RTMIN+10 i3blocks
