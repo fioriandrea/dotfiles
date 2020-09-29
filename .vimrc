@@ -1,5 +1,6 @@
 " syntax highlighting
-syntax on
+syntax enable
+
 
 " enable mouse support
 
@@ -14,11 +15,13 @@ set noerrorbells
 " set encoding
 set encoding=utf-8
 
+" tells vim to apply the indentation of the current line to the next 
+set autoindent
+
 " it's gonna try to indent for you
 set smartindent
 
-" tells vim to apply the indentation of the current line to the next 
-set autoindent
+filetype plugin indent on
 
 " highlights while you are typing in \ search mode
 set incsearch
