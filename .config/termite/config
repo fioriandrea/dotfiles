@@ -34,7 +34,7 @@ urgent_on_bell = true
 #roundness = 2.0
 
 [colors]
-background = rgba(40, 42, 54, 0.8)
+background = #282a36
 
 # special
 foreground      = #f8f8f2
