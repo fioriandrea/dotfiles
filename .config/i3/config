@@ -218,9 +218,6 @@ exec_always --no-startup-id autotiling
 
 # applications that are not installed will not start
 
-# bluetooth
-exec --no-startup-id blueberry-tray
-
 # network
 exec --no-startup-id nm-applet
 

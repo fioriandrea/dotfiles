@@ -2,7 +2,7 @@ export TERMINAL="urxvt"
 export EDITOR="vim"
 export GUI_EDITOR="gvim"
 export BROWSER="firefox"
-export READER="xreader"
+export READER="zathura"
 export FILE_MANAGER="ranger"
 export AUDIO_CONTROL="pulsemixer"
 # you need to put the wallpaper here
