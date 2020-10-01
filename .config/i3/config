@@ -226,14 +226,14 @@ exec --no-startup-id nm-applet
 #
 
 # terminal
-bindsym $mod+Return exec --no-startup-id $TERMINAL;focus
-bindsym control+mod1+t exec --no-startup-id $TERMINAL; focus
+bindsym $mod+Return exec --no-startup-id i3-sensible-terminal;focus
+bindsym control+mod1+t exec --no-startup-id i3-sensible-terminal; focus
 
 #file manager
-bindsym $mod+Shift+Return exec --no-startup-id $TERMINAL -e $FILE_MANAGER;focus
+bindsym $mod+Shift+Return exec --no-startup-id i3-sensible-terminal -e $FILE_MANAGER;focus
 
 #System monitor
-bindsym control+Shift+Escape exec --no-startup-id $TERMINAL -e htop;focus
+bindsym control+Shift+Escape exec --no-startup-id i3-sensible-terminal -e $TASK_MANAGER;focus
 
 #xkill
 bindsym --release $mod+Escape exec xkill
@@ -243,7 +243,7 @@ bindsym $mod+w exec --no-startup-id $BROWSER;focus
 bindsym control+mod1+f exec --no-startup-id $BROWSER;focus
 
 #editor
-bindsym $mod+e exec $TERMINAL -e $EDITOR; focus
+bindsym $mod+e exec i3-sensible-terminal -e i3-sensible-editor; focus
 
 
 #

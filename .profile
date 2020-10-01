@@ -1,11 +1,11 @@
 export TERMINAL="termite"
 export EDITOR="vim"
 export PAGER="less"
-export GUI_EDITOR="gvim"
 export BROWSER="firefox"
 export READER="zathura"
 export FILE_MANAGER="ranger"
 export AUDIO_CONTROL="pulsemixer"
+export TASK_MANAGER="htop"
 # you need to put the wallpaper here
 export WALLPAPER_DIR="$HOME/.local/share/wallpapers"
 export WALLPAPER_NAME="wallpaper.jpg"
