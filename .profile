@@ -1,4 +1,4 @@
-export TERMINAL="urxvt"
+export TERMINAL="termite"
 export EDITOR="vim"
 export GUI_EDITOR="gvim"
 export BROWSER="firefox"
