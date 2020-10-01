@@ -6,13 +6,14 @@ BEGIN {
     charging_icon = "🔌"
     full_icon =" ⚡"
     not_charging_icon = "🛑"
+    almost_discharged_icon="❗️"
     unknown_icon = "♻"
 
     while (("battery-info" | getline) > 0) {
         $3 = tolower($3)
         
         if ($3 == "discharging")
-            icon = discharging_icon
+            icon = $2 <= 20 ? almost_discharged_icon : discharging_icon
         else if ($3 == "charging")
             icon = charging_icon
         else if ($3 == "full")
