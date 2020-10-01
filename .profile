@@ -1,5 +1,6 @@
 export TERMINAL="termite"
 export EDITOR="vim"
+export PAGER="less"
 export GUI_EDITOR="gvim"
 export BROWSER="firefox"
 export READER="zathura"
