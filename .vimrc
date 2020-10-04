@@ -1,6 +1,17 @@
 " syntax highlighting
 syntax enable
 
+" status line
+
+set laststatus=2 "always show status line                                 
+set statusline=%F%m%r%h%w\ [dec=\%3.3b]\ [hex=\%02.2B]\ [pos=%04l:%04v][%p%%\ of\ %L]
+
+" highlight
+
+" hi CursorLine   cterm=NONE ctermbg=9 " ctermfg=white  
+" hi CursorColumn cterm=NONE ctermbg=9 " ctermfg=white  
+" set cursorline 
+" set cursorcolumn
 
 " enable mouse support
 
