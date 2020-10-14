@@ -41,9 +41,9 @@ set incsearch
 set clipboard=unnamedplus
 
 " tab size
-:set tabstop=4
+:set tabstop=8
 " >> and << size
-:set shiftwidth=4
+:set shiftwidth=8
 " substitute tabs with spaces
 :set expandtab
 
