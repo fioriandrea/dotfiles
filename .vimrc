@@ -3,8 +3,8 @@ syntax enable
 
 " status line
 
-set laststatus=2 "always show status line                                 
-set statusline=%F%m%r%h%w\ [dec=\%3.3b]\ [hex=\%02.2B]\ [pos=%04l:%04v][%p%%\ of\ %L]
+set laststatus=2 "always show status line
+set statusline=%F%m%r%h%w\ [dec=%3.3b]\ [hex=%02.2B]\ [pos=%04l:%04v][%p%%\ of\ %L]
 
 " highlight
 
@@ -41,11 +41,11 @@ set incsearch
 set clipboard=unnamedplus
 
 " tab size
-:set tabstop=8
+set tabstop=4
 " >> and << size
-:set shiftwidth=8
+set shiftwidth=4
 " substitute tabs with spaces
-:set expandtab
+" set expandtab
 
 " enable omnicompletion
 filetype plugin on
