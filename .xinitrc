@@ -18,4 +18,4 @@ fi
 
 . ~/.xprofile
 
-ssh-agent i3
+i3

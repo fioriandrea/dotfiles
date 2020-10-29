@@ -11,5 +11,5 @@
 #feh sets wallpaper
 feh --bg-fill /"$WALLPAPER_DIR/$WALLPAPER_NAME" &
 
-# set screensaver tieìmeout
+# set screensaver timeout
 xset s 100 & 
