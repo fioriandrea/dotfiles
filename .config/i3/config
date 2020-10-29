@@ -251,6 +251,7 @@ bindsym $mod+e exec i3-sensible-terminal -e i3-sensible-editor; focus
 #
 
 bindsym Print --release exec screenshot
+bindsym Shift+Print --release exec screenshot -s
 
 #
 ## audio settings

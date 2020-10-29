@@ -1,3 +1,62 @@
 #! /bin/bash
 
-scrot /tmp/screenshot-$(date +%F_%T).jpeg -e 'xclip -selection clipboard -t image/jpeg $f'
+error_exit() {
+	echo "$1" >&2
+	if [ "$2" = "" ]
+	then
+		exit 1
+	else
+		exit "$2"
+	fi
+}
+
+format="png"
+destination="/tmp/screenshot-$(date +%F_%T)"
+options=()
+
+print_help() {
+	echo "usage: screenshot [option] [...args]"
+	echo ""
+	echo "-h|--help         show this help"
+	echo "-s                allows mouse selection"
+	echo "-f FORMAT         use FORMAT instead of default $format. FORMAT has to be a valid image MIME type"
+	echo "-d DESTINATION    use DESTINATION instead of default $destination.FORMAT"
+}
+
+while [ "$#" -gt 0 ]; do
+	case "$1" in
+		"-s")
+			options+=("-s")
+			shift
+		;;
+		"-f")
+			if [ "$#" -lt 2 ]
+			then
+				error_exit "error: must supply format" >&2
+			fi
+
+			shift
+			format="$1"
+			shift
+		;;
+		"-d")
+			if [ "$#" -lt 2 ]
+			then
+				error_exit "error: must supply destination" >&2
+			fi
+			shift
+			destination="$1"
+			shift
+		;;
+		"-h"|"--help")
+			print_help
+			exit 0
+		;;
+		*)
+			echo "unknown option $1" >&2
+			exit 1
+		;;
+	esac
+done
+
+scrot "${options[@]}" "$destination.$format" -e 'xclip -selection clipboard -t image/'"$format"' $f'
