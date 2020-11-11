@@ -34,13 +34,12 @@ dump_output() {
 
 qflag=
 dflag=
-while getopts ":hqdl" o
+while getopts ":hqd" o
 do
     case "$o" in
         "h") print_help && exit 0 ;;
         "q") qflag=1 ;;
         "d") dflag=1 ;;
-        "l") lflag=1 ;;
         "?") echo "unknown option $o" >&2 && exit 1 ;;
         *) echo "all" ;;
     esac
