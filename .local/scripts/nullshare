@@ -1,0 +1,63 @@
+#! /bin/bash
+
+print_help() {
+    echo "nullshare [options] ...filelist"
+    echo ""
+    echo "Upload filelist to 0x0.st (The null pointer, https://github.com/mia-0/0x0)"
+    echo ""
+    echo "-h    Prints help"
+    echo "-q    Quiet upload, doesn't print FILENAME to stdout"
+    echo "-d    Dump output. Prints FILENAME UPLOAD_LINK"
+}
+
+upload_file() {
+    curl -F "file=@$1" https://0x0.st
+}
+
+print_filename() {
+    echo -n "$1"
+}
+
+generic_dump_output() {
+    print_filename "$1"
+    echo -n "$2"
+    upload_file "$1"
+}
+
+human_readable_output() {
+    generic_dump_output "$1" " -> "
+}
+
+dump_output() {
+    generic_dump_output "$1" " "
+}
+
+qflag=
+dflag=
+while getopts ":hqdl" o
+do
+    case "$o" in
+        "h") print_help && exit 0 ;;
+        "q") qflag=1 ;;
+        "d") dflag=1 ;;
+        "l") lflag=1 ;;
+        "?") echo "unknown option $o" >&2 && exit 1 ;;
+        *) echo "all" ;;
+    esac
+done
+
+shift "$(($OPTIND - 1))"
+
+while [ -f "$1" ]
+do
+    if [ ! -z "$qflag" ]
+    then
+        upload_file "$1"
+    elif [ ! -z "$dflag" ]
+    then
+        dump_output "$1"
+    else
+        human_readable_output "$1"
+    fi
+    shift
+done
