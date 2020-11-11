@@ -41,7 +41,6 @@ do
         "q") qflag=1 ;;
         "d") dflag=1 ;;
         "?") echo "unknown option $o" >&2 && exit 1 ;;
-        *) echo "all" ;;
     esac
 done
 
