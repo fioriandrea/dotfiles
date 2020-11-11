@@ -45,7 +45,7 @@ set tabstop=4
 " >> and << size
 set shiftwidth=4
 " substitute tabs with spaces
-" set expandtab
+set expandtab
 
 " enable omnicompletion
 filetype plugin on
