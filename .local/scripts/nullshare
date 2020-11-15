@@ -40,7 +40,7 @@ do
         "h") print_help && exit 0 ;;
         "q") qflag=1 ;;
         "d") dflag=1 ;;
-        "?") echo "unknown option $o" >&2 && exit 1 ;;
+        "?") echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
     esac
 done
 
