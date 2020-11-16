@@ -16,12 +16,7 @@ export XDG_CACHE_HOME="$HOME/.cache"
 #export GTK2_RC_FILES="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-2.0/gtkrc-2.0"
 export HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/history"
 
-scriptsPath=""
-while IFS= read -r -d '' line
-do
-    scriptsPath="$scriptsPath:$line"
-done < <(find "$HOME/.local/scripts" -type d -print0) 
-export PATH="$PATH$scriptsPath"
+export PATH="$PATH:$(find "$HOME/.local/scripts" -type d -print0 | paste -zsd ':')"
 
 export QT_QPA_PLATFORMTHEME="gtk2"
 export QT_AUTO_SCREEN_SCALE_FACTOR=0
