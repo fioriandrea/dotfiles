@@ -1,0 +1,49 @@
+#! /bin/bash
+
+print_help() {
+    echo "histo [options]"
+    echo ""
+    echo "Generate histogram from data read from stdin"
+    echo ""
+    echo "-h    Prints help"
+    echo "-n    Numeric mode. Use buckets for your input. Works only with numeric inputs"
+    echo "-i    Specify number of intervals (buckets) for numeric mode"
+    echo "-w    Specify the maximum word length for a datapoint. Default is $maxWordLength"
+    echo "-b    Specify how tall would be a datapoint if it had a frequency of 100%. Default is $maxBar"
+    echo "-s    Specify the symbol used for the histogram. Default is $symbol"
+    echo "-a    Specify number of axis intervals"
+    echo "-H    Hide axes"
+    echo "-t    Show axis on top"
+    echo "-T    Show axes both on top and on bottom"
+}
+
+maxBar=30
+maxWordLength=10
+symbol='*'
+numeric=0
+numericIntervals=10
+axisIntervals=5
+hideAxes=0
+topBottomAxes=0
+topAxis=0
+while getopts ":hnHtTi:s:w:b:a:" o
+do
+    case "$o" in
+        "h") print_help && exit 0 ;;
+        "H") hideAxes=1 ;;
+        "t") topAxis=1 ;;
+        "T") topBottomAxes=1 ;;
+        "n") numeric=1 ;;
+        "i") numericIntervals="$OPTARG" ;;
+        "w") maxWordLength="$OPTARG" ;;
+        "b") maxBar="$OPTARG" ;;
+        "s") symbol="$OPTARG" ;;
+        "a") axisIntervals="$OPTARG" ;;
+        ":") echo "missing argument for '$OPTARG'" >&2 && exit 1 ;;
+        "?") echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+sort -n | uniq -c | histo.awk n "$numeric" ni "$numericIntervals" wl "$maxWordLength" mb "$maxBar" s "$symbol" ai "$axisIntervals" ha "$hideAxes" tb "$topBottom" t "$topAxis"
