@@ -9,7 +9,7 @@ print_help() {
     echo "-n    Numeric mode. Use buckets for your input. Works only with numeric inputs"
     echo "-i    Specify number of intervals (buckets) for numeric mode"
     echo "-w    Specify the maximum word length for a datapoint. Default is $maxWordLength"
-    echo "-b    Specify how tall would be a datapoint if it had a frequency of 100%. Default is $maxBar"
+    echo "-b    Specify the height assigned to the bucket with the maximum frequency. Default is $maxBar"
     echo "-s    Specify the symbol used for the histogram. Default is $symbol"
     echo "-a    Specify number of axis intervals"
     echo "-H    Hide axes"
