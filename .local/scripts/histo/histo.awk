@@ -48,7 +48,7 @@ function printData() {
     }
 }
 
-function printAxis(    stepb, stepn, sep, ssep) {
+function printAxisLine(    stepb, ssep, sep) {
     stepb = int(maxBar / axisIntervals)
     printf("%s", rep("-", padding))
     ssep = rep("-", stepb - 1)
@@ -57,17 +57,36 @@ function printAxis(    stepb, stepn, sep, ssep) {
         sep = ssep
     }
     printf("\n")
-    stepn = int(maxCount / axisIntervals)
+}
+
+function printAxisNumbers(    stepn, stepb, ii) {
+    stepb = int(maxBar / axisIntervals)
+    stepn = maxCount / axisIntervals
     printf("%s", rep(" ", padding))
     k = 1
     for (i = 0; k <= axisIntervals; i += stepn) {
-        printf("%d", i)
-        for (j = 0; j < stepb - length(i); j++)
+        ii = int(i)
+        printf("%d", ii)
+        for (j = 0; j < stepb - length(ii); j++)
             printf(" ")
         k++
     }
     printf(maxCount)
     printf("\n")
+}
+
+function limitAxisIntervals() {
+   axisIntervals = min(axisIntervals, maxCount)
+}
+
+function printBottomAxis() {
+    printAxisLine()
+    printAxisNumbers()
+}
+
+function printTopAxis() {
+    printAxisNumbers()
+    printAxisLine()
 }
 
 function readStandardData() {
@@ -163,9 +182,12 @@ BEGIN {
     } else {
         readStandardData()
     }
+
+    limitAxisIntervals()
+
     if ((topAxis || topBottomAxes) && !hideAxis)
-        printAxis()
+        printTopAxis()
     printData()
     if (!topAxis && !hideAxis)
-        printAxis()
+        printBottomAxis()
 }
