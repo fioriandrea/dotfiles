@@ -173,8 +173,6 @@ function processBucketData(    minNum, maxNum, n, step, numi, closed, word, coun
 }
 
 BEGIN {
-    # accepts input in the form FREQUENCY VALUE, sorted
-
     countCommand = "sort -g | uniq -c"
     filesCat = "cat"
     maxBar = 30
