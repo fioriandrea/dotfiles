@@ -14,14 +14,6 @@ function rep(ch, n,    res) {
     return res
 }
 
-function join(arr, n, ch,   s, sep) {
-    for (i = 1; i <= n; i++) {
-        s = s sep arr[i]
-        sep = ch
-    }
-    return s
-}
-
 function processWord(count, word) {
     if (length(word) > maxWordLength) {
         word = substr(word, 1, maxWordLength) "..."
@@ -145,7 +137,7 @@ BEGIN {
     symbol = "*"
     numeric = 0
     numericIntervals = 10
-    axisIntervals = 5
+    axisIntervals = 2
     hideAxis = 0
     topBottomAxes = 0
     topAxis = 0
