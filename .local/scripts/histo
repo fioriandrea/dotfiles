@@ -8,6 +8,7 @@ function help() {
     print ""
     print "h        Prints help"
     print "ec       Read externally counted data. Input is in the form COUNT VALUE (like the output of uniq -c)"
+    print "rf       Read data from a list of files. To indicate the end of the list, -- must be passed after the files"
     print "b        Bucket mode. Use buckets for your input. Works only with numeric inputs"
     print "ni N     Specify number of intervals (buckets) for bucket mode. Default is " bucketIntervals
     print "wl N     Specify the maximum word length for a datapoint. Default is " maxWordLength
@@ -120,7 +121,7 @@ function printTopAxis() {
 }
 
 function collectData() {
-    while (countCommand | getline > 0) {
+    while (filesCat " | " countCommand | getline > 0) {
         dataCount++
         total += $1
         maxCount = max(maxCount + 0, $1)
@@ -175,6 +176,7 @@ BEGIN {
     # accepts input in the form FREQUENCY VALUE, sorted
 
     countCommand = "sort -g | uniq -c"
+    filesCat = "cat"
     maxBar = 30
     maxWordLength = 10
     symbol = "*"
@@ -195,6 +197,10 @@ BEGIN {
             exit 0
         } else if (ARGV[i] == "ec") {
             countCommand = "cat"
+        } else if (ARGV[i] == "rf") {
+            i++
+            while (i < ARGC && ARGV[i] != "--")
+                filesCat = filesCat " " ARGV[i++]
         } else if (ARGV[i] == "b") {
             bucketMode = 1
         } else if (ARGV[i] == "ni") {
