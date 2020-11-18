@@ -15,6 +15,7 @@ print_help() {
     echo "-H    Hide axes"
     echo "-t    Show axis on top"
     echo "-T    Show axes both on top and on bottom"
+    echo "-p    Show percentages instead of counts"
 }
 
 maxBar=30
@@ -26,11 +27,13 @@ axisIntervals=2
 hideAxes=0
 topBottomAxes=0
 topAxis=0
-while getopts ":hnHtTi:s:w:b:a:" o
+showPercentages=0
+while getopts ":hpnHtTi:s:w:b:a:" o
 do
     case "$o" in
         "h") print_help && exit 0 ;;
         "H") hideAxes=1 ;;
+        "p") showPercentages=1 ;;
         "t") topAxis=1 ;;
         "T") topBottomAxes=1 ;;
         "n") numeric=1 ;;
@@ -46,4 +49,4 @@ done
 
 shift $(($OPTIND - 1))
 
-sort -n | uniq -c | histo.awk n "$numeric" ni "$numericIntervals" wl "$maxWordLength" mb "$maxBar" s "$symbol" ai "$axisIntervals" ha "$hideAxes" tb "$topBottomAxes" t "$topAxis"
+sort -g | uniq -c | histo.awk n "$numeric" ni "$numericIntervals" wl "$maxWordLength" mb "$maxBar" s "$symbol" ai "$axisIntervals" ha "$hideAxes" tb "$topBottomAxes" t "$topAxis" p "$showPercentages"

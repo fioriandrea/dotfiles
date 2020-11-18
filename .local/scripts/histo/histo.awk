@@ -14,11 +14,15 @@ function rep(ch, n,    res) {
     return res
 }
 
+function percentage(count) {
+    return 100 * count / total;
+}
+
 function processWord(count, word) {
-    if (length(word) > maxWordLength) {
+    if (!numeric && length(word) > maxWordLength) {
         word = substr(word, 1, maxWordLength) "..."
     } 
-    return sprintf("%s (%d)", word, count)
+    return sprintf("%s (%s)", word, showPercentages ? percentage(count) "%" : count)
 }
 
 function makeBar(count) {
@@ -81,51 +85,55 @@ function printTopAxis() {
     printAxisLine()
 }
 
-function readStandardData() {
+function collectData() {
     while (getline > 0) {
+        dataCount++
+        total += $1
+        maxCount = max(maxCount + 0, $1)
+        data[dataCount, "count"] = $1
+        data[dataCount, "name"] = $2
+    }
+}
+
+function processStandardData(   count, name, word) {
+    for (i = 1; i <= dataCount; i++) {
+        count = data[i, "count"]
+        name = data[i, "name"]
         wordCount++
-        maxCount = max(maxCount, $1)
-        word = processWord($1, $2)
+        word = processWord(count, name)
         padding = max(padding + 0, length(word))
         words[wordCount, "word"] = word
-        words[wordCount, "count"] = $1
+        words[wordCount, "count"] = count
     }
 }
 
-function readNumericData() {
-    while (getline > 0) {
-        numberCount++
-        total += $1
-        numbers[numberCount, "number"] = $2
-        numbers[numberCount, "count"] = $1
-    }
-}
-
-function processNumericData(    minNum, maxNum, step, numi, closed, count) {
-    minNum = numbers[1, "number"]
-    maxNum = numbers[numberCount, "number"]
+function processNumericData(    minNum, maxNum, n, step, numi, closed, word, count) {
+    minNum = data[1, "name"]
+    maxNum = data[dataCount, "name"]
     step = (maxNum - minNum) / numericIntervals
     numi = 1
     wordCount = 1
-    for (i = minNum; i < maxNum; i += step) {
-        closed = (i == (maxNum - step))
+    n = minNum
+    for (i = 1; i < numericIntervals; i++) {
+        closed = (i == numericIntervals - 1)
         count = 0
-        while (numi < numberCount) {
-            if (numbers[numi, "number"] >= i + step)
+        while (numi < dataCount) {
+            if (data[numi, "name"] >= n + step)
                 break
-            count += numbers[numi, "count"]
+            count += data[numi, "count"]
             numi++
         }
         if (closed) {
-            count += numbers[numi, "count"]
+            count += data[numi, "count"]
             numi++
         }
-        word = sprintf("%.2f - %.2f" (closed ? "]" : ")") "(%d)", i, i + step, count)
+        word = processWord(count, sprintf("%.2f - %.2f" (closed ? "]" : ")"), n, n + step))
         words[wordCount, "word"] = word
         words[wordCount, "count"] = count
         padding = max(padding + 0, length(word))
-        maxCount = max(maxCount, count)
+        maxCount = max(maxCount + 0, count)
         wordCount++
+        n += step
     }
 }
 
@@ -141,6 +149,7 @@ BEGIN {
     hideAxis = 0
     topBottomAxes = 0
     topAxis = 0
+    showPercentages = 0
     
     for (i = 1; i < ARGC; i++) {
         if (ARGV[i] == "n") {
@@ -161,6 +170,8 @@ BEGIN {
             topBottomAxes = ARGV[++i]
         } else if (ARGV[i] == "t") {
             topAxis = ARGV[++i]
+        } else if (ARGV[i] == "p") {
+            showPercentages = ARGV[++i]
         } else {
             printf("unknown option '%s'\n", ARGV[i]) | "cat 1>&2"
             exit 1
@@ -168,11 +179,12 @@ BEGIN {
     }
     ARGC = 1
 
+    collectData()
+
     if (numeric) {
-        readNumericData()
         processNumericData()
     } else {
-        readStandardData()
+        processStandardData()
     }
 
     limitAxisIntervals()
