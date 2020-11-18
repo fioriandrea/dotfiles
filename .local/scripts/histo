@@ -42,9 +42,10 @@ function percentage(count) {
     return 100 * count / total;
 }
 
-function processWord(count, word) {
-    if (!numeric && length(word) > maxWordLength) {
-        word = substr(word, 1, maxWordLength) "..."
+function processWord(count, word, trunc,    ellipsis) {
+    ellipsis = "..."
+    if (trunc && length(word) > maxWordLength) {
+        word = substr(word, 1, maxWordLength - length(ellipsis)) ellipsis
     } 
     return sprintf("%s (%s)", word, showPercentages ? percentage(count) "%" : count)
 }
@@ -124,7 +125,7 @@ function processStandardData(   count, name, word) {
         count = data[i, "count"]
         name = data[i, "name"]
         wordCount++
-        word = processWord(count, name)
+        word = processWord(count, name, 1)
         padding = max(padding + 0, length(word))
         words[wordCount, "word"] = word
         words[wordCount, "count"] = count
@@ -151,7 +152,7 @@ function processNumericData(    minNum, maxNum, n, step, numi, closed, word, cou
             count += data[numi, "count"]
             numi++
         }
-        word = processWord(count, sprintf("%.2f - %.2f" (closed ? "]" : ")"), n, n + step))
+        word = processWord(count, sprintf("%.2f - %.2f" (closed ? "]" : ")"), n, n + step), 0)
         words[wordCount, "word"] = word
         words[wordCount, "count"] = count
         padding = max(padding + 0, length(word))
