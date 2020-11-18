@@ -19,7 +19,7 @@ do
         "h") print_help && exit 0 ;;
         "f") wallpaperFile="$OPTARG" ;;
         "d") wallpaperDir="$OPTARG" ;;
-        ":") echo "$o $OPTARG" ;;
+        ":") echo "must supply argument to '$OPTARG'" >&2 && exit 1 ;;
         "?") echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
     esac
 done
