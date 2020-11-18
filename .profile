@@ -8,7 +8,6 @@ export AUDIO_CONTROL="pulsemixer"
 export TASK_MANAGER="htop"
 # you need to put the wallpaper here
 export WALLPAPER_DIR="$HOME/.local/share/wallpapers"
-export WALLPAPER_NAME="wallpaper.jpg"
 
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"

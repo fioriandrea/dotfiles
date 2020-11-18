@@ -8,8 +8,8 @@
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
 
-#feh sets wallpaper
-feh --bg-fill /"$WALLPAPER_DIR/$WALLPAPER_NAME" &
+#sets wallpaper
+shufwall
 
 # set screensaver timeout
 xset s 100 & 
