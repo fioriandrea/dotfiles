@@ -12,4 +12,4 @@
 shufwall
 
 # set screensaver timeout
-xset s 100 & 
+xset s 100
