@@ -7,7 +7,7 @@ print_help() {
     echo ""
     echo "-h    Prints help"
     echo "-t    Uploads files as archives (tar)"
-    echo "-x    Uploads files as gzipped archives (tar.gz)"
+    echo "-x    Uploads files as gzipped archives (tar.gz). Default for directories"
 }
 
 upload_file() {
@@ -65,7 +65,7 @@ tarballName=
 while [ -f "$1" -o -d "$1" ]
 do
     fileName="$1"
-    if [ ! -z "$xflag" ]
+    if [ ! -z "$xflag" -o -d "$fileName" ]
     then
         make_tarballgz "$fileName"
     elif [ ! -z "$tflag" ]
