@@ -59,15 +59,15 @@ function printAxisNumbers(    stepn, stepb, ii) {
     stepb = int(maxBar / axisIntervals)
     stepn = maxCount / axisIntervals
     printf("%s", rep(" ", padding))
-    k = 1
-    for (i = 0; k <= axisIntervals; i += stepn) {
-        ii = int(i)
-        printf("%d", ii)
-        for (j = 0; j < stepb - length(ii); j++)
-            printf(" ")
-        k++
+    i = 0
+    for (k = 1; k <= axisIntervals + 1; k++) {
+        ii = showPercentages ? sprintf("%.2f", percentage(i)) : int(i)
+        printf("%s", ii)
+        if (k <= axisIntervals) {
+            printf(rep(" ", stepb - length(ii)))
+        }
+        i += stepn
     }
-    printf(maxCount)
     printf("\n")
 }
 
