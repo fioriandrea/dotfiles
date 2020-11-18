@@ -8,8 +8,8 @@ function help() {
     print "Each row must be of the form COUNT ELEMENT (like the output of uniq c)."
     print ""
     print "h        Prints help"
-    print "n        Numeric mode. Use buckets for your input. Works only with numeric inputs"
-    print "ni N     Specify number of intervals (buckets) for numeric mode"
+    print "b        Bucket mode. Use buckets for your input. Works only with numeric inputs"
+    print "ni N     Specify number of intervals (buckets) for bucket mode. Default is " bucketIntervals
     print "wl N     Specify the maximum word length for a datapoint. Default is " maxWordLength
     print "mb N     Specify the height assigned to the bucket with the maximum frequency. Default is " maxBar
     print "s S      Specify the symbol used for the histogram. Default is " symbol
@@ -132,15 +132,15 @@ function processStandardData(   count, name, word) {
     }
 }
 
-function processNumericData(    minNum, maxNum, n, step, numi, closed, word, count) {
+function processBucketData(    minNum, maxNum, n, step, numi, closed, word, count) {
     minNum = data[1, "name"]
     maxNum = data[dataCount, "name"]
-    step = (maxNum - minNum) / numericIntervals
+    step = (maxNum - minNum) / bucketIntervals
     numi = 1
     wordCount = 1
     n = minNum
-    for (i = 1; i <= numericIntervals; i++) {
-        closed = (i == numericIntervals)
+    for (i = 1; i <= bucketIntervals; i++) {
+        closed = (i == bucketIntervals)
         count = 0
         while (numi < dataCount) {
             if (data[numi, "name"] >= n + step)
@@ -168,8 +168,8 @@ BEGIN {
     maxBar = 30
     maxWordLength = 10
     symbol = "*"
-    numeric = 0
-    numericIntervals = 10
+    bucketMode = 0
+    bucketIntervals = 10
     axisIntervals = 2
     hideAxis = 0
     topBottomAxes = 0
@@ -182,10 +182,10 @@ BEGIN {
         if (ARGV[i] == "h") {
             help()
             exit 0
-        } else if (ARGV[i] == "n") {
-            numeric = 1
+        } else if (ARGV[i] == "b") {
+            bucketMode = 1
         } else if (ARGV[i] == "ni") {
-            numericIntervals = ARGV[++i]
+            bucketIntervals = ARGV[++i]
         } else if (ARGV[i] == "wl") {
             maxWordLength = ARGV[++i]
         } else if (ARGV[i] == "mb") {
@@ -215,8 +215,8 @@ BEGIN {
 
     collectData()
 
-    if (numeric) {
-        processNumericData()
+    if (bucketMode) {
+        processBucketData()
     } else {
         processStandardData()
     }
