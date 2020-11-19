@@ -156,13 +156,12 @@ bindsym $mod+Tab workspace back_and_forth
 bindsym Mod1+Ctrl+Right workspace next
 bindsym Mod1+Ctrl+Left workspace prev
 
-# switch to workspace with urgent window automatically
-for_window [urgent=latest] focus
-
-
 #
 ## Tiling parameters
 #
+
+# autotiling
+for_window [class=".*"] split toggle
 
 # orientation for new workspaces
 default_orientation horizontal
@@ -210,9 +209,6 @@ font pango:Noto Mono Regular 23
 #
 
 # USER APPLICATIONS TO START AT BOOT
-
-# Autotiling
-exec_always --no-startup-id autotiling
 
 # TRAY APPLICATIONS
 
