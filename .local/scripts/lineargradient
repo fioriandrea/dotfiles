@@ -1,0 +1,140 @@
+#! /bin/awk -f
+
+function printHelp() {
+    print "lineargradient [OPTIONS]"
+    print ""
+    print "Reads from stdin values in a range and outputs linear gradient colors."
+    print ""
+    print "h       Show this help"
+    print "lv V    Sets the range low value. Default is " lowValue
+    print "hv V    Sets the range high value. Default is " highValue
+    print "lc C    Sets the range low color. Default is " lowColor
+    print "hc C    Sets the range high color. Default is " highColor
+}
+
+function reverseTable(tabA, tabB,    ka) {
+    for (ka in tabA)
+        tabB[tabA[ka]] = ka
+}
+
+function baseToInt(str, base, convtable,   res) {
+    res = 0
+    n = split(str, chars, "")
+    for (i = 1; i <= n; i++) {
+        res = res * base + convtable[chars[i]]
+    }
+    return res
+}
+
+function intToBase(integer, base, convtable,   res) {
+    res = ""
+    if (integer == 0)
+        return convtable[integer]
+    while (integer != 0) {
+       res = convtable[integer % base] res
+       integer = int(integer / base)
+    }
+    return res 
+}
+
+function checkColor(color) {
+    if (tolower(color) !~ /^#?([a-f0-9]{6}|[a-f0-9]{3})$/) {
+        print "invalid color: " color | "cat 1>&2"
+        exit 1
+    }
+}
+
+function fpad(str, z, n) {
+    while (length(str) < n)
+        str = z str
+    return str
+}
+
+function normalizeHexColor(color) {
+    gsub(/#/, "", color)
+    if (length(color) == 3)
+        gsub(/./, "&&", color)
+    return tolower(color)
+}
+
+function mapValues(z, a, b, c, d) {
+   return (z - a) * (d - c) / (b - a) + c
+}
+
+function hexToRgb(color, rgbarr) {
+    rgbarr[1] = baseToInt(substr(color, 1, 2), 16, hexToIntTable)
+    rgbarr[2] = baseToInt(substr(color, 3, 2), 16, hexToIntTable)
+    rgbarr[3] = baseToInt(substr(color, 5, 2), 16, hexToIntTable)
+}
+
+function rgbToHex(rgb,   hex) {
+    hex = ""
+    for (i = 1; i <= 3; i++) {
+        hex = hex fpad(intToBase(rgb[i], 16, intToHexTable), "0", 2)
+    }
+    return hex
+}
+
+function linearGradient(val, valMin, valMax, rgbMin, rgbMax, resRgb) {
+    for (i = 1; i <= 3; i++) {
+        resRgb[i] = int(mapValues(val, valMin, valMax, rgbMin[i], rgbMax[i]))
+    }
+}
+
+BEGIN {
+    hexToIntTable["0"] = 0
+    hexToIntTable["1"] = 1
+    hexToIntTable["2"] = 2
+    hexToIntTable["3"] = 3
+    hexToIntTable["4"] = 4
+    hexToIntTable["5"] = 5
+    hexToIntTable["6"] = 6
+    hexToIntTable["7"] = 7
+    hexToIntTable["8"] = 8
+    hexToIntTable["9"] = 9
+    hexToIntTable["a"] = 10
+    hexToIntTable["b"] = 11
+    hexToIntTable["c"] = 12
+    hexToIntTable["d"] = 13
+    hexToIntTable["e"] = 14
+    hexToIntTable["f"] = 15
+
+    reverseTable(hexToIntTable, intToHexTable)
+
+    lowColor = "#00ff00"
+    highColor = "#ff0000"
+    lowValue = 0
+    highValue = 100
+
+    for (i = 1; i < ARGC; i++) {
+        if (ARGV[i] == "h") {
+            printHelp()
+            exit 0
+        } else if (ARGV[i] == "lc") {
+            lowColor = ARGV[++i]
+            checkColor(lowColor)
+        } else if (ARGV[i] == "hc") {
+            highColor = ARGV[++i]
+            checkColor(highColor)
+        } else if (ARGV[i] == "lv") {
+            lowValue = ARGV[++i]
+        } else if (ARGV[i] == "hv") {
+            highValue = ARGV[++i]
+        } else {
+            printf("unknown option '%s'\n", ARGV[i]) | "cat 1>&2"
+            exit 1
+        }
+    }
+
+    ARGC = 1
+
+    lowColor = normalizeHexColor(lowColor)
+    highColor = normalizeHexColor(highColor)
+    hexToRgb(lowColor, lowColorRgb)
+    hexToRgb(highColor, highColorRgb)
+}
+
+{
+    linearGradient($0, lowValue, highValue, lowColorRgb, highColorRgb, resRgb)
+    print "#" rgbToHex(resRgb)
+}
