@@ -25,4 +25,6 @@ BEGIN {
     }
     
     printf("%s %d%% %s\n", icon, $2, $4)
+    printf("%s %d%%\n", icon, $2)
+    print $2 | "lineargradient lv 100 hv 0"
 }

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-muteicon="🙊"
+muteicon="(muted)"
 unmuteicon="🎙️"
 
 # vol=$(pactl list sinks | grep '^[[:space:]]Volume:' | grep -oE '[0-9]{1,3}%')

@@ -2,6 +2,12 @@ command="$XDG_CONFIG_HOME/i3blocks/scripts/$BLOCK_NAME"
 separator_block_width=15
 markup=pango
 
+[ram]
+interval=20
+
+[battery]
+interval=20
+
 [temperature]
 interval=30
 
@@ -11,13 +17,10 @@ signal=10
 
 [microphone]
 interval=once
-signal=10
+signal=11
 
 [disk]
 interval=60
-
-[battery]
-interval=20
 
 [clock]
 interval=30
