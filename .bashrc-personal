@@ -12,9 +12,6 @@ fzfsettings="fzf/settings"
 alias info='info --vi-keys'
 alias diff='diff --color=auto'
 
-# allow use of **
-shopt -s globstar
-
 # dotfiles management
 
 alias ricegit='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
