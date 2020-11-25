@@ -8,11 +8,11 @@ fi
 
 xdg_config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
 
-fzfsettings="fzf/settings"
-[ -f "$xdg_config_home/$fzfsettings" ] && . "$xdg_config_home/$fzfsettings"
+fzfconfig="fzf/fzf-config.sh"
+[ -f "$xdg_config_home/$fzfconfig" ] && . "$xdg_config_home/$fzfconfig"
 
-nnnsettings="nnn/nnn-config.sh"
-[ -f "$xdg_config_home/$nnnsettings" ] && . "$xdg_config_home/$nnnsettings" 
+nnnconfig="nnn/nnn-config.sh"
+[ -f "$xdg_config_home/$nnnconfig" ] && . "$xdg_config_home/$nnnconfig" 
 
 alias info='info --vi-keys'
 alias diff='diff --color=auto'
