@@ -31,5 +31,5 @@ fi
 
 if [ -f "$wallpaperFile" ]
 then
-    feh --bg-fill "$wallpaperFile"
+    feh --no-fehbg --bg-fill "$wallpaperFile"
 fi
