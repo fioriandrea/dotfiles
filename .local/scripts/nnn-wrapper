@@ -1,8 +1,6 @@
 #! /bin/bash
 
-xdg_config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+envconfig="${XDG_CONFIG_HOME:-$HOME/.config}/env-config"
+[ -f "$envconfig" ] && . "$envconfig"
 
-. "$xdg_config_home/fzf/fzf-config.sh"
-. "$xdg_config_home/nnn/nnn-config.sh"
-
-nnn -e
+/bin/nnn -e
