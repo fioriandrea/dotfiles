@@ -10,9 +10,16 @@ fi
 alias info='info --vi-keys'
 alias diff='diff --color=auto'
 
+# fzf config
+
+fuzzysettings="fzf/settings"
+[ -f "$XDG_CONFIG_HOME/$fuzzysettings" ] && . "$XDG_CONFIG_HOME/$fuzzysettings"
+
 # allow use of **
 shopt -s globstar
 
 # dotfiles management
 
 alias ricegit='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
+
+neofetch
