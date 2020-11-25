@@ -1,6 +1,7 @@
 export TERMINAL="termite"
 export EDITOR="vim"
 export PAGER="less"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export BROWSER="firefox"
 export READER="zathura"
 export FILE_MANAGER="ranger"
