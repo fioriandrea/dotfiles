@@ -4,7 +4,7 @@ export PAGER="less"
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export BROWSER="firefox"
 export READER="zathura"
-export FILE_MANAGER="ranger"
+export FILE_MANAGER="nnn-wrapper"
 export AUDIO_CONTROL="pulsemixer"
 export TASK_MANAGER="htop"
 # you need to put the wallpaper here

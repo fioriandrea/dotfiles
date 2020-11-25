@@ -1,0 +1,7 @@
+#! /bin/bash
+
+xdg_config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+. "$xdg_config_home/nnn/nnn-config.sh"
+
+nnn

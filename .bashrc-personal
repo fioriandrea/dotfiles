@@ -6,8 +6,13 @@ else
     PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] '
 fi
 
+xdg_config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+
 fzfsettings="fzf/settings"
-[ -f "$XDG_CONFIG_HOME/$fzfsettings" ] && . "$XDG_CONFIG_HOME/$fzfsettings"
+[ -f "$xdg_config_home/$fzfsettings" ] && . "$xdg_config_home/$fzfsettings"
+
+nnnsettings="nnn/nnn-config.sh"
+[ -f "$xdg_config_home/$nnnsettings" ] && . "$xdg_config_home/$nnnsettings" 
 
 alias info='info --vi-keys'
 alias diff='diff --color=auto'
