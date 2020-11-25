@@ -16,6 +16,7 @@ nnnconfig="nnn/nnn-config.sh"
 
 alias info='info --vi-keys'
 alias diff='diff --color=auto'
+alias less='bat --paging=always'
 
 # dotfiles management
 
