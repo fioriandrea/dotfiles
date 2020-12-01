@@ -34,6 +34,7 @@ alias upate='sudo pacman -Syyu'
 
 ## Colorize the grep command output for ease of use (good for log files)##
 alias grep='grep --color=auto'
+alias pgrep='grep -P'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
@@ -58,7 +59,7 @@ alias merge="xrdb -merge ~/.Xresources"
 
 # Aliases for software managment
 # pacman or pm
-alias pacman='sudo pacman --color auto'
+alias pacman='pacman --color auto'
 alias update='sudo pacman -Syyu'
 
 # yay as aur helper - updates everything
