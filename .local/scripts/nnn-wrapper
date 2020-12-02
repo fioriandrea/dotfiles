@@ -1,6 +1,6 @@
 #! /bin/bash
 
-envconfig="${XDG_CONFIG_HOME:-$HOME/.config}/env-config"
+envconfig="${XDG_CONFIG_HOME:-$HOME/.config}/bash-config/env-config"
 [ -f "$envconfig" ] && . "$envconfig"
 
 /bin/nnn -e
