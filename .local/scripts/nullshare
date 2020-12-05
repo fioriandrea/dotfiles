@@ -11,7 +11,7 @@ print_help() {
 }
 
 upload_file() {
-    curl -F "file=@$1" https://0x0.st
+    curl -s -F "file=@$1" https://0x0.st
 }
 
 print_upload_file() {
