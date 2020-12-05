@@ -12,6 +12,14 @@ function printHelp() {
     print "hc C    Sets the range high color. Default is " highColor
 }
 
+function min(a, b) {
+    return a > b ? b : a
+}
+
+function max(a, b) {
+    return a > b ? a : b
+}
+
 function reverseTable(tabA, tabB,    ka) {
     for (ka in tabA)
         tabB[tabA[ka]] = ka
@@ -135,6 +143,7 @@ BEGIN {
 }
 
 {
-    linearGradient($0, lowValue, highValue, lowColorRgb, highColorRgb, resRgb)
+    trimmed = max(min($0 + 0, highValue), lowValue)
+    linearGradient(trimmed, lowValue, highValue, lowColorRgb, highColorRgb, resRgb)
     print "#" rgbToHex(resRgb)
 }
