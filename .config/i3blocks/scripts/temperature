@@ -1,7 +1,17 @@
 #! /bin/bash
 
+#1 left
+#2 middle
+#3 right
+case "$BLOCK_BUTTON" in
+    1|2|3) eval "$TERMINAL -e $TASK_MANAGER";;
+esac
+
+
 thermometericon=🌡
 
 temp=$(sensors | grep "Core 0" | awk '{print $3}')
 
 echo "$thermometericon $temp"
+echo "$temp"
+lineargradient lv 25 hv 60 <<< "$temp"

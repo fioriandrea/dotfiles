@@ -1,8 +1,16 @@
 #! /bin/bash
 
+#1 left
+#2 middle
+#3 right
+case "$BLOCK_BUTTON" in
+    1|2|3) eval "$TERMINAL -e $TASK_MANAGER";;
+esac
+
 /bin/free -m | awk 'NR == 2 {
     used = $3
     total = $2
+    printf("🧠 ")
     printf("%.2fGiB/%.2fGiB\n", used / 1024, total / 1024)
     printf("%.2fGiB\n", used / 1024)
     print used | "lineargradient lv 0 hv " total
