@@ -144,5 +144,6 @@ alias ricegitinit='git init --bare $HOME/.myconf'
 alias ricegit='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
 ricegitclone() {
 # $1 -> path to repo
-    /usr/bin/git clone --separate-git-dir=~/.myconf "$1" ~
+# $2 -> directory to copy to
+    /usr/bin/git clone --separate-git-dir="$2"/.myconf "$1" "$2"
 }
