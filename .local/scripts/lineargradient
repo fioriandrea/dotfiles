@@ -86,6 +86,8 @@ function rgbToHex(rgb,   hex) {
 function linearGradient(val, valMin, valMax, rgbMin, rgbMax, resRgb) {
     for (i = 1; i <= 3; i++) {
         resRgb[i] = int(mapValues(val, valMin, valMax, rgbMin[i], rgbMax[i]))
+        resRgb[i] = max(resRgb[i], 0)
+        resRgb[i] = min(resRgb[i], 255)
     }
 }
 
@@ -143,7 +145,6 @@ BEGIN {
 }
 
 {
-    trimmed = max(min($0 + 0, highValue), lowValue)
-    linearGradient(trimmed, lowValue, highValue, lowColorRgb, highColorRgb, resRgb)
+    linearGradient($0 + 0, lowValue, highValue, lowColorRgb, highColorRgb, resRgb)
     print "#" rgbToHex(resRgb)
 }
