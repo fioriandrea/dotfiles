@@ -1,0 +1,42 @@
+#! /bin/bash
+
+print_help() {
+    echo "install-dotfiles [options]"
+    echo ""
+    echo "Install dotfiles found in a git repo."
+    echo ""
+    echo "-h    Show this help"
+    echo "-r    Specify the repo. Default is $repo"
+    echo "-d    Specify the destination folder. Default is $destination"
+    echo "-c    Specify separate-git-dir. Default is $confDir"
+}
+
+
+clone_dotfiles() {
+    # $1 -> path to repo
+    # $2 -> directory to copy to
+    # $3 -> conf dir (.myconf)
+    /usr/bin/git clone --separate-git-dir="$2"/"$3" "$1" "$2"
+}
+
+repo="https://github.com/fioriandrea/dotfiles"
+destination="$HOME"
+confDir=".myconf"
+
+while getopts ":hr:d:c:" o
+do
+    case "$o" in
+        "h") print_help && exit 0 ;;
+        "r") repo="$OPTARG" ;;
+        "d") destination="$OPTARG" ;;
+        "c") confDir="$OPTARG" ;;
+        ":") echo "must supply argument to '$OPTARG'" >&2 && exit 1 ;;
+        "?") echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
+    esac
+done
+
+tmpdir="$(mktemp -d)"
+tmpdir="${tmpdir%/}"
+clone_dotfiles "$repo" "$tmpdir" "$confDir"
+rsync -av --progress "$tmpdir"/ "$destination"
+rm -rf "$tmpdir"
