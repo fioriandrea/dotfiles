@@ -18,7 +18,8 @@ git_bare() {
 clone_dotfiles() {
     # $1 -> path to repo
     # $2 -> directory to copy to
-    /usr/bin/git clone --bare "$1" "$2"
+    # $3 -> separate-git-dir (.myconf)
+    /usr/bin/git clone --separate-git-dir="$2/$3" "$1" "$2"
 }
 
 repo="https://github.com/fioriandrea/dotfiles"
@@ -38,7 +39,7 @@ do
 done
 
 tmpdir="$(mktemp -d)"
-if ![ -d "$tmpdir" ]
+if ! [ -d "$tmpdir" ]
 then
     echo "failed to create tmpdir" >&2
     exit 2
@@ -48,8 +49,7 @@ tmpdir="${tmpdir%/}"
 destination="${destination%/}"
 
 clone_dotfiles "$repo" "$tmpdir" "$confDir"
-cp -r "$tmpdir"/ "$destination/$confDir"
-git_bare checkout
+rsync -avP "$tmpdir"/ "$destination/$confDir"
 git_bare config --local status.showUntrackedFiles no
 
 rm -rf "$tmpdir"
