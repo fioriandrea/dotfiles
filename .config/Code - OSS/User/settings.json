@@ -1,5 +1,5 @@
 {
-    "workbench.startupEditor": "welcomePage",
+    "workbench.startupEditor": "newUntitledFile",
     "editor.fontSize": 18,
     "editor.wordWrap": "on",
     "terminal.integrated.fontSize": 18,
