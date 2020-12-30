@@ -4,7 +4,6 @@
     "editor.wordWrap": "on",
     "terminal.integrated.fontSize": 18,
     "window.zoomLevel": 2,
-    "editor.lineNumbers": "relative",
     "vim.useCtrlKeys": true,
     "vim.useSystemClipboard": true,
     "typescript.updateImportsOnFileMove.enabled": "always"

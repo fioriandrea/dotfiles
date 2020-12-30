@@ -95,9 +95,11 @@ tnoremap <Esc><Esc> <C-W>N
 
 " Show current line number
 set number
-" Show relative line numbers
-set relativenumber
 
 " map space to leader
 nnoremap <Space> <Nop>
 map <Space> <leader>
+
+"Set every files as Unix (LF) as Windows might set CRLF wich is not working
+"for unix
+set fileformat=unix
