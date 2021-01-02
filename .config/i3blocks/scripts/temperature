@@ -7,11 +7,26 @@ case "$BLOCK_BUTTON" in
     1|2|3) eval "$TERMINAL -e $TASK_MANAGER";;
 esac
 
-
-thermometericon="🌡️"
+lowicon=""
+midicon=""
+highicon=""
+lowtemp="20"
+hightemp="60"
 
 temp=$(sensors | grep "Core 0" | awk '{print $3}')
 
-echo "$thermometericon $temp"
+level="$(map sx "$lowtemp" ex "$hightemp" sy 0 ey 3 <<< "$temp" | awk '{print int($0)}')"
+
+if [ "$level" -eq 0 ]
+then
+    icon="$lowicon"
+elif [ "$level" -eq 1 ]
+then
+    icon="$midicon"
+else
+    icon="$highicon"
+fi
+
+echo "$icon $temp"
 echo "$temp"
-lineargradient lv 25 hv 60 <<< "$temp"
+lineargradient lv "$lowtemp" hv "$hightemp" <<< "$temp"

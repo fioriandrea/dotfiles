@@ -10,7 +10,7 @@ esac
 /bin/free -m | awk 'NR == 2 {
     used = $3
     total = $2
-    printf("%.2fGiB/%.2fGiB\n", used / 1024, total / 1024)
+    printf(" %.2fGiB/%.2fGiB\n", used / 1024, total / 1024)
     printf("%.2fGiB\n", used / 1024)
     print used | "lineargradient lv 0 hv " total
 }'

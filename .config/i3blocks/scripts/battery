@@ -8,25 +8,24 @@ function map(x, sx, ex, sy, ey) {
     return (x - sx) * (ey - sy) / (ex - sx) + sy
 }
 
-function dischargingIcon(percentage) {
-    return dischargingIcons[ceil(map(percentage, 0, 100, 1, dilen))]
+function getIcon(percentage, icons, len) {
+    return icons[ceil(map(percentage, 0, 100, 1, len))]
 }
 
 BEGIN {
-    dilen = split(" _▁▂▃▄▅▆▇█", dischargingIcons, "")
-    charging_icon = "🔌"
-    full_icon =" ⚡"
-    not_charging_icon = "🛑"
-    almost_discharged_icon="❗️"
-    unknown_icon = "♻"
+    dilen = split(" ", dischargingIcons, "")
+    cilen = split(" ", chargingIcons, "")
+    full_icon =""
+    not_charging_icon = ""
+    unknown_icon = ""
 
     while (("battery-info" | getline) > 0) {
         $3 = tolower($3)
         
         if ($3 == "discharging") {
-            icon = dischargingIcon($2)
+            icon = getIcon($2, dischargingIcons, dilen)
         } else if ($3 == "charging") {
-            icon = charging_icon
+            icon = getIcon($2, chargingIcons, cilen)
         } else if ($3 == "full") {
             icon = full_icon
         } else if ($3 == "not charging") {

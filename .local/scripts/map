@@ -1,0 +1,46 @@
+#! /bin/awk -f
+
+function help() {
+    print "map [options]"
+    print ""
+    print "Maps an interval into another"
+    print ""
+    print "h        Prints help"
+    print "sx       Sets start for domain interval. Default is " sx
+    print "ex       Sets end for domain interval. Default is " ex
+    print "sy       Sets start for codomain interval. Default is " sy
+    print "ex       Sets end for codomain interval. Default is " ey
+}
+
+function map(x) {
+    return (x - sx) * (ey - sy) / (ex - sx) + sy
+}
+
+BEGIN {
+    sx = 0
+    ex = 100
+    sy = 0
+    ey = 255
+    for (i = 1; i < ARGC; i++) {
+        if (ARGV[i] == "h") {
+            help()
+            exit 0
+        } else if (ARGV[i] == "sx") {
+            sx = ARGV[++i]
+        } else if (ARGV[i] == "ex") {
+            ex = ARGV[++i]
+        } else if (ARGV[i] == "sy") {
+            sy = ARGV[++i]
+        } else if (ARGV[i] == "ey") {
+            ey = ARGV[++i]
+        } else {
+            printf("unknown option '%s'\n", ARGV[i]) | "cat 1>&2"
+            exit 1
+        }
+    }
+    ARGC = 1
+}
+
+{
+    print map($0)
+}

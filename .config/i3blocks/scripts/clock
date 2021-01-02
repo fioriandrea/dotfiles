@@ -4,19 +4,19 @@ clock=$(date '+%I')
 clockIcon=
 
 case "$clock" in
-	"00") clockIcon="🕛" ;;
-	"01") clockIcon="🕐" ;;
-	"02") clockIcon="🕑" ;;
-	"03") clockIcon="🕒" ;;
-	"04") clockIcon="🕓" ;;
-	"05") clockIcon="🕔" ;;
-	"06") clockIcon="🕕" ;;
-	"07") clockIcon="🕖" ;;
-	"08") clockIcon="🕗" ;;
-	"09") clockIcon="🕘" ;;
-	"10") clockIcon="🕙" ;;
-	"11") clockIcon="🕚" ;;
-	"12") clockIcon="🕛" ;;
+	"00") clockIcon="" ;;
+	"01") clockIcon="" ;;
+	"02") clockIcon="" ;;
+	"03") clockIcon="" ;;
+	"04") clockIcon="" ;;
+	"05") clockIcon="" ;;
+	"06") clockIcon="" ;;
+	"07") clockIcon="" ;;
+	"08") clockIcon="" ;;
+	"09") clockIcon="" ;;
+	"10") clockIcon="" ;;
+	"11") clockIcon="" ;;
+	"12") clockIcon="" ;;
 esac
 
 date "+%Y %b %d (%a) $clockIcon %I:%M%p"
