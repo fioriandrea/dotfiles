@@ -1,8 +1,15 @@
 #! /bin/awk -f
 
+function ceil(n) {
+    return n - int(n) > 0 ? int(n + 1) : n
+}
+
+function dischargingIcon(percentage) {
+    return dischargingIcons[ceil((percentage / 100) * dilen)]
+}
 
 BEGIN {
-    discharging_icon = "🔋"
+    dilen = split("▁▂▃▄▅▆▇█", dischargingIcons, "")
     charging_icon = "🔌"
     full_icon =" ⚡"
     not_charging_icon = "🛑"
@@ -12,16 +19,17 @@ BEGIN {
     while (("battery-info" | getline) > 0) {
         $3 = tolower($3)
         
-        if ($3 == "discharging")
-            icon = $2 <= 20 ? almost_discharged_icon : discharging_icon
-        else if ($3 == "charging")
+        if ($3 == "discharging") {
+            icon = dischargingIcon($2)
+        } else if ($3 == "charging") {
             icon = charging_icon
-        else if ($3 == "full")
+        } else if ($3 == "full") {
             icon = full_icon
-        else if ($3 == "not charging")
+        } else if ($3 == "not charging") {
             icon = not_charging_icon
-        else
+        } else {
             icon = unknown_icon
+        }
     }
     
     printf("%s %d%% %s\n", icon, $2, $4)

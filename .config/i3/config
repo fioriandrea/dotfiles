@@ -310,10 +310,9 @@ popup_during_fullscreen smart
 #
 
 bar {
-
         height 35
         workspace_buttons yes
-        font pango:Noto Sans 20
+        font pango:Noto Sans 16
 
         position top
 

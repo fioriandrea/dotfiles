@@ -1,0 +1,51 @@
+#! /bin/awk -f
+
+function help() {
+    print "seven-segment [options]"
+    print ""
+    print "Print seven-segment numbers"
+    print ""
+    print "h        Prints help"
+    print "sep s    Specify the separator used between characters. Default is \"" separator "\""
+}
+
+function printToSegments(s) {
+    len = split(s, innumber, "")
+    for (i = 1; i <= len; i++) {
+        n = innumber[i]
+        printf(sep)
+        sep = separator
+        if (n >= "0" && n <= "9") {
+            printf(segmentDigit(0 + n))
+        } else {
+            printf(n)
+        }
+    }
+}
+
+function segmentDigit(n) {
+    return digits[n + 1]
+}
+
+BEGIN {
+    split("🯰🯱🯲🯳🯴🯵🯶🯷🯸🯹", digits, "")
+    separator = " "
+
+    for (i = 1; i < ARGC; i++) {
+        if (ARGV[i] == "h") {
+            help()
+            exit 0
+        } else if (ARGV[i] == "sep") {
+            separator = ARGV[++i]
+        } else {
+            printf("unknown option '%s'\n", ARGV[i]) | "cat 1>&2"
+            exit 1
+        }
+    }
+    ARGC = 1
+}
+
+{
+    printToSegments($0)
+    printf("\n")
+}
