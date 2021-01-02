@@ -4,12 +4,16 @@ function ceil(n) {
     return n - int(n) > 0 ? int(n + 1) : n
 }
 
+function map(x, sx, ex, sy, ey) {
+    return (x - sx) * (ey - sy) / (ex - sx) + sy
+}
+
 function dischargingIcon(percentage) {
-    return dischargingIcons[ceil((percentage / 100) * dilen)]
+    return dischargingIcons[ceil(map(percentage, 0, 100, 1, dilen))]
 }
 
 BEGIN {
-    dilen = split("▁▂▃▄▅▆▇█", dischargingIcons, "")
+    dilen = split(" _▁▂▃▄▅▆▇█", dischargingIcons, "")
     charging_icon = "🔌"
     full_icon =" ⚡"
     not_charging_icon = "🛑"
