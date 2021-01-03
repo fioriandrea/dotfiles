@@ -10,10 +10,44 @@ function help() {
     print "ex       Sets end for domain interval. Default is " ex
     print "sy       Sets start for codomain interval. Default is " sy
     print "ex       Sets end for codomain interval. Default is " ey
+    print "f FNAME  Applies FNAME to the result. Allowed FNAMEs are id, floor, ceil, trunc. Default is id"
 }
 
 function map(x) {
     return (x - sx) * (ey - sy) / (ex - sx) + sy
+}
+
+function isInt(x) {
+    return x == int(x)
+}
+
+function ceil(x) {
+    if (isInt(x))
+        return x
+    else
+        return x >= 0 ? int(x + 1) : int(x)
+}
+
+function floor(x) {
+    if (isInt(x))
+        return x
+    else
+        return x >= 0 ? int(x) : int(x - 1)
+}
+
+function filterResult(x) {
+    if (mode == "id") {
+        return x
+    } else if (mode == "floor") {
+        return floor(x)
+    } else if (mode == "ceil") {
+        return ceil(x)
+    } else if (mode == "trunc") {
+        return int(x)
+    } else {
+        printf("operation %s not permitted\n", mode) | "cat 1>&2"
+        exit 2
+    }
 }
 
 BEGIN {
@@ -21,6 +55,7 @@ BEGIN {
     ex = 100
     sy = 0
     ey = 255
+    mode = "id"
     for (i = 1; i < ARGC; i++) {
         if (ARGV[i] == "h") {
             help()
@@ -33,6 +68,8 @@ BEGIN {
             sy = ARGV[++i]
         } else if (ARGV[i] == "ey") {
             ey = ARGV[++i]
+        } else if (ARGV[i] == "f") {
+            mode = ARGV[++i]
         } else {
             printf("unknown option '%s'\n", ARGV[i]) | "cat 1>&2"
             exit 1
@@ -42,5 +79,5 @@ BEGIN {
 }
 
 {
-    print map($0)
+    print filterResult(map($0))
 }

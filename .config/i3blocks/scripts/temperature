@@ -15,7 +15,7 @@ hightemp="60"
 
 temp=$(sensors | grep "Core 0" | awk '{print $3}')
 
-level="$(map sx "$lowtemp" ex "$hightemp" sy 0 ey 3 <<< "$temp" | awk '{print int($0)}')"
+level="$(map sx "$lowtemp" ex "$hightemp" sy 0 ey 3 f trunc <<< "$temp")"
 
 if [ "$level" -eq 0 ]
 then
