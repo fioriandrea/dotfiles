@@ -1,0 +1,132 @@
+#! /bin/awk -f
+
+function help() {
+    print "mandelbrot [options]"
+    print ""
+    print "Prints a Mandelbrot set"
+    print ""
+    print "h        Prints help"
+    print "minx n     Sets the minimum x value, default is " minx
+    print "maxx n     Sets the maximum x value, default is " maxx
+    print "miny n     Sets the minimum y value, default is " miny
+    print "maxy n     Sets the maximum y value, default is " maxy
+    print "iter n     Sets the maximum number of iterations, default is " iterations
+}
+
+function complex(arr, re, im) {
+    arr["re"] = re
+    arr["im"] = im
+}
+
+function re(cmplx) {
+    return cmplx["re"]
+}
+
+function im(cmplx) {
+    return cmplx["im"]
+}
+
+function printComplex(cmplx) {
+    print re(cmplx), im(cmplx)
+}
+
+function abs2(cmplx) {
+    return re(cmplx) * re(cmplx) + im(cmplx) * im(cmplx)
+}
+
+function abs(cmplx) {
+    return sqrt(abs2(cmplx))
+}
+
+function add(res, cmplx1, cmplx2) {
+    complex(res, re(cmplx1) + re(cmplx2), im(cmplx1) + im(cmplx2)) 
+}
+
+function mult(res, cmplx1, cmplx2) {
+    complex(res, re(cmplx1) * re(cmplx2) - im(cmplx1) * im(cmplx2), re(cmplx1) * im(cmplx2) + im(cmplx1) * re(cmplx2))
+}
+
+function mandelbrot(z) {
+    complex(v, 0, 0)
+    for (n = 1; n <= iterations; n++) {
+        mult(v, v, v)
+        add(v, v, z)
+        if (abs(v) > 2) {
+            return n
+        }
+    }
+    return 0
+}
+
+function min(a, b) {
+    return a < b ? a : b
+}
+
+function map(x, sx, ex, sy, ey) {
+    return (x - sx) * (ey - sy) / (ex - sx) + sy
+}
+
+function getColumns(    c) {
+    "tput cols" | getline c
+    return c
+}
+
+function getRows(    r) {
+    "tput lines" | getline r
+    return r
+}
+
+function color(ansicol) {
+    printf("\033[38;5;%dm", min(ansicol, 255))
+}
+
+function printBox() {
+    printf("█")
+}
+function processCLIArgs() {
+    for (i = 1; i < ARGC; i++) {
+        if (ARGV[i] == "h") {
+            help()
+            exit 0
+        } else if (ARGV[i] == "minx") {
+            minx = ARGV[++i]
+        } else if (ARGV[i] == "maxx") {
+            maxx = ARGV[++i]
+        } else if (ARGV[i] == "miny") {
+            miny = ARGV[++i]
+        } else if (ARGV[i] == "maxy") {
+            maxy = ARGV[++i]
+        } else if (ARGV[i] == "iter") {
+            iterations = ARGV[++i]
+        } else {
+            printf("unknown option '%s'\n", ARGV[i]) | "cat 1>&2"
+            exit 1
+        }
+    }
+    ARGC = 1
+}
+
+BEGIN {
+    iterations = 200
+    minx = -2
+    maxx = 2
+    miny = -2
+    maxy = 2
+    processCLIArgs()
+
+    columns = getColumns()
+    rows = getRows()
+
+    upperrow = rows - 2
+    uppercolumn = columns - 1
+
+    for (r = 0; r <= upperrow; r++) {
+        for (c = 0; c <= uppercolumn; c++) {
+            x = map(c, 0, uppercolumn, minx, maxx)
+            y = map(r, 0, upperrow, miny, maxy)
+            complex(z, x, y)
+            color(mandelbrot(z))
+            printBox()
+        }
+    }
+}
