@@ -13,6 +13,14 @@ function help() {
     print "iter n     Sets the maximum number of iterations, default is " iterations
 }
 
+function min(a, b) {
+    return a < b ? a : b
+}
+
+function map(x, sx, ex, sy, ey) {
+    return (x - sx) * (ey - sy) / (ex - sx) + sy
+}
+
 function complex(arr, re, im) {
     arr["re"] = re
     arr["im"] = im
@@ -52,18 +60,10 @@ function mandelbrot(z) {
         mult(v, v, v)
         add(v, v, z)
         if (abs(v) > 2) {
-            return n
+            return min(n, 255)
         }
     }
     return 0
-}
-
-function min(a, b) {
-    return a < b ? a : b
-}
-
-function map(x, sx, ex, sy, ey) {
-    return (x - sx) * (ey - sy) / (ex - sx) + sy
 }
 
 function getColumns(    c) {
@@ -77,7 +77,7 @@ function getRows(    r) {
 }
 
 function color(ansicol) {
-    printf("\033[38;5;%dm", min(ansicol, 255))
+    printf("\033[38;5;%dm", ansicol, 255)
 }
 
 function printBox() {
