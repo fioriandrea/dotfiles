@@ -77,7 +77,7 @@ function getRows(    r) {
 }
 
 function color(ansicol) {
-    printf("\033[38;5;%dm", ansicol, 255)
+    printf("\033[38;5;%dm", ansicol)
 }
 
 function printBox() {
