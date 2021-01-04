@@ -284,9 +284,9 @@ bindsym $mod+shift+b exec --no-startup-id i3-msg border toggle
 for_window [class="^.*"] border pixel 5
 
 #changing border style
-bindsym $mod+t border normal
-bindsym $mod+y border pixel 5
-bindsym $mod+u border none
+bindsym $mod+shift+t border normal
+bindsym $mod+shift+y border pixel 5
+bindsym $mod+shift+u border none
 
 
 #new_window pixel 1
