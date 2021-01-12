@@ -68,11 +68,13 @@ function mandelbrot(z) {
 
 function getColumns(    c) {
     "tput cols" | getline c
+    close("tput cols")
     return c
 }
 
 function getRows(    r) {
     "tput lines" | getline r
+    close("tput lines")
     return r
 }
 

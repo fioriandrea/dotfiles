@@ -141,3 +141,7 @@ alias less='bat --paging=always'
 # dotfiles management
 
 alias ricegit='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
+
+# open terminal in current directory
+
+alias termhere='$TERMINAL . & disown'
