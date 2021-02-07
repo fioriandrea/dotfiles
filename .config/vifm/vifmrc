@@ -125,15 +125,27 @@ mark h ~/
 " %D the other window directory name.
 " %m run the command in a menu window
 
+" :[range]!program
+" execute command via shell.  Accepts macros.
+
+" :[range]!! <program>
+" is the same as :! but will pause the screen before returning to Vifm.
+
+" :com[mand] cmd :commands
+" will set kind of alias for internal command (like in a  shell).   Will  pass  range given to alias to an aliased command
+
 command! df df -h %m 2> /dev/null
 command! diff vim -d %f %F
 command! zip zip -r %f.zip %f
-command! run !! ./%f
-command! make !! make %a
+command! run :!! ./%f
+command! make :!! make %a
 command! mkcd :mkdir %a | cd %a
 command! vgrep vim "+grep %a"
 command! reload :write | restart full
 command! extract ext %f
+command! ddrop dragon-drag-and-drop %f
+command! fzfcd :execute 'cd ' . fnameescape(term('fzf 2> /dev/tty'))
+command! fzfed :execute 'edit ' . fnameescape(term('fzf 2> /dev/tty'))
 
 " ------------------------------------------------------------------------------
 
