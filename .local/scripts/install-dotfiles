@@ -40,6 +40,8 @@ do
     esac
 done
 
+shift "$(($OPTIND - 1))"
+
 tmpdir="$(mktemp -d)"
 if ! [ -d "$tmpdir" ]
 then
