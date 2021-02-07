@@ -125,6 +125,15 @@ mark h ~/
 " %D the other window directory name.
 " %m run the command in a menu window
 
+":com[mand] name action
+" sets a new user command.
+" Trying to use a reserved command name will result in an error message.
+" Use :com[mand]! to overwrite a previously set command.
+" Unlike vim user commands do not have to start with a capital letter.  User commands
+" are run in a shell by default.  To run a command in the background you must set  it
+" as a background command with & at the end of the commands action (:com rm rm %f &).
+" Command name cannot contain numbers or special symbols (except '?' and '!').
+
 " :[range]!program
 " execute command via shell.  Accepts macros.
 
