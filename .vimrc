@@ -103,3 +103,8 @@ map <Space> <leader>
 "Set every files as Unix (LF) as Windows might set CRLF wich is not working
 "for unix
 set fileformat=unix
+
+" common typos
+iabbrev lenght length
+iabbrev widht width
+iabbrev heigth height
