@@ -2,8 +2,14 @@
 
 xdg_config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
 
+# TODO write a loop
+# TODO change extensions
+
 fzfconfig="fzf/fzf-config.sh"
 [ -f "$xdg_config_home/$fzfconfig" ] && . "$xdg_config_home/$fzfconfig"
 
 nnnconfig="nnn/nnn-config.sh"
 [ -f "$xdg_config_home/$nnnconfig" ] && . "$xdg_config_home/$nnnconfig" 
+
+vifmconfig="vifm/scripts/vifm-config.sh"
+[ -f "$xdg_config_home/$vifmconfig" ] && . "$xdg_config_home/$vifmconfig" 

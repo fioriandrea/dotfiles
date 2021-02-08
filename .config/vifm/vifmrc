@@ -153,8 +153,8 @@ command! vgrep vim "+grep %a"
 command! reload :write | restart full
 command! extract ext %f
 command! ddrop dragon-drag-and-drop %f
-command! fzfcd :execute 'cd ' . fnameescape(term('fzf 2> /dev/tty'))
-command! fzfed :execute 'edit ' . fnameescape(term('fzf 2> /dev/tty'))
+command! fcd :execute 'cd ' . fnameescape(term('fzfdir 2> /dev/tty'))
+command! fed :execute 'edit ' . fnameescape(term('fzf 2> /dev/tty'))
 
 " ------------------------------------------------------------------------------
 
