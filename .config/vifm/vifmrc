@@ -203,6 +203,10 @@ filextype {*.djvu},<image/vnd.djvu>
         \ apvlv %f,
 
 " Audio
+filextype {*.wav,*.mp3,*.flac,*.m4a,*.wma,*.ape,*.ac3,*.og[agx],*.spx,*.opus},
+        \<audio/*>
+       \ { Play using mpv }
+       \ mpv-gui %c,
 filetype {*.wav,*.mp3,*.flac,*.m4a,*.wma,*.ape,*.ac3,*.og[agx],*.spx,*.opus},
         \<audio/*>
        \ { Play using mpv }
