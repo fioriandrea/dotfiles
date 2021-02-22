@@ -134,6 +134,7 @@ alias sr="sudo reboot"
 
 #paging and diff
 
+alias v='$VISUAL'
 alias info='info --vi-keys'
 alias diff='diff --color=auto'
 alias less='bat --paging=always'
