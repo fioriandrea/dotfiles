@@ -1,0 +1,12 @@
+#! /bin/sh
+
+installed_pager() {
+    if command -v 'bat' &> /dev/null
+    then
+        bat -l man -p
+    else
+        less -s
+    fi
+}
+
+col -bx | installed_pager
