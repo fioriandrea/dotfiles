@@ -1,0 +1,140 @@
+#! /bin/awk -f
+
+# deque data structure
+
+function deque(deq) {
+    deq["start"] = 0
+    deq["end"] = 0
+}
+
+function dlength(deq) {
+    return deq["end"] - deq["start"]
+}
+
+function push(deq, elem) {
+    deq[deq["end"]++] = elem
+}
+
+function pop(deq, elem) {
+    if (dlength(deq) > 0) {
+        return deq[--deq["end"]]
+    }
+}
+
+function last(deq) {
+    if (dlength(deq) > 0) {
+        return deq[deq["end"] - 1]
+    }
+}
+
+function unshift(deq, elem) {
+    deq[--deq["start"]] = elem
+}
+
+function shift(deq) {
+    if (dlength(deq)) {
+        return deq[deq["start"]++]
+    }
+}
+
+function first(deq) {
+    if (dlength(deq)) {
+        return deq[deq["first"]]
+    }
+}
+
+# graph data structure
+
+function graph(gr) {
+    split("", gr)
+}
+
+function hasNode(gr, node) {
+    return node in gr
+}
+
+function nchildren(gr, node) {
+    return gr[node, "nchildren"]
+}
+
+function nthchild(gr, node, i) {
+    return gr[node, "child", i]
+}
+
+function addNode(gr, node) {
+    gr[node] = 1
+    gr[node, "nchildren"] = 0
+}
+
+function addChild(gr, node, child) {
+    if (!hasNode(gr, node)) {
+        addNode(gr, node)
+    }
+    if (!hasNode(gr, child)) {
+        addNode(gr, child)
+    }
+    gr[node, "child", ++gr[node, "nchildren"]] = child
+}
+
+# set data structure
+
+function set(st) {
+    clearDict(st)
+}
+
+function has(st, value) {
+    return value in st
+}
+
+function add(st, value) {
+    st[value] = 1
+}
+
+# algorithms
+
+function postorder(gr, starting, deq, done, visited,    node, childrenDone, i, child) {
+    push(deq, starting)
+    while (dlength(deq) > 0) {
+        node = last(deq)
+        visited[node] = 1
+        childrenDone = 1
+        for (i = nchildren(gr, node); i >= 1; --i) {
+            child =  nthchild(gr, node, i)
+            if (visited[child] && !done[child]) {
+                printf("cycle detected at %s\n", child)
+                continue
+            }
+            if (!done[child]) {
+                childrenDone = 0
+                push(deq, child)
+            }
+        }
+        if (childrenDone) {
+            printf("%s\n", node)
+            pop(deq)
+            done[node] = 1
+        }
+    } 
+}
+
+{
+    if ($1 in gr) {
+        delete roots[$1]
+    } else {
+        roots[$1] = 1
+    }
+    if ($2 in roots) {
+        delete roots[$2]
+    }
+    addChild(gr, $1, $2)    
+}
+
+END {
+    delim = ""
+    for (root in roots) {
+        printf("%s", delim)
+        delim = "\n"
+        deque(deq)
+        postorder(gr, root, deq, done, visited)
+    }        
+}
