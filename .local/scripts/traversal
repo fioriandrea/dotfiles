@@ -224,16 +224,32 @@ BEGIN {
 }
 
 {
-    if ($1 in leaves) {
-        delete roots[$1]
-    } else {
-        roots[$1] = 1
+    gsub(/^\s+/, "")
+    gsub(/\s$/, "")
+    if (length($0) == 0)
+        next
+
+    for (i = 1; i <= NF; ++i) {
+        if (!prevroot) {
+            if ($i in leaves) {
+                delete roots[$i]
+            } else {
+                roots[$i] = 1
+            }
+            prevroot = $i
+        } else {
+            leaves[$i] = 1
+            addChild(gr, prevroot, $i)
+            prevroot = ""
+        }
     }
-    leaves[$2] = 1
-    addChild(gr, $1, $2)    
 }
 
 END {
+    if (prevroot) {
+        printf("odd number of nodes\n") | "cat 1>&2"
+        exit 1
+    }
     delim = ""
     for (root in roots) {
         delimitBreaks(type, delim)
