@@ -48,10 +48,6 @@ function processCLIArgs(    i, j) {
     }
 }
 
-function clearArray(array) {
-    split("", array, ":")
-}
-
 # deque data structure
 
 function deque(deq) {
@@ -196,11 +192,11 @@ function levelorder(gr, starting, deq, visited,    node, i, j, nlevel, delim) {
 }
 
 function algorithm(type, gr, root) {
-    clearArray(deq)
-    clearArray(visited)
+    delete deq
+    delete visited
     deque(deq)
     if (type == "post") {
-        clearArray(done)
+        delete done
         postorder(gr, root, deq, visited, done)
     } else if (type == "topo") {
         postorder(gr, root, deq, visited, done)
