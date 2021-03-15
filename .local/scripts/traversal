@@ -27,6 +27,10 @@ function help() {
     print "         After this, arguments are assumed to be files"
 }
 
+function printError(message) {
+    printf(message) | "cat 1>&2"
+}
+
 function processCLIArgs(    i, j) {
     type = "post"
     for (i = 1; i < ARGC; ++i) {
@@ -39,7 +43,7 @@ function processCLIArgs(    i, j) {
             ++i
             break
         } else {
-            printf("unknown option '%s'\n", ARGV[i]) | "cat 1>&2"
+            printError(sprintf("unknown option '%s'\n", ARGV[i]))
             exit 1
         }
     }
@@ -139,7 +143,7 @@ function postorder(gr, starting, deq, startedjobs, done,    node, childrenDone, 
         for (i = nchildren(gr, node); i >= 1; --i) {
             child = nthchild(gr, node, i)
             if (startedjobs[child]) {
-                printf("cycle detected at %s\n", child)
+                printError(sprintf("cycle detected at %s\n", child))
                 continue
             }
             if (!done[child]) {
@@ -232,7 +236,7 @@ BEGIN {
         next
 
     for (i = 1; i <= NF; ++i) {
-        if (!prevroot) {
+        if (length(prevroot) == 0) {
             if ($i in leaves) {
                 delete roots[$i]
             } else {
@@ -248,8 +252,9 @@ BEGIN {
 }
 
 END {
+    delete leaves
     if (prevroot) {
-        printf("odd number of nodes\n") | "cat 1>&2"
+        printError(sprintf("odd number of tokens\n"))
         exit 1
     }
     delim = ""
