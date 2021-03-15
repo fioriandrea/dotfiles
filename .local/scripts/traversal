@@ -126,15 +126,19 @@ function addChild(gr, node, child) {
 
 # algorithms
 
-function postorder(gr, starting, deq, visited, done,    node, childrenDone, i, child) {
+function postorder(gr, starting, deq, startedjobs, done,    node, childrenDone, i, child) {
     push(deq, starting)
     while (dlength(deq) > 0) {
         node = last(deq)
-        visited[node] = 1
+        if (done[node]) {
+            pop(deq)
+            continue
+        }
+        startedjobs[node] = 1
         childrenDone = 1
         for (i = nchildren(gr, node); i >= 1; --i) {
-            child =  nthchild(gr, node, i)
-            if (visited[child] && !done[child]) {
+            child = nthchild(gr, node, i)
+            if (startedjobs[child]) {
                 printf("cycle detected at %s\n", child)
                 continue
             }
@@ -147,22 +151,23 @@ function postorder(gr, starting, deq, visited, done,    node, childrenDone, i, c
             printf("%s\n", node)
             pop(deq)
             done[node] = 1
+            delete startedjobs[node]
         }
     } 
 }
 
 function preorder(gr, starting, deq, visited,    node, i, child) {
     push(deq, starting)
+    visited[starting] = 1
     while (dlength(deq) > 0) {
         node = pop(deq)
-        visited[node] = 1
         printf("%s\n", node)
         for (i = nchildren(gr, node); i >= 1; --i) {
             child =  nthchild(gr, node, i)
             if (visited[child]) {
-                printf("cycle detected at %s\n", child)
                 continue
             }
+            visited[child] = 1
             push(deq, child)
         }
     }
@@ -170,20 +175,20 @@ function preorder(gr, starting, deq, visited,    node, i, child) {
 
 function levelorder(gr, starting, deq, visited,    node, i, j, nlevel, delim) {
     push(deq, starting)
+    visited[starting] = 1
     while (dlength(deq) > 0) {
         nlevel = dlength(deq)
         delim = ""
         for (i = 1; i <= nlevel; ++i) {
             node = shift(deq)
-            visited[node] = 1
             printf("%s%s", delim, node)
             delim = " "
             for (j = nchildren(gr, node); j >= 1; --j) {
                 child =  nthchild(gr, node, j)
                 if (visited[child]) {
-                    printf("\ncycle detected at %s", child)
                     continue
                 }
+                visited[child] = 1
                 push(deq, child)
             }
         }
@@ -193,13 +198,14 @@ function levelorder(gr, starting, deq, visited,    node, i, j, nlevel, delim) {
 
 function algorithm(type, gr, root) {
     delete deq
+    delete startedjobs
     delete visited
     deque(deq)
     if (type == "post") {
         delete done
-        postorder(gr, root, deq, visited, done)
+        postorder(gr, root, deq, startedjobs, done)
     } else if (type == "topo") {
-        postorder(gr, root, deq, visited, done)
+        postorder(gr, root, deq, startedjobs, done)
     } else if (type == "pre") {
         preorder(gr, root, deq, visited)
     } else if (type == "level") {
