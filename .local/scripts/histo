@@ -120,13 +120,16 @@ function printTopAxis() {
     printAxisLine()
 }
 
-function collectData() {
+function collectData(    i, sep) {
     while (filesCat " | " countCommand | getline > 0) {
         dataCount++
         total += $1
         maxCount = max(maxCount + 0, $1)
         data[dataCount, "count"] = $1
-        data[dataCount, "name"] = $2
+        for (i = 2; i <= NF; i++) {
+            data[dataCount, "name"] = data[dataCount, "name"] sep $i
+            sep = " "
+        }
     }
 }
 
