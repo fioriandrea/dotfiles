@@ -8,6 +8,7 @@ URxvt*iso14755_52:      false
 URxvt*meta8:            false
 URxvt*metaSendsEscape:  true
 URxvt*iconFile:  		/usr/share/icons/Sardi-Mono/scalable/apps/terminal.svg
+URxvt*scrollBar:        false
 
 ! appearance
 URxvt*depth:             32
@@ -53,11 +54,11 @@ URxvt*depth:             32
 
 ! fonts
 URxvt*letterSpace: 	    		-2
-URxvt*font:                 	xft:Monospace:regular:size=28
-URxvt*imFont:               	xft:Monospace:regular:size=28
-URxvt*boldFont:             	xft:Monospace:bold:size=28
-URxvt*italicFont:           	xft:Monospace:italic:size=28
-URxvt*boldItalicFont:     		xft:Monospace:regular:size=28
+URxvt*font:                 	xft:Monospace:regular:size=24
+URxvt*imFont:               	xft:Monospace:regular:size=24
+URxvt*boldFont:             	xft:Monospace:bold:size=24
+URxvt*italicFont:           	xft:Monospace:italic:size=24
+URxvt*boldItalicFont:     		xft:Monospace:regular:size=24
 ! run :.!fc-list | grep <font-name>
 
 ! perl extensions
