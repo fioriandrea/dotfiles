@@ -11,6 +11,10 @@ module.exports = class NeuralNetwork {
             func: (x) => Math.tanh(x),
             dfunc: (y) => 1 - (y * y),
         },
+        identity: {
+            func: (x) => x,
+            dfunc: (y) => 1,
+        },
     };
 
     constructor(layerdims = [], activationName = "sigmoid") {
@@ -60,6 +64,22 @@ module.exports = class NeuralNetwork {
         return output;
     }
 
+    testInput(input, target) {
+        input = new Matrix(input);
+        target = new Matrix(target);
+        const output = this.feedForwardHistory(input).pop();
+        return {
+            input: input.mat,
+            target: target.mat,
+            output: output.mat,
+            error: target.minus(output).mat,
+        };
+    }
+
+    testDataset(dataset) {
+        return dataset.map(({input, target}) => this.testInput(input, target));
+    }
+
     feedForward(input) {
         return this.feedForwardHistory(input).pop();
     }
@@ -103,6 +123,8 @@ module.exports = class NeuralNetwork {
         const errors = this.computeErrors(ffhistory[ffhistory.length - 1], target); 
         const deltas = this.computeDeltas(rate, errors, ffhistory);
 
+        //console.log(JSON.stringify({errors, deltas, ffhistory}, null, 4))
+
         for (let i = 0; i < deltas.length; i++) {
             const delta = deltas[i];
             this.layers[i].weights = this.layers[i].weights.plus(delta.weights);
@@ -111,7 +133,7 @@ module.exports = class NeuralNetwork {
     }
 
     backpropagateDataset(dataset, rate = 0.1, epochs = 100) {
-        while (--epochs > 0) {
+        while (epochs-- > 0) {
             for (const {input, target} of dataset) {
                 this.backpropagate(input, target, rate);
             }

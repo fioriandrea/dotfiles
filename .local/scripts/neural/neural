@@ -1,6 +1,7 @@
 #! /bin/env node
 
 const fs = require("fs");
+const util = require("util");
 const NeuralNetwork = require("./neuralnet");
 
 function printHelp() {
@@ -12,11 +13,12 @@ perform tasks with a neural network.
 OPTIONS:
 
 -help                prints this help
--predict             goes into predict mode (default is train mode)
+-train               goes into train mode (default is ${mode} mode)
+-predict             goes into predict mode (default is ${mode} mode)
+-test                goes into test mode (default is ${mode} mode)
 -layerout n          in prediction mode, outputs only the specified layer (negative numbers to output them all)
--datafile FILE       specify dataset file (default is stdin)
--modelfile FILE      specify model file (default is stdin)
--newnet              generates new neural network instead of reading one
+-data FILE       specify dataset file 
+-model FILE      specify model file 
 -activation AF       specify activation function (default is ${activation})
 -rate R              specify learning rate (default is ${rate})
 -epochs E            specify number of epochs (default is ${epochs})
@@ -24,16 +26,29 @@ OPTIONS:
 );
 }
 
+function printError(message) {
+    console.error(message);
+    process.exit(1);
+}
+
+function printDeep(obj) {
+    console.log(util.inspect(obj, {
+        showHidden: false, 
+        depth: null, 
+        colors: true,
+        maxArrayLength: null,
+    }));
+}
+
 const args = process.argv.slice(2);
 if (!args.length) {
     args.push("-help");
 }
 
-let trainflag = true;
+let mode = "train";
 let layerout = null;
-let datafile = "/dev/stdin";
-let modelfile = "/dev/stdin";
-let newnetflag = false;
+let datafile = null;
+let modelfile = null;
 let activation = "sigmoid";
 let hiddendims = [];
 let rate = 0.1;
@@ -44,23 +59,26 @@ for (let i = 0; i < args.length; i++) {
             printHelp();
             process.exit(0);
             break;
+        case "-train":
+            mode = "train";
+            break;
         case "-predict":
-            trainflag = false;
+            mode = "predict";
+            break;
+        case "-test":
+            mode = "test";
             break;
         case "-layerout":
             i++;
             layerout = parseInt(args[i]);
             break;
-        case "-datafile":
+        case "-data":
             i++;
             datafile = args[i];
             break;
-        case "-modelfile":
+        case "-model":
             i++;
             modelfile = args[i];
-            break;
-        case "-newnet":
-            newnetflag = true;
             break;
         case "-activation":
             i++;
@@ -77,42 +95,50 @@ for (let i = 0; i < args.length; i++) {
         case "-hiddendims":
             i++;
             while (i < args.length && args[i] !== "--") {
+                if (args[i].startsWith("-")) {
+                    i--;
+                    break;
+                }
                 hiddendims.push(Math.abs(Math.floor(+args[i++])));
             }
             break;
         default:
-            console.error(`unknown option ${args[i]}`);
-            process.exit(1);
+            printError(`unknown option ${args[i]}`);
             break;
     }
 }
 
-try {
-    const data = loadData(datafile);
-    if (trainflag) {
-        train(data);
-    } else {
-        predict(data);
-    }
-} catch (e) {
-    console.error(e.message);
+if (datafile === null) {
+    printError(`unspecified dataset file`);
 }
 
-function train(data) {
+try {
+    const data = loadData(datafile);
     const inputdim = data[0].input.length || 1;
-    const outputdim = data[0].target.length || 1;
-    let nn;
-    if (newnetflag) {
-        nn = new NeuralNetwork([inputdim, ...hiddendims, outputdim], activation);
-    } else {
-        nn = loadNeuralNetwork(modelfile);
+    const outputdim = data[0].target?.length || 1;
+    const nn = modelfile !== null ? loadNeuralNetwork(modelfile) : 
+        new NeuralNetwork([inputdim, ...hiddendims, outputdim], activation);
+    switch (mode) {
+        case "train":
+            train(nn, data);
+            break;
+        case "predict":
+            predict(nn, data);
+            break;
+        case "test":
+            test(nn, data);
+            break;
     }
+} catch (e) {
+    printError(e.message);
+}
+
+function train(nn, data) {
     nn.backpropagateDataset(data, rate, epochs);
     console.log(nn.serialize());
 }
 
-function predict(data) {
-    const nn = loadNeuralNetwork(modelfile);
+function predict(nn, data) {
     for (const { input } of data) {
         let output;
         if (layerout !== null) {
@@ -124,8 +150,12 @@ function predict(data) {
         } else {
             output = nn.outputArray(input);
         }
-        console.log(output);
+        printDeep(output);
     }
+}
+
+function test(nn, data) {
+    printDeep(nn.testDataset(data));
 }
 
 function loadNeuralNetwork(file) {
