@@ -27,12 +27,14 @@ module.exports = class NeuralNetwork {
             });
         }
         
-        this.activationName = activationName;
+        if (activationName in NeuralNetwork.activations)
+            this.activationName = activationName;
+        else
+            this.activationName = "sigmoid";
     }
 
     get activation() {
-        return NeuralNetwork.activations[this.activationName] || 
-            NeuralNetwork.activations["sigmoid"];
+        return NeuralNetwork.activations[this.activationName];
     }
 
     outputHistoryArray(input) {

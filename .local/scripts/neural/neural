@@ -15,6 +15,7 @@ OPTIONS:
 -predict     goes into predict mode (default is train mode)
 -datafile    specify dataset file (default is stdin)
 -modelfile   specify model file (default is stdin)
+-newnet      generates new neural network instead of reading one
 -activation  specify activation function (default is ${activation})
 -rate        specify learning rate (default is ${rate})
 -epochs      specify number of epochs (default is ${epochs})
@@ -30,6 +31,7 @@ if (!args.length) {
 let trainflag = true;
 let datafile = process.stdin.fd;
 let modelfile = process.stdin.fd;
+let newnetflag = false;
 let activation = "sigmoid";
 let hiddendims = [];
 let rate = 0.1;
@@ -50,6 +52,9 @@ for (let i = 0; i < args.length; i++) {
         case "-modelfile":
             i++;
             modelfile = args[i];
+            break;
+        case "-newnet":
+            newnetflag = true;
             break;
         case "-activation":
             i++;
@@ -76,11 +81,6 @@ for (let i = 0; i < args.length; i++) {
     }
 }
 
-if (datafile === modelfile) {
-    console.error(`cannot read model and dataset from the same file '${modelfile}'`);
-    process.exit(1);
-}
-
 try {
     const data = loadData(datafile);
     if (trainflag) {
@@ -92,14 +92,19 @@ try {
     console.error(e.message);
 }
 
+if (datafile === modelfile) {
+    console.error(`cannot read model and dataset from the same file '${modelfile}'`);
+    process.exit(1);
+}
+
 function train(data) {
     const inputdim = data[0].input.length || 1;
     const outputdim = data[0].target.length || 1;
     let nn;
-    if (modelfile !== null) {
-        nn = loadNeuralNetwork(modelfile);
-    } else {
+    if (newnet) {
         nn = new NeuralNetwork([inputdim, ...hiddendims, outputdim], activation);
+    } else {
+        nn = loadNeuralNetwork(modelfile);
     }
     nn.backpropagateDataset(data, rate, epochs);
     console.log(nn.serialize());
