@@ -1,0 +1,121 @@
+#! /bin/env node
+
+const fs = require("fs");
+const NeuralNetwork = require("./neuralnet");
+
+function printHelp() {
+    console.log(
+`neural [options]
+
+perform tasks with a neural network.
+
+OPTIONS:
+
+-help        prints this help
+-predict     goes into predict mode (default is train mode)
+-datafile    specify dataset file (default is stdin)
+-modelfile   specify model file (default is stdin)
+-activation  specify activation function (default is ${activation})
+-rate        specify learning rate (default is ${rate})
+-epochs      specify number of epochs (default is ${epochs})
+-hiddendims  specify dimensions of hidden layers (list terminated with --)`
+);
+}
+
+let args = process.argv.slice(2);
+if (!args.length) {
+    args.push("-help");
+}
+
+let trainflag = true;
+let datafile = process.stdin.fd;
+let modelfile = process.stdin.fd;
+let activation = "sigmoid";
+let hiddendims = [];
+let rate = 0.1;
+let epochs = 1000;
+for (let i = 0; i < args.length; i++) {
+    switch (args[i]) {
+        case "-help":
+            printHelp();
+            process.exit(0);
+            break;
+        case "-predict":
+            trainflag = false;
+            break;
+        case "-datafile":
+            i++;
+            datafile = args[i];
+            break;
+        case "-modelfile":
+            i++;
+            modelfile = args[i];
+            break;
+        case "-activation":
+            i++;
+            activation = args[i];
+            break;
+        case "-rate":
+            i++;
+            rate = Math.abs(+args[i]);
+            break;
+        case "-epochs":
+            i++;
+            epochs = Math.abs(Math.floor(+args[i]));
+            break;
+        case "-hiddendims":
+            i++;
+            while (i < args.length && args[i] !== "--") {
+                hiddendims.push(Math.abs(Math.floor(+args[i++])));
+            }
+            break;
+        default:
+            console.error(`unknown option ${args[i]}`);
+            process.exit(1);
+            break;
+    }
+}
+
+if (datafile === modelfile) {
+    console.error(`cannot read model and dataset from the same file '${modelfile}'`);
+    process.exit(1);
+}
+
+try {
+    const data = loadData(datafile);
+    if (trainflag) {
+        train(data);
+    } else {
+        predict(data);
+    }
+} catch (e) {
+    console.error(e.message);
+}
+
+function train(data) {
+    const inputdim = data[0].input.length || 1;
+    const outputdim = data[0].target.length || 1;
+    let nn;
+    if (modelfile !== null) {
+        nn = loadNeuralNetwork(modelfile);
+    } else {
+        nn = new NeuralNetwork([inputdim, ...hiddendims, outputdim], activation);
+    }
+    nn.backpropagateDataset(data, rate, epochs);
+    console.log(nn.serialize());
+}
+
+function predict(data) {
+    const nn = loadNeuralNetwork(modelfile);
+    for (const { input } of data) {
+        console.log(nn.outputArray(input));
+    }
+}
+
+function loadNeuralNetwork(file) {
+    return NeuralNetwork.deserialize(fs.readFileSync(file, "utf-8"));
+}
+
+function loadData(file) {
+    return JSON.parse(fs.readFileSync(file, "utf-8"));
+}
