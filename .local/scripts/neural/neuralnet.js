@@ -110,7 +110,7 @@ module.exports = class NeuralNetwork {
         }
     }
 
-    backpropagateDataset(dataset, rate = 0.1, epochs = 1000) {
+    backpropagateDataset(dataset, rate = 0.1, epochs = 100) {
         while (--epochs > 0) {
             for (const {input, target} of dataset) {
                 this.backpropagate(input, target, rate);

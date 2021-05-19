@@ -11,15 +11,16 @@ perform tasks with a neural network.
 
 OPTIONS:
 
--help        prints this help
--predict     goes into predict mode (default is train mode)
--datafile    specify dataset file (default is stdin)
--modelfile   specify model file (default is stdin)
--newnet      generates new neural network instead of reading one
--activation  specify activation function (default is ${activation})
--rate        specify learning rate (default is ${rate})
--epochs      specify number of epochs (default is ${epochs})
--hiddendims  specify dimensions of hidden layers (list terminated with --)`
+-help                prints this help
+-predict             goes into predict mode (default is train mode)
+-layerout n          in prediction mode, outputs only the specified layer (negative numbers to output them all)
+-datafile FILE       specify dataset file (default is stdin)
+-modelfile FILE      specify model file (default is stdin)
+-newnet              generates new neural network instead of reading one
+-activation AF       specify activation function (default is ${activation})
+-rate R              specify learning rate (default is ${rate})
+-epochs E            specify number of epochs (default is ${epochs})
+-hiddendims ...DIMS  specify dimensions of hidden layers (list terminated with --)`
 );
 }
 
@@ -29,13 +30,14 @@ if (!args.length) {
 }
 
 let trainflag = true;
-let datafile = process.stdin.fd;
-let modelfile = process.stdin.fd;
+let layerout = null;
+let datafile = "/dev/stdin";
+let modelfile = "/dev/stdin";
 let newnetflag = false;
 let activation = "sigmoid";
 let hiddendims = [];
 let rate = 0.1;
-let epochs = 1000;
+let epochs = 100;
 for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
         case "-help":
@@ -44,6 +46,10 @@ for (let i = 0; i < args.length; i++) {
             break;
         case "-predict":
             trainflag = false;
+            break;
+        case "-layerout":
+            i++;
+            layerout = parseInt(args[i]);
             break;
         case "-datafile":
             i++;
@@ -108,7 +114,17 @@ function train(data) {
 function predict(data) {
     const nn = loadNeuralNetwork(modelfile);
     for (const { input } of data) {
-        console.log(nn.outputArray(input));
+        let output;
+        if (layerout !== null) {
+            output = nn.outputHistoryArray(input);
+            if (layerout >= output.length)
+                throw new Error(`index out or range: length ${output.length}, index ${layerout}`);
+            if (layerout >= 0)
+                output = output[layerout];
+        } else {
+            output = nn.outputArray(input);
+        }
+        console.log(output);
     }
 }
 
