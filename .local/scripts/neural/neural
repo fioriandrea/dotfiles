@@ -17,12 +17,13 @@ OPTIONS:
 -predict             goes into predict mode (default is ${mode} mode)
 -test                goes into test mode (default is ${mode} mode)
 -layerout n          in prediction mode, outputs only the specified layer (negative numbers to output them all)
--data FILE       specify dataset file 
--model FILE      specify model file 
+-data FILE           specify dataset file 
+-model FILE          specify model file 
 -activation AF       specify activation function (default is ${activation})
 -rate R              specify learning rate (default is ${rate})
 -epochs E            specify number of epochs (default is ${epochs})
--hiddendims ...DIMS  specify dimensions of hidden layers (list terminated with --)`
+-hiddendims ...DIMS  specify dimensions of hidden layers (list terminated with --)
+-printtrace          prints stack trace when there is an error (for debugging)`
 );
 }
 
@@ -53,6 +54,7 @@ let activation = "sigmoid";
 let hiddendims = [];
 let rate = 0.1;
 let epochs = 100;
+let printtrace = false;
 for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
         case "-help":
@@ -102,6 +104,9 @@ for (let i = 0; i < args.length; i++) {
                 hiddendims.push(Math.abs(Math.floor(+args[i++])));
             }
             break;
+        case "-printtrace":
+            printtrace = true;
+            break;
         default:
             printError(`unknown option ${args[i]}`);
             break;
@@ -130,7 +135,11 @@ try {
             break;
     }
 } catch (e) {
-    printError(e.message);
+    if (printtrace) {
+        console.error(e);
+    } else {
+        printError(e.message);
+    }
 }
 
 function train(nn, data) {
@@ -142,13 +151,13 @@ function predict(nn, data) {
     for (const { input } of data) {
         let output;
         if (layerout !== null) {
-            output = nn.outputHistoryArray(input);
+            output = nn.outputHistory(input);
             if (layerout >= output.length)
                 throw new Error(`index out or range: length ${output.length}, index ${layerout}`);
             if (layerout >= 0)
                 output = output[layerout];
         } else {
-            output = nn.outputArray(input);
+            output = nn.output(input);
         }
         printDeep(output);
     }

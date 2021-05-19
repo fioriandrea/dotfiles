@@ -1,23 +1,31 @@
 const Matrix = require('./matrix.js');
 
+function sigmoid(x) {
+    return 1 / (1 + Math.exp(-x));
+}
+
 module.exports = class NeuralNetwork {
-    // various activation functions (must be recursive derivatives)
+    // various activation functions 
     static activations = {
         sigmoid: {
-            func: (x) => 1 / (1 + Math.exp(-x)), 
-            dfunc: (y) => y * (1 - y),
+            func: sigmoid,
+            dfunc: (x) => sigmoid(x) * (1 - sigmoid(x)),
         },
         tanh: {
-            func: (x) => Math.tanh(x),
-            dfunc: (y) => 1 - (y * y),
+            func: Math.tanh,
+            dfunc: (x) => 1 - (Math.tanh(x) ** 2),
         },
         identity: {
             func: (x) => x,
-            dfunc: (y) => 1,
+            dfunc: (x) => 1,
+        },
+        relu: {
+            func: (x) => x >= 0 ? x : 0,
+            dfunc: (x) => x >= 0 ? 1 : 0,
         },
     };
 
-    constructor(layerdims = [], activationName = "sigmoid") {
+    constructor(layerdims = [], activationName = "relu") {
         // A[nhidden][ninput] * b[ninput] -> c[hnidden]
         // B[noutput][nhidden] * c[nhidden] -> d[noutput]
 
@@ -34,40 +42,42 @@ module.exports = class NeuralNetwork {
         if (activationName in NeuralNetwork.activations)
             this.activationName = activationName;
         else
-            this.activationName = "sigmoid";
+            this.activationName = "relu";
     }
 
     get activation() {
         return NeuralNetwork.activations[this.activationName];
     }
 
-    outputHistoryArray(input) {
+    outputHistory(input) {
         input = new Matrix(input);
         const ffhistory = this.feedForwardHistory(input);
-        ffhistory.forEach((_, i) => ffhistory[i] = ffhistory[i].mat);
+        ffhistory.forEach((_, i) => ffhistory[i] = ffhistory[i].nonlinear.mat);
         return ffhistory;
     }
 
-    outputArray(input) {
-        return this.outputHistoryArray(input).pop();
+    output(input) {
+        return this.outputHistory(input).pop();
     }
 
-    feedForwardLayer(layer, input) {
-        return layer.weights.times(input).plus(layer.bias).map(this.activation.func);
+    trainInput(example, target, rate = 0.1) {
+        example = new Matrix(example);
+        target = new Matrix(target);
+        this.backpropagate(example, target, rate);
     }
 
-    feedForwardHistory(input) {
-        const output = [input];
-        for (const layer of this.layers) {
-            output.push(this.feedForwardLayer(layer, output[output.length - 1]))
+    trainDataset(dataset, rate = 0.1, epochs = 100) {
+        while (epochs-- > 0) {
+            for (const {input, target} of dataset) {
+                this.trainInput(input, target, rate);
+            }
         }
-        return output;
     }
 
     testInput(input, target) {
         input = new Matrix(input);
         target = new Matrix(target);
-        const output = this.feedForwardHistory(input).pop();
+        const output = this.feedForwardHistory(input).pop().nonlinear;
         return {
             input: input.mat,
             target: target.mat,
@@ -80,6 +90,21 @@ module.exports = class NeuralNetwork {
         return dataset.map(({input, target}) => this.testInput(input, target));
     }
 
+
+    feedForwardLayer(layer, input) {
+        const linear = layer.weights.times(input).plus(layer.bias);
+        const nonlinear = linear.map(this.activation.func);
+        return {linear, nonlinear};
+    }
+
+    feedForwardHistory(input) {
+        const output = [{nonlinear: input}];
+        for (const layer of this.layers) {
+            output.push(this.feedForwardLayer(layer, output[output.length - 1].nonlinear));
+        }
+        return output;
+    }
+
     feedForward(input) {
         return this.feedForwardHistory(input).pop();
     }
@@ -89,7 +114,7 @@ module.exports = class NeuralNetwork {
     }
 
     computeErrors(output, target) {
-        const errors = [target.minus(output)];
+        const errors = [target.minus(output.nonlinear)];
         for (let i = this.layers.length - 1; i > 0; i--) {
             const layer = this.layers[i];
             errors.unshift(this.computeErrorLayer(layer, errors[0]));
@@ -98,9 +123,9 @@ module.exports = class NeuralNetwork {
     }
 
     computeDeltaLayer(rate, error, output, input) {
-        const activationDerivative = output.map(this.activation.dfunc);
+        const activationDerivative = output.linear.map(this.activation.dfunc);
         const biasdelta = error.timesElementWise(activationDerivative).scaledBy(rate);
-        const weightsdelta = biasdelta.times(input.transposed());
+        const weightsdelta = biasdelta.times(input.nonlinear.transposed());
         return {bias: biasdelta, weights: weightsdelta};
     }
 
@@ -115,28 +140,15 @@ module.exports = class NeuralNetwork {
         return deltas;
     }
 
-    backpropagate(example, target, rate = 0.1) {
-        example = new Matrix(example);
-        target = new Matrix(target);
-
+    backpropagate(example, target, rate) {
         const ffhistory = this.feedForwardHistory(example);
         const errors = this.computeErrors(ffhistory[ffhistory.length - 1], target); 
         const deltas = this.computeDeltas(rate, errors, ffhistory);
-
-        //console.log(JSON.stringify({errors, deltas, ffhistory}, null, 4))
 
         for (let i = 0; i < deltas.length; i++) {
             const delta = deltas[i];
             this.layers[i].weights = this.layers[i].weights.plus(delta.weights);
             this.layers[i].bias = this.layers[i].bias.plus(delta.bias);
-        }
-    }
-
-    backpropagateDataset(dataset, rate = 0.1, epochs = 100) {
-        while (epochs-- > 0) {
-            for (const {input, target} of dataset) {
-                this.backpropagate(input, target, rate);
-            }
         }
     }
 
