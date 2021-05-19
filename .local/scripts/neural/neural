@@ -143,7 +143,7 @@ try {
 }
 
 function train(nn, data) {
-    nn.backpropagateDataset(data, rate, epochs);
+    nn.trainDataset(data, rate, epochs);
     console.log(nn.serialize());
 }
 
