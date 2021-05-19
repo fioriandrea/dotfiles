@@ -92,16 +92,11 @@ try {
     console.error(e.message);
 }
 
-if (datafile === modelfile) {
-    console.error(`cannot read model and dataset from the same file '${modelfile}'`);
-    process.exit(1);
-}
-
 function train(data) {
     const inputdim = data[0].input.length || 1;
     const outputdim = data[0].target.length || 1;
     let nn;
-    if (newnet) {
+    if (newnetflag) {
         nn = new NeuralNetwork([inputdim, ...hiddendims, outputdim], activation);
     } else {
         nn = loadNeuralNetwork(modelfile);
