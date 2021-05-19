@@ -1,6 +1,9 @@
 " syntax highlighting
 syntax enable
 
+" color scheme
+colorscheme ron
+
 " status line
 
 set laststatus=2 "always show status line
