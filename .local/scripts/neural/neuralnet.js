@@ -19,13 +19,21 @@ module.exports = class NeuralNetwork {
             func: (x) => x,
             dfunc: (x) => 1,
         },
+        silu: {
+            func: (x) => x / (1 + Math.exp(-x)),
+            dfunc: (x) => (1 + Math.exp(-x) + x * Math.exp(-x)) / ((1 + Math.exp(-x)) ** 2),
+        },
+        softplus: {
+            func: (x) => Math.log(1 + Math.exp(x)),
+            dfunc: (x) => 1 / (1 + Math.exp(-x)),
+        },
         relu: {
             func: (x) => x >= 0 ? x : 0,
             dfunc: (x) => x >= 0 ? 1 : 0,
         },
     };
 
-    constructor(layerdims = [], activationName = "relu") {
+    constructor(layerdims = [], activationName) {
         // A[nhidden][ninput] * b[ninput] -> c[hnidden]
         // B[noutput][nhidden] * c[nhidden] -> d[noutput]
 
@@ -42,7 +50,7 @@ module.exports = class NeuralNetwork {
         if (activationName in NeuralNetwork.activations)
             this.activationName = activationName;
         else
-            this.activationName = "relu";
+            this.activationName = "silu";
     }
 
     get activation() {
