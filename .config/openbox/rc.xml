@@ -209,19 +209,19 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                     <wrap>no</wrap>
                 </action>
             </keybind>
-            <keybind key="S-A-Right">
+            <keybind key="A-S-Right">
                 <action name="SendToDesktop">
                     <to>right</to>
                     <wrap>no</wrap>
                 </action>
             </keybind>
-            <keybind key="S-A-Up">
+            <keybind key="A-S-Up">
                 <action name="SendToDesktop">
                     <to>up</to>
                     <wrap>no</wrap>
                 </action>
             </keybind>
-            <keybind key="S-A-Down">
+            <keybind key="A-S-Down">
                 <action name="SendToDesktop">
                     <to>down</to>
                     <wrap>no</wrap>
@@ -413,23 +413,23 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                     <height>33%</height>
                 </action>
             </keybind>
-            <keybind key="W-Right">
+            <keybind key="W-C-Right">
                 <action name="UnmaximizeFull"/>
                 <action name="GrowToEdgeEast"/>
             </keybind>
-            <keybind key="W-Left">
+            <keybind key="W-C-Left">
                 <action name="UnmaximizeFull"/>
                 <action name="GrowToEdgeWest"/>
             </keybind>
-            <keybind key="W-Down">
+            <keybind key="W-C-Down">
                 <action name="UnmaximizeFull"/>
                 <action name="GrowToEdgeSouth"/>
             </keybind>
-            <keybind key="W-Up">
+            <keybind key="W-C-Up">
                 <action name="UnmaximizeFull"/>
                 <action name="GrowToEdgeNorth"/>
             </keybind>
-            <keybind key="W-C-Up">
+            <keybind key="W-S-Up">
                 <action name="UnmaximizeFull"/>
                 <action name="MaximizeHorizontal"/>
                 <action name="MoveResizeTo">
@@ -439,7 +439,7 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                     <y>0</y>
                 </action>
             </keybind>
-            <keybind key="W-C-Down">
+            <keybind key="W-S-Down">
                 <action name="UnmaximizeFull"/>
                 <action name="MaximizeHorizontal"/>
                 <action name="MoveResizeTo">
@@ -449,7 +449,7 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                     <y>-0</y>
                 </action>
             </keybind>
-            <keybind key="W-C-Left">
+            <keybind key="W-S-Left">
                 <action name="UnmaximizeFull"/>
                 <action name="MaximizeVert"/>
                 <action name="MoveResizeTo">
@@ -458,7 +458,7 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                     <y>0</y>
                 </action>
             </keybind>
-            <keybind key="W-C-Right">
+            <keybind key="W-S-Right">
                 <action name="UnmaximizeFull"/>
                 <action name="MaximizeVert"/>
                 <action name="MoveResizeTo">
@@ -530,22 +530,22 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                 </action>
             </keybind>
             <!-- Keybindings for window switching with the arrow keys -->
-            <keybind key="W-S-Right">
+            <keybind key="W-Right">
                 <action name="DirectionalCycleWindows">
                     <direction>right</direction>
                 </action>
             </keybind>
-            <keybind key="W-S-Left">
+            <keybind key="W-Left">
                 <action name="DirectionalCycleWindows">
                     <direction>left</direction>
                 </action>
             </keybind>
-            <keybind key="W-S-Up">
+            <keybind key="W-Up">
                 <action name="DirectionalCycleWindows">
                     <direction>up</direction>
                 </action>
             </keybind>
-            <keybind key="W-S-Down">
+            <keybind key="W-Down">
                 <action name="DirectionalCycleWindows">
                     <direction>down</direction>
                 </action>
@@ -587,18 +587,18 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                 <action name="Execute">
                     <startupnotify>
                         <enabled>true</enabled>
-                        <name>Xterm</name>
+                        <name>Alacritty</name>
                     </startupnotify>
-                    <command>xterm</command>
+                    <command>alacritty</command>
                 </action>
             </keybind>
             <keybind key="C-A-t">
                 <action name="Execute">
                     <startupnotify>
                         <enabled>true</enabled>
-                        <name>Xterm</name>
+                        <name>Alacritty</name>
                     </startupnotify>
-                    <command>xterm</command>
+                    <command>alacritty</command>
                 </action>
             </keybind>
             <!-- Keybindings for running applications -->
@@ -650,7 +650,7 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                         <enabled>true</enabled>
                         <name>pulsemixer</name>
                     </startupnotify>
-                    <command>xterm -e pulsemixer</command>
+                    <command>alacritty -e pulsemixer</command>
                 </action>
             </keybind>
             <keybind key="W-l">

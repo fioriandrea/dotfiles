@@ -20,3 +20,4 @@ tint2 &
 nm-applet &
 pasystray &
 shufwall
+picom --experimental-backends &
