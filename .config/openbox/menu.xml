@@ -124,10 +124,7 @@
                     <execute>alacritty -e htop</execute>
             </action> </item>
             <item label="pstree"> <action name="Execute">
-                    <execute>alacritty -e pstree</execute>
-            </action> </item>
-            <item label="Tint2"> <action name="Execute">
-                    <execute>tint2</execute>
+                    <execute>alacritty -e pstree.x11</execute>
             </action> </item>
             <item label="Top"> <action name="Execute">
                     <execute>alacritty -e top</execute>

@@ -550,6 +550,17 @@ Copy the file to $HOME/.config/openbox/ instead. -->
         <direction>down</direction>
       </action>
     </keybind>
+    <!-- screenshot control -->
+    <keybind key="Print">
+      <action name="Execute">
+        <command>screenshot</command>
+      </action>
+    </keybind>
+    <keybind key="S-0x6B">
+      <action name="Execute">
+        <command>screenshot -s</command>
+      </action>
+    </keybind>
     <!-- brightness control -->
     <keybind key="XF86MonBrightnessUp">
       <action name="Execute">
