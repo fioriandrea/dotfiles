@@ -27,10 +27,6 @@ module.exports = class NeuralNetwork {
             func: (x) => Math.log(1 + Math.exp(x)),
             dfunc: (x) => 1 / (1 + Math.exp(-x)),
         },
-        relu: {
-            func: (x) => x >= 0 ? x : 0,
-            dfunc: (x) => x >= 0 ? 1 : 0,
-        },
     };
 
     constructor(layerdims = [], activationName) {
