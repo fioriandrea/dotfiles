@@ -42,7 +42,7 @@ Copy the file to $HOME/.config/openbox/ instead. -->
         'Active' - where the active window is -->
     </placement>
     <theme>
-        <name>dt-dark-theme</name>
+        <name>Clearlooks</name>
         <titleLayout>CSIML</titleLayout>
         <!--
             available characters are NDSLIMC, each can occur at most once.
@@ -85,7 +85,7 @@ Copy the file to $HOME/.config/openbox/ instead. -->
         </font>
         <font place="MenuItem">
             <name>Sans</name>
-            <size>8</size>
+            <size>12</size>
             <!-- font size in points -->
             <weight>Bold</weight>
             <!-- 'bold' or 'normal' -->
@@ -608,6 +608,15 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                 </action>
             </keybind>
             <keybind key="W-r">
+                <action name="Execute">
+                    <startupnotify>
+                        <enabled>true</enabled>
+                        <name>Dmenu</name>
+                    </startupnotify>
+                    <command>program-menu</command>
+                </action>
+            </keybind>
+            <keybind key="W-S-d">
                 <action name="Execute">
                     <startupnotify>
                         <enabled>true</enabled>
