@@ -20,4 +20,4 @@ tint2 &
 nm-applet &
 pasystray &
 shufwall
-picom --experimental-backends &
+picom --inactive-opacity=1.0 --experimental-backends &
