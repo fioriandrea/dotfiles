@@ -1,0 +1,3 @@
+#! /bin/sh
+
+mpv --force-window --no-terminal "$1" & disown

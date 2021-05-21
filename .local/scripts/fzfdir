@@ -1,0 +1,5 @@
+#! /bin/sh
+
+dir="$(fzf)"
+! [ -d "$dir" ] && dir="$(dirname "$dir")"
+echo "$dir"

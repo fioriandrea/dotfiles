@@ -598,18 +598,18 @@ Copy the file to $HOME/.config/openbox/ instead. -->
       <action name="Execute">
         <startupnotify>
           <enabled>true</enabled>
-          <name>Alacritty</name>
+          <name>Terminal</name>
         </startupnotify>
-        <command>alacritty</command>
+        <command>terminal</command>
       </action>
     </keybind>
     <keybind key="C-A-t">
       <action name="Execute">
         <startupnotify>
           <enabled>true</enabled>
-          <name>Alacritty</name>
+          <name>Terminal</name>
         </startupnotify>
-        <command>alacritty</command>
+        <command>terminal</command>
       </action>
     </keybind>
     <!-- Keybindings for running applications -->
@@ -641,18 +641,18 @@ Copy the file to $HOME/.config/openbox/ instead. -->
       <action name="Execute">
         <startupnotify>
           <enabled>true</enabled>
-          <name>Firefox</name>
+          <name>Browser</name>
         </startupnotify>
-        <command>firefox</command>
+        <command>browser</command>
       </action>
     </keybind>
     <keybind key="W-S-Return">
       <action name="Execute">
         <startupnotify>
           <enabled>true</enabled>
-          <name>PCManFM</name>
+          <name>File Manager</name>
         </startupnotify>
-        <command>pcmanfm</command>
+        <command>file_manager</command>
       </action>
     </keybind>
     <keybind key="W-v">
@@ -668,9 +668,9 @@ Copy the file to $HOME/.config/openbox/ instead. -->
       <action name="Execute">
         <startupnotify>
           <enabled>true</enabled>
-          <name>pulsemixer</name>
+          <name>termaudiocontrol</name>
         </startupnotify>
-        <command>alacritty -e pulsemixer</command>
+        <command>terminal -e audio_control</command>
       </action>
     </keybind>
     <keybind key="W-l">
@@ -680,16 +680,6 @@ Copy the file to $HOME/.config/openbox/ instead. -->
           <name>i3lock</name>
         </startupnotify>
         <command>i3lock -c 48D884</command>
-      </action>
-    </keybind>
-    <!-- Keybindings for exiting out of Openbox -->
-    <keybind key="S-W-q">
-      <action name="Execute">
-        <startupnotify>
-          <enabled>true</enabled>
-          <name>Oblogout</name>
-        </startupnotify>
-        <command>oblogout</command>
       </action>
     </keybind>
   </keyboard>
