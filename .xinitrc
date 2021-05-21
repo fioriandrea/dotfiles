@@ -18,4 +18,4 @@ fi
 
 . "$HOME/.xprofile"
 
-exec i3
+exec openbox-session

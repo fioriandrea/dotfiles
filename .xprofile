@@ -7,9 +7,5 @@
 #Authentication dialog
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
-
-#sets wallpaper
-shufwall
-
 # set screensaver timeout
 xset s 100
