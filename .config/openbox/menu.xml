@@ -6,7 +6,7 @@
                     <execute>code-oss --no-sandbox</execute>
             </action> </item>
             <item label="Python"> <action name="Execute">
-                    <execute>xterm -e python</execute>
+                    <execute>alacritty -e python</execute>
             </action> </item>
             <item label="Qt QDbusViewer"> <action name="Execute">
                     <execute>qdbusviewer</execute>
@@ -17,10 +17,10 @@
                     <execute>gvim</execute>
             </action> </item>
             <item label="Vi"> <action name="Execute">
-                    <execute>xterm -e vi</execute>
+                    <execute>alacritty -e vi</execute>
             </action> </item>
             <item label="Vim"> <action name="Execute">
-                    <execute>xterm -e vim</execute>
+                    <execute>alacritty -e vim</execute>
             </action> </item>
         </menu>
         <menu id="7" label="Multimedia">
@@ -51,7 +51,7 @@
                     <execute>google-chrome-stable</execute>
             </action> </item>
             <item label="Lynx"> <action name="Execute">
-                    <execute>xterm -e lynx</execute>
+                    <execute>alacritty -e lynx</execute>
             </action> </item>
             <item label="Microsoft Teams - Preview"> <action name="Execute">
                     <execute>teams</execute>
@@ -65,13 +65,13 @@
         </menu>
         <menu id="4" label="Science">
             <item label="bc"> <action name="Execute">
-                    <execute>xterm -e bc</execute>
+                    <execute>alacritty -e bc</execute>
             </action> </item>
             <item label="dc"> <action name="Execute">
-                    <execute>xterm -e dc</execute>
+                    <execute>alacritty -e dc</execute>
             </action> </item>
             <item label="GNU Octave"> <action name="Execute">
-                    <execute>xterm -e octave</execute>
+                    <execute>alacritty -e octave</execute>
             </action> </item>
         </menu>
         <menu id="19" label="Shells">
@@ -79,7 +79,7 @@
                     <execute>pcmanfm</execute>
             </action> </item>
             <item label="nnn"> <action name="Execute">
-                    <execute>xterm -e nnn</execute>
+                    <execute>alacritty -e nnn</execute>
             </action> </item>
             <item label="Termite"> <action name="Execute">
                     <execute>termite</execute>
@@ -88,7 +88,7 @@
                     <execute>urxvt</execute>
             </action> </item>
             <item label="Vifm"> <action name="Execute">
-                    <execute>xterm -e vifm</execute>
+                    <execute>alacritty -e vifm</execute>
             </action> </item>
             <item label="Xterm"> <action name="Execute">
                     <execute>xterm</execute>
@@ -121,16 +121,16 @@
                     <execute>hp-print</execute>
             </action> </item>
             <item label="Htop"> <action name="Execute">
-                    <execute>xterm -e htop</execute>
+                    <execute>alacritty -e htop</execute>
             </action> </item>
             <item label="pstree"> <action name="Execute">
-                    <execute>xterm -e pstree</execute>
+                    <execute>alacritty -e pstree</execute>
             </action> </item>
             <item label="Tint2"> <action name="Execute">
                     <execute>tint2</execute>
             </action> </item>
             <item label="Top"> <action name="Execute">
-                    <execute>xterm -e top</execute>
+                    <execute>alacritty -e top</execute>
             </action> </item>
         </menu>
         <separator/>
