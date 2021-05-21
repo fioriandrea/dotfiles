@@ -550,7 +550,7 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                     <direction>down</direction>
                 </action>
             </keybind>
-            <!-- Volume and brightness control -->
+            <!-- Mic and brightness control -->
             <keybind key="XF86MonBrightnessUp">
                 <action name="Execute">
                     <command>xbacklight -inc 1</command>
@@ -561,21 +561,6 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                     <command>xbacklight -dec 1</command>
                 </action>
             </keybind>
-            <keybind key="XF86AudioMute">
-                <action name="Execute">
-                    <command>pamixer --toggle-mute</command>
-                </action>
-            </keybind>
-            <keybind key="XF86AudioRaiseVolume">
-                <action name="Execute">
-                    <command>pamixer --increase 2</command>
-                </action>
-            </keybind>
-            <keybind key="XF86AudioLowerVolume">
-                <action name="Execute">
-                    <command>pamixer --decrease 2</command>
-                </action>
-            </keybind>
             <keybind key="XF86AudioMicMute">
                 <action name="Execute">
                     <command>pamixer --source 1 --toggle-mute</command>
@@ -583,6 +568,15 @@ Copy the file to $HOME/.config/openbox/ instead. -->
             </keybind>
             <!-- Keybindings for launching terminal -->
             <keybind key="W-Return">
+                <action name="Execute">
+                    <startupnotify>
+                        <enabled>true</enabled>
+                        <name>Xterm</name>
+                    </startupnotify>
+                    <command>xterm</command>
+                </action>
+            </keybind>
+            <keybind key="C-A-t">
                 <action name="Execute">
                     <startupnotify>
                         <enabled>true</enabled>
@@ -690,32 +684,32 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                     <action name="FocusToBottom"/>
                     <action name="Unfocus"/>
                 </mousebind>
-                <mousebind button="A-Up" action="Click">
+                <mousebind button="A-Up" action="Press">
                     <action name="GoToDesktop">
                         <to>previous</to>
                     </action>
                 </mousebind>
-                <mousebind button="A-Down" action="Click">
+                <mousebind button="A-Down" action="Press">
                     <action name="GoToDesktop">
                         <to>next</to>
                     </action>
                 </mousebind>
-                <mousebind button="C-A-Up" action="Click">
+                <mousebind button="C-A-Up" action="Press">
                     <action name="GoToDesktop">
                         <to>previous</to>
                     </action>
                 </mousebind>
-                <mousebind button="C-A-Down" action="Click">
+                <mousebind button="C-A-Down" action="Press">
                     <action name="GoToDesktop">
                         <to>next</to>
                     </action>
                 </mousebind>
-                <mousebind button="A-S-Up" action="Click">
+                <mousebind button="S-A-Up" action="Press">
                     <action name="SendToDesktop">
                         <to>previous</to>
                     </action>
                 </mousebind>
-                <mousebind button="A-S-Down" action="Click">
+                <mousebind button="S-A-Down" action="Press">
                     <action name="SendToDesktop">
                         <to>next</to>
                     </action>
@@ -728,7 +722,7 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                 <mousebind button="Left" action="DoubleClick">
                     <action name="ToggleMaximize"/>
                 </mousebind>
-                <mousebind button="Up" action="Click">
+                <mousebind button="Up" action="Press">
                     <action name="if">
                         <shaded>no</shaded>
                         <then>
@@ -739,7 +733,7 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                         </then>
                     </action>
                 </mousebind>
-                <mousebind button="Down" action="Click">
+                <mousebind button="Down" action="Press">
                     <action name="if">
                         <shaded>yes</shaded>
                         <then>
@@ -913,32 +907,32 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                 </mousebind>
             </context>
             <context name="Desktop">
-                <mousebind button="Up" action="Click">
+                <mousebind button="Up" action="Press">
                     <action name="GoToDesktop">
                         <to>previous</to>
                     </action>
                 </mousebind>
-                <mousebind button="Down" action="Click">
+                <mousebind button="Down" action="Press">
                     <action name="GoToDesktop">
                         <to>next</to>
                     </action>
                 </mousebind>
-                <mousebind button="A-Up" action="Click">
+                <mousebind button="A-Up" action="Press">
                     <action name="GoToDesktop">
                         <to>previous</to>
                     </action>
                 </mousebind>
-                <mousebind button="A-Down" action="Click">
+                <mousebind button="A-Down" action="Press">
                     <action name="GoToDesktop">
                         <to>next</to>
                     </action>
                 </mousebind>
-                <mousebind button="C-A-Up" action="Click">
+                <mousebind button="C-A-Up" action="Press">
                     <action name="GoToDesktop">
                         <to>previous</to>
                     </action>
                 </mousebind>
-                <mousebind button="C-A-Down" action="Click">
+                <mousebind button="C-A-Down" action="Press">
                     <action name="GoToDesktop">
                         <to>next</to>
                     </action>
@@ -966,22 +960,22 @@ Copy the file to $HOME/.config/openbox/ instead. -->
                 </mousebind>
             </context>
             <context name="MoveResize">
-                <mousebind button="Up" action="Click">
+                <mousebind button="Up" action="Press">
                     <action name="GoToDesktop">
                         <to>previous</to>
                     </action>
                 </mousebind>
-                <mousebind button="Down" action="Click">
+                <mousebind button="Down" action="Press">
                     <action name="GoToDesktop">
                         <to>next</to>
                     </action>
                 </mousebind>
-                <mousebind button="A-Up" action="Click">
+                <mousebind button="A-Up" action="Press">
                     <action name="GoToDesktop">
                         <to>previous</to>
                     </action>
                 </mousebind>
-                <mousebind button="A-Down" action="Click">
+                <mousebind button="A-Down" action="Press">
                     <action name="GoToDesktop">
                         <to>next</to>
                     </action>
