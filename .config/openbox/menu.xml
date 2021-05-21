@@ -8,9 +8,6 @@
             <item label="Python"> <action name="Execute">
                     <execute>xterm -e python</execute>
             </action> </item>
-            <item label="Python (v2.7)"> <action name="Execute">
-                    <execute>xterm -e python2.7</execute>
-            </action> </item>
             <item label="Qt QDbusViewer"> <action name="Execute">
                     <execute>qdbusviewer</execute>
             </action> </item>
@@ -44,12 +41,6 @@
             </action> </item>
         </menu>
         <menu id="5" label="Network">
-            <item label="Avahi SSH Server Browser"> <action name="Execute">
-                    <execute>bssh</execute>
-            </action> </item>
-            <item label="Avahi VNC Server Browser"> <action name="Execute">
-                    <execute>bvnc</execute>
-            </action> </item>
             <item label="Chromium"> <action name="Execute">
                     <execute>chromium</execute>
             </action> </item>
@@ -70,14 +61,6 @@
             </action> </item>
             <item label="Telegram Desktop"> <action name="Execute">
                     <execute>telegram-desktop</execute>
-            </action> </item>
-            <item label="TkVNC"> <action name="Execute">
-                    <execute>xterm -e tkvnc</execute>
-            </action> </item>
-        </menu>
-        <menu id="3" label="Office">
-            <item label="Zathura"> <action name="Execute">
-                    <execute>zathura</execute>
             </action> </item>
         </menu>
         <menu id="4" label="Science">
@@ -131,9 +114,6 @@
                         <execute>tint2conf</execute>
                 </action> </item>
             </menu>
-            <item label="Avahi Zeroconf Browser"> <action name="Execute">
-                    <execute>avahi-discover</execute>
-            </action> </item>
             <item label="Hardware Locality lstopo"> <action name="Execute">
                     <execute>lstopo</execute>
             </action> </item>
@@ -151,14 +131,6 @@
             </action> </item>
             <item label="Top"> <action name="Execute">
                     <execute>xterm -e top</execute>
-            </action> </item>
-        </menu>
-        <menu id="38" label="Utilities">
-            <item label="HP Device Manager"> <action name="Execute">
-                    <execute>hp-toolbox</execute>
-            </action> </item>
-            <item label="Info"> <action name="Execute">
-                    <execute>xterm -e info</execute>
             </action> </item>
         </menu>
         <separator/>
