@@ -207,7 +207,6 @@ bat1_format =
 bat2_format = 
 battery_padding = 2 0
 battery_background_id = 1
-battery_hide = 96
 battery_lclick_command = 
 battery_rclick_command = 
 battery_mclick_command = 
