@@ -11,7 +11,10 @@ do
     current_now="$(< "$battery/current_now")"
 
     estimated_time="$(awk '{
-        time = $1 / $2
+        if ($2 == 0)
+            time = 0
+        else
+            time = $1 / $2
         hours = int(time)
         minutes = int((time - hours) * 60)
         printf("%02d:%02d\n", hours, minutes)
