@@ -249,7 +249,7 @@
       <action name="ToggleShowDesktop"/>
     </keybind>
     <!-- Tiling Windows -->
-    <keybind key="W-A-KP_7">
+    <keybind key="W-A-p">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>0</x>
@@ -258,7 +258,7 @@
         <height>50%</height>
       </action>
     </keybind>
-    <keybind key="W-A-KP_8">
+    <keybind key="W-A-egrave">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>25%</x>
@@ -267,7 +267,7 @@
         <height>50%</height>
       </action>
     </keybind>
-    <keybind key="W-A-KP_9">
+    <keybind key="W-A-plus">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>50%</x>
@@ -276,7 +276,7 @@
         <height>50%</height>
       </action>
     </keybind>
-    <keybind key="W-A-KP_4">
+    <keybind key="W-A-ograve">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>0</x>
@@ -285,7 +285,7 @@
         <height>50%</height>
       </action>
     </keybind>
-    <keybind key="W-A-KP_6">
+    <keybind key="W-A-agrave">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>50%</x>
@@ -294,7 +294,7 @@
         <height>50%</height>
       </action>
     </keybind>
-    <keybind key="W-A-KP_1">
+    <keybind key="W-A-ugrave">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>0</x>
@@ -303,7 +303,7 @@
         <height>50%</height>
       </action>
     </keybind>
-    <keybind key="W-A-KP_2">
+    <keybind key="W-A-period">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>25%</x>
@@ -312,7 +312,7 @@
         <height>50%</height>
       </action>
     </keybind>
-    <keybind key="W-A-KP_3">
+    <keybind key="W-A-minus">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>50%</x>
@@ -321,7 +321,7 @@
         <height>50%</height>
       </action>
     </keybind>
-    <keybind key="W-A-KP_5">
+    <keybind key="W-A-Shift_R">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>center</x>
@@ -330,7 +330,7 @@
         <height>95%</height>
       </action>
     </keybind>
-    <keybind key="W-KP_7">
+    <keybind key="W-p">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>0%</x>
@@ -339,7 +339,7 @@
         <height>33%</height>
       </action>
     </keybind>
-    <keybind key="W-KP_8">
+    <keybind key="W-egrave">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>33%</x>
@@ -348,7 +348,7 @@
         <height>33%</height>
       </action>
     </keybind>
-    <keybind key="W-KP_9">
+    <keybind key="W-plus">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>67%</x>
@@ -357,7 +357,7 @@
         <height>33%</height>
       </action>
     </keybind>
-    <keybind key="W-KP_4">
+    <keybind key="W-ograve">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>0%</x>
@@ -366,7 +366,7 @@
         <height>34%</height>
       </action>
     </keybind>
-    <keybind key="W-KP_5">
+    <keybind key="W-agrave">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>33%</x>
@@ -375,7 +375,7 @@
         <height>34%</height>
       </action>
     </keybind>
-    <keybind key="W-KP_6">
+    <keybind key="W-ugrave">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>67%</x>
@@ -384,7 +384,7 @@
         <height>34%</height>
       </action>
     </keybind>
-    <keybind key="W-KP_1">
+    <keybind key="W-period">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>0%</x>
@@ -393,7 +393,7 @@
         <height>33%</height>
       </action>
     </keybind>
-    <keybind key="W-KP_2">
+    <keybind key="W-minus">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>33%</x>
@@ -402,7 +402,7 @@
         <height>33%</height>
       </action>
     </keybind>
-    <keybind key="W-KP_3">
+    <keybind key="W-Shift_R">
       <action name="UnmaximizeFull"/>
       <action name="MoveResizeTo">
         <x>67%</x>
