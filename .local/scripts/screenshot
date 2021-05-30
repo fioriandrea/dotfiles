@@ -11,7 +11,8 @@ error_exit() {
 }
 
 format="png"
-destination="/tmp/screenshot-$(date +%F_%T)"
+fname="screenshot-$(date +%F_%T)"
+destination="/tmp"
 options=()
 
 print_help() {
@@ -20,7 +21,7 @@ print_help() {
 	echo "-h|--help         show this help"
 	echo "-s                allows mouse selection"
 	echo "-f FORMAT         use FORMAT instead of default $format. FORMAT has to be a valid image MIME type"
-	echo "-d DESTINATION    use DESTINATION instead of default $destination.FORMAT"
+	echo "-d DESTINATION    use DESTINATION instead of default $destination"
 }
 
 while [ "$#" -gt 0 ]; do
@@ -45,7 +46,8 @@ while [ "$#" -gt 0 ]; do
 				error_exit "error: must supply destination" >&2
 			fi
 			shift
-			destination="$1"
+            destination="$(cd "$1"; pwd)"
+            destination="${destination%%/}"
 			shift
 		;;
 		"-h"|"--help")
@@ -59,4 +61,4 @@ while [ "$#" -gt 0 ]; do
 	esac
 done
 
-scrot "${options[@]}" "$destination.$format" -e 'xclip -selection clipboard -t image/'"$format"' $f'
+scrot "${options[@]}" "$destination/$fname.$format" -e 'xclip -selection clipboard -t image/'"$format"' $f'

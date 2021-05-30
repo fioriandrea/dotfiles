@@ -1,29 +1,32 @@
 #! /bin/awk -f
 
-function help() {
-    print "histo [options]"
-    print ""
-    print "Generate histogram from data read from stdin."
-    print "By default, it reads data, sorts it numerically and counts occurrences."
-    print ""
-    print "h        Prints help"
-    print "ec       Read externally counted data. Input is in the form COUNT VALUE (like the output of uniq -c)"
-    print "rf       Read data from a list of files. To indicate the end of the list, -- must be passed after the files"
-    print "b        Bucket mode. Use buckets for your input. Works only with numeric inputs"
-    print "ni N     Specify number of intervals (buckets) for bucket mode. Default is " bucketIntervals
-    print "wl N     Specify the maximum word length for a datapoint. Default is " maxWordLength
-    print "mb N     Specify the height assigned to the bucket with the maximum frequency. Default is " maxBar
-    print "s S      Specify the symbol used for the histogram. Default is " symbol
-    print "ai N     Specify number of axis intervals"
-    print "ha       Hide axes"
-    print "t        Show axis on top"
-    print "tb       Show axes both on top and on bottom"
-    print "p        Show percentages instead of counts"
-    print "tot      Show total"
-    print "avg      Show average"
-    print "exp      Show expected value"
-    print ""
-    print "EXAMPLE: awk 'BEGIN {for (i = 1; i < 1000; i++) print (rand() > 0.5 ? 1 : -1)}' | histo s ? tot avg p"
+function help(    oldofs) {
+    oldofs = OFS
+    OFS = "\n"
+    print "histo [options]",
+    "",
+    "Generate histogram from data read from stdin.",
+    "By default, it reads data, sorts it numerically and counts occurrences.",
+    "",
+    "h        Prints help",
+    "ec       Read externally counted data. Input is in the form COUNT VALUE (like the output of uniq -c)",
+    "rf       Read data from a list of files. To indicate the end of the list, -- must be passed after the files",
+    "b        Bucket mode. Use buckets for your input. Works only with numeric inputs",
+    "ni N     Specify number of intervals (buckets) for bucket mode. Default is " bucketIntervals,
+    "wl N     Specify the maximum word length for a datapoint. Default is " maxWordLength,
+    "mb N     Specify the height assigned to the bucket with the maximum frequency. Default is " maxBar,
+    "s S      Specify the symbol used for the histogram. Default is " symbol,
+    "ai N     Specify number of axis intervals",
+    "ha       Hide axes",
+    "t        Show axis on top",
+    "tb       Show axes both on top and on bottom",
+    "p        Show percentages instead of counts",
+    "tot      Show total",
+    "avg      Show average",
+    "exp      Show expected value",
+    "",
+    "EXAMPLE: awk 'BEGIN {for (i = 1; i < 1000; i++) print (rand() > 0.5 ? 1 : -1)}' | histo s ? tot avg p"
+    OFS = oldofs
 }
 
 function max(n, k) {

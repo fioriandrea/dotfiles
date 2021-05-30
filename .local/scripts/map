@@ -1,16 +1,19 @@
 #! /bin/awk -f
 
-function help() {
-    print "map [options]"
-    print ""
-    print "Maps an interval into another"
-    print ""
-    print "h        Prints help"
-    print "sx       Sets start for domain interval. Default is " sx
-    print "ex       Sets end for domain interval. Default is " ex
-    print "sy       Sets start for codomain interval. Default is " sy
-    print "ex       Sets end for codomain interval. Default is " ey
-    print "f FNAME  Applies FNAME to the result. Allowed FNAMEs are id, floor, ceil, trunc. Default is id"
+function help(    oldofs) {
+    oldofs = OFS
+    OFS = "\n"
+    print "map [options]",
+    "",
+    "Maps an interval into another",
+    "",
+    "h        Prints help",
+    "sx       Sets start for domain interval. Default is " sx,
+    "ex       Sets end for domain interval. Default is " ex,
+    "sy       Sets start for codomain interval. Default is " sy,
+    "ex       Sets end for codomain interval. Default is " ey,
+    "f FNAME  Applies FNAME to the result. Allowed FNAMEs are id, floor, ceil, trunc. Default is id"
+    OFS = oldofs
 }
 
 function map(x) {

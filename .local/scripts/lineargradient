@@ -1,15 +1,18 @@
 #! /bin/awk -f
 
-function printHelp() {
-    print "lineargradient [OPTIONS]"
-    print ""
-    print "Reads from stdin values in a range and outputs linear gradient colors."
-    print ""
-    print "h       Show this help"
-    print "lv V    Sets the range low value. Default is " lowValue
-    print "hv V    Sets the range high value. Default is " highValue
-    print "lc C    Sets the range low color. Default is " lowColor
-    print "hc C    Sets the range high color. Default is " highColor
+function printHelp(    oldofs) {
+    oldofs = OFS
+    OFS = "\n"
+    print "lineargradient [OPTIONS]",
+    "",
+    "Reads from stdin values in a range and outputs linear gradient colors.",
+    "",
+    "h       Show this help",
+    "lv V    Sets the range low value. Default is " lowValue,
+    "hv V    Sets the range high value. Default is " highValue,
+    "lc C    Sets the range low color. Default is " lowColor,
+    "hc C    Sets the range high color. Default is " highColor
+    OFS = oldofs
 }
 
 function min(a, b) {

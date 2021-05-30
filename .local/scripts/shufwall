@@ -1,14 +1,16 @@
-#! /bin/bash
+#! /bin/sh
 
 print_help() {
-    echo "shufwall [options]"
-    echo ""
-    echo "Sets background."
-    echo "The default behaviour is to take a file from "'$WALLPAPER_DIR'" and set it as a wallpaper."
-    echo ""
-    echo "-h    Show this help"
-    echo "-f    Specify wallpaper file instead of picking one at random"
-    echo "-d    Specify wallpaper directory instead of the default "'$WALLPAPER_DIR'
+    cat << EOF
+shufwall [options]
+
+Sets background.
+The default behaviour is to take a file from "'$WALLPAPER_DIR'" and set it as a wallpaper.
+
+-h    Show this help
+-f    Specify wallpaper file instead of picking one at random
+-d    Specify wallpaper directory instead of the default "'$WALLPAPER_DIR
+EOF
 }
 
 wallpaperFile=

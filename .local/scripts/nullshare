@@ -1,13 +1,15 @@
 #! /bin/bash
 
 print_help() {
-    echo "nullshare [options] ...filelist"
-    echo ""
-    echo "Upload filelist to 0x0.st (The null pointer, https://github.com/mia-0/0x0)"
-    echo ""
-    echo "-h    Prints help"
-    echo "-t    Uploads files as archives (tar)"
-    echo "-x    Uploads files as gzipped archives (tar.gz). Default for directories"
+    cat << EOF
+nullshare [options] ...filelist
+
+Upload filelist to 0x0.st (The null pointer, https://github.com/mia-0/0x0)
+
+-h    Prints help
+-t    Uploads files as archives (tar)
+-x    Uploads files as gzipped archives (tar.gz). Default for directories
+EOF
 }
 
 upload_file() {

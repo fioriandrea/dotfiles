@@ -1,16 +1,19 @@
 #! /bin/awk -f
 
-function help() {
-    print "mandelbrot [options]"
-    print ""
-    print "Prints a Mandelbrot set"
-    print ""
-    print "h        Prints help"
-    print "minx n     Sets the minimum x value, default is " minx
-    print "maxx n     Sets the maximum x value, default is " maxx
-    print "miny n     Sets the minimum y value, default is " miny
-    print "maxy n     Sets the maximum y value, default is " maxy
-    print "iter n     Sets the maximum number of iterations, default is " iterations
+function help(    oldofs) {
+    oldofs = OFS
+    OFS = "\n"
+    print "mandelbrot [options]",
+    "",
+    "Prints a Mandelbrot set",
+    "",
+    "h        Prints help",
+    "minx n     Sets the minimum x value, default is " minx,
+    "maxx n     Sets the maximum x value, default is " maxx,
+    "miny n     Sets the minimum y value, default is " miny,
+    "maxy n     Sets the maximum y value, default is " maxy,
+    "iter n     Sets the maximum number of iterations, default is " iterations
+    OFS = oldofs
 }
 
 function min(a, b) {

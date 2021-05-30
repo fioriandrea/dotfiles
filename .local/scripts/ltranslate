@@ -1,15 +1,17 @@
 #! /bin/sh
 
 print_help() {
-    echo "ltranslate [options]"
-    echo ""
-    echo "Helper script to access the libretranslate API"
-    echo ""
-    echo "-h    Prints help"
-    echo "-m    Sets mode, supported modes are 'translate', 'detect' and 'languages'. Default is '$mode'"
-    echo "-f    Source language (from). Default is '$from'"
-    echo "-t    Destination language (to). Deafult is '$to'"
-    echo "-c    Text to translate (content). Deafult is '$content'"
+    cat << EOF
+ltranslate [options]
+
+Helper script to access the libretranslate API
+
+-h    Prints help
+-m    Sets mode, supported modes are 'translate', 'detect' and 'languages'. Default is '$mode'
+-f    Source language (from). Default is '$from'
+-t    Destination language (to). Deafult is '$to'
+-c    Text to translate (content). Deafult is '$content'
+EOF
 }
 
 post_json() {

@@ -1,13 +1,15 @@
 #! /bin/sh
 
 print_help() {
-    echo "say [options] arg"
-    echo ""
-    echo "Text-to-speech script"
-    echo ""
-    echo "-h    Prints help"
-    echo "-l    Sets language"
-    echo "-f    Read file instead of arg"
+    cat << EOF
+say [options] arg
+
+Text-to-speech script
+
+-h    Prints help
+-l    Sets language
+-f    Read file instead of arg
+EOF
 }
 
 lang="en"

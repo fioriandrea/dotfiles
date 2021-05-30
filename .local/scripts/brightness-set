@@ -1,9 +1,12 @@
 #! /bin/awk -f
 
-function printHelp() {
-    print "brightness-set -- set screen brightness"
-    print "brightness-set [+|-]NUM"
-    print "if neither + or - is in front of NUM, NUM is interpreted as a percentage, otherwise as an increment (or decrement)"
+function printHelp(    oldofs) {
+    oldofs = OFS
+    OFS = "\n"
+    print "brightness-set -- set screen brightness",
+          "brightness-set [+|-]NUM",
+          "if neither + or - is in front of NUM, NUM is interpreted as a percentage, otherwise as an increment (or decrement)"
+    OFS = oldofs
 }
 
 function printError(msg) {

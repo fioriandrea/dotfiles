@@ -1,14 +1,16 @@
 #! /bin/bash
 
 print_help() {
-    echo "install-dotfiles [options]"
-    echo ""
-    echo "Install dotfiles found in a git repo."
-    echo ""
-    echo "-h    Show this help"
-    echo "-r    Specify the repo. Default is $repo"
-    echo "-d    Specify the destination folder. Default is $destination"
-    echo "-c    Specify separate-git-dir. Default is $confDir"
+    cat << EOF
+install-dotfiles [options]
+
+Install dotfiles found in a git repo.
+
+-h    Show this help
+-r    Specify the repo. Default is $repo
+-d    Specify the destination folder. Default is $destination
+-c    Specify separate-git-dir. Default is $confDir
+EOF
 }
 
 git_bare() {

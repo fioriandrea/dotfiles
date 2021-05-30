@@ -1,12 +1,15 @@
 #! /bin/awk -f
 
-function help() {
-    print "seven-segment [options]"
-    print ""
-    print "Print seven-segment numbers"
-    print ""
-    print "h        Prints help"
-    print "sep s    Specify the separator used between characters. Default is \"" separator "\""
+function help(    oldofs) {
+    oldofs = OFS
+    OFS = "\n"
+    print "seven-segment [options]",
+    "",
+    "Print seven-segment numbers",
+    "",
+    "h        Prints help",
+    "sep s    Specify the separator used between characters. Default is \"" separator "\""
+    OFS = oldofs
 }
 
 function printToSegments(s) {
