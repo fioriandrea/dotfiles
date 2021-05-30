@@ -219,7 +219,7 @@ cursor:
     #   - ▇ Block
     #   - _ Underline
     #   - | Beam
-    shape: Beam
+    shape: Block
 
   # Vi mode cursor style
   #
