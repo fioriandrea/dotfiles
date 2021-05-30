@@ -1,0 +1,24 @@
+#! /bin/sh
+
+file="$1"
+directory="$(dirname "$file")"
+directory="$(cd "$directory" && pwd)"
+file=$(basename "$file")
+filename="${file%%.*}"
+extension="${file##*.}"
+shift
+
+cd "$directory" || exit 1
+
+case "$extension" in
+    py) python "$file" "$@" ;;
+    js) node "$file" "$@" ;;
+    awk) awk -f "$file" "$@" ;;
+    sh) sh "$file" "$@" ;;
+    bash) bash "$file" "$@" ;;
+    go) go run "$file" "$@" ;;
+    m) octave "$file" "$@" ;;
+    c) cc "$file" -o "$filename" && ./"$filename" ;;
+    c++) g++ "$file" -o "$filename" && ./"$filename" ;;
+    *) echo "file format not supported '$extension'" >&2 ;;
+esac

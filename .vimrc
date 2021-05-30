@@ -55,6 +55,9 @@ filetype plugin on
 set completeopt=longest,menuone
 set omnifunc=syntaxcomplete#Complete
 
+" map comma to leader
+map , <leader>
+
 " completion "
 
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
@@ -99,10 +102,6 @@ tnoremap <Esc><Esc> <C-W>N
 " Show current line number
 set number
 
-" map space to leader
-nnoremap <Space> <Nop>
-map <Space> <leader>
-
 "Set every files as Unix (LF) as Windows might set CRLF wich is not working
 "for unix
 set fileformat=unix
@@ -111,3 +110,6 @@ set fileformat=unix
 iabbrev lenght length
 iabbrev widht width
 iabbrev heigth height
+
+" autointerpret
+noremap <leader>i :w<cr>:!clear ; interpreter %<cr>
