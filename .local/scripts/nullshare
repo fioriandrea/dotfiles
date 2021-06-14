@@ -22,15 +22,12 @@ print_upload_file() {
 }
 
 make_tmp() {
-    if [ -z "$tmpDir" ]
-    then
-        tmpDir="$(mktemp -d)"
-    fi
+    [ -z "$tmpDir" ] && tmpDir="$(mktemp -d)"
 }
 
 make_tarball() {
     make_tmp
-    tarballName="$(basename "$1")"
+    tarballName="${1##*/}"
     fileName="$tmpDir/$tarballName.tar"
     tar -c -f "$fileName" "$1"
 }
@@ -42,18 +39,14 @@ make_tarballgz() {
 }
 
 delete_tmp() {
-    if [ ! -z "$tmpDir" ]
-    then
-        rm -rf "$tmpDir"
-    fi
+    [ ! -z "$tmpDir" ] && rm -rf "$tmpDir"
 }
 
 [ "$#" = 0 ] && print_help && exit 0
 
 tflag=
 xflag=
-while getopts ":htx" o
-do
+while getopts ":htx" o; do
     case $o in
         "h") print_help && exit 0 ;;
         "t") tflag=1 ;;
@@ -66,14 +59,11 @@ shift "$(($OPTIND - 1))"
 
 tmpDir=
 tarballName=
-while [ -f "$1" -o -d "$1" ]
-do
+while [ -f "$1" -o -d "$1" ]; do
     fileName="$1"
-    if [ ! -z "$xflag" -o -d "$fileName" ]
-    then
+    if [ ! -z "$xflag" -o -d "$fileName" ]; then
         make_tarballgz "$fileName"
-    elif [ ! -z "$tflag" ]
-    then
+    elif [ ! -z "$tflag" ]; then
         make_tarball "$fileName"
     fi
     print_upload_file "$fileName"

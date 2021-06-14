@@ -14,7 +14,7 @@ EOF
 }
 
 error_exit() {
-	printf '%s\n' "$1" >&2
+    printf '%s\n' "$1" >&2
     if [[ -z $2 ]]; then
         exit 1
     else
@@ -77,7 +77,7 @@ nsecs=$((hours * 60 * 60 + minutes * 60 + seconds))
 
 for ((i = nsecs; i >= 0; i--)); do
     sleep 1 &
-    hours=$((i / 60 / 60))
+    hours=$((i / (60 * 60)))
     minutes=$(((i - hours * 60 * 60) / 60))
     seconds=$((i - hours * 60 * 60 - minutes * 60))
     printf '\r%02d:%02d:%02d' "$hours" "$minutes" "$seconds"
