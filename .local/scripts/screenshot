@@ -17,7 +17,7 @@ options=()
 
 print_help() {
 	cat <<EOF
-usage: screenshot [option] [...args]
+usage: ${0##*/} [option] [...args]
 
 -h|--help         show this help
 -s                allows mouse selection

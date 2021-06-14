@@ -1,0 +1,89 @@
+#! /bin/bash
+
+print_help() {
+    cat <<EOF
+usage: ${0##*/} [options]
+
+-h                  show this help
+-H HOURS            wait for HOURS hours before performing action
+-m MINUTES          wait for MINUTES minutes before performing action
+-s SECONDS          wait for SECONDS seconds before performing action
+-t TIMESTR          wait for TIMESTR before performing action
+-a ACTION ARGS...   call ACTION with its ARGS after TIMESTR is elapsed
+EOF
+}
+
+error_exit() {
+	printf '%s\n' "$1" >&2
+    if [[ -z $2 ]]; then
+        exit 1
+    else
+        exit "$2"
+    fi
+}
+
+(($# == 0)) && print_help && exit 0
+
+hours=0
+minutes=0
+seconds=0
+action=()
+while (($# > 0)); do
+    case $1 in
+        "-h") print_help && exit 0 ;;
+        "-H")
+            (($# < 2)) && error_exit "must supply hours"
+            hours=$2
+            shift
+            shift
+            ;;
+        "-m")
+            (($# < 2)) && error_exit "must supply minutes"
+            minutes=$2
+            shift
+            shift
+            ;;
+        "-s")
+            (($# < 2)) && error_exit "must supply seconds"
+            seconds=$2
+            shift
+            shift
+            ;;
+        "-t") 
+            (($# < 2)) && error_exit "must supply time string"
+            IFS=':' read -r hours minutes seconds <<< "$2"
+            shopt -s extglob
+            hours=${hours##+(0)}
+            minutes=${minutes##+(0)}
+            seconds=${seconds##+(0)}
+            shopt -u extglob
+            shift
+            shift
+            ;;
+        "-a")
+            (($# < 2)) && error_exit "must supply a command"
+            shift
+            while (($# > 0)); do
+                action+=("$1")
+                shift
+            done
+            ;;
+        *) error_exit "unrecognized option '$1'" ;;
+    esac
+done
+
+nsecs=$((hours * 60 * 60 + minutes * 60 + seconds))
+((${#action[@]} == 0)) && action=(notify-send "$nsecs seconds elapsed")
+
+for ((i = nsecs; i >= 0; i--)); do
+    sleep 1 &
+    hours=$((i / 60 / 60))
+    minutes=$(((i - hours * 60 * 60) / 60))
+    seconds=$((i - hours * 60 * 60 - minutes * 60))
+    printf '\r%02d:%02d:%02d' "$hours" "$minutes" "$seconds"
+    ((i <= 0)) && break
+    wait
+done
+
+printf '\n'
+"${action[@]}"
