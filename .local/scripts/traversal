@@ -3,7 +3,7 @@
 function help(    oldofs) {
     oldofs = OFS
     OFS = "\n"
-    print "traversal [options]",
+    print programname " [options]",
     "",
     "Traverses a graph.",
     "",
@@ -23,15 +23,12 @@ function help(    oldofs) {
     "ALGO     Sets the algorithm to use (available algorithms are:",
     "         preorder (pre), postorder (post), levelorder (level),",
     "         topological sorting (topo)).",
-    "         default is " type,
-    "",
-    "-        Signals end of command line options.",
-    "         After this, arguments are assumed to be files"
+    "         default is " type
     OFS = oldofs
 }
 
 function printError(message) {
-    printf(message) | "cat 1>&2"
+    printf("%s: %s", programname, message) | "cat 1>&2"
 }
 
 function processCLIArgs(    i, j) {
@@ -42,12 +39,8 @@ function processCLIArgs(    i, j) {
             exit 0
         } else if (ARGV[i] == "pre" || ARGV[i] == "post" || ARGV[i] == "level" || ARGV[i] == "topo") {
             type = ARGV[i]
-        } else if (ARGV[i] == "-") {
-            ++i
-            break
         } else {
-            printError(sprintf("unknown option '%s'\n", ARGV[i]))
-            exit 1
+            break
         }
     }
     for (j = 1; j < i; ++j) {
@@ -220,7 +213,7 @@ function algorithm(type, gr, root) {
     }
 }
 
-function delimitBreaks(type, delimiter) {
+function printPathDelimiter(type, delimiter) {
     if (type == "post" || type == "pre" || type == "level") {
         printf("%s", delimiter)
     } 
@@ -229,6 +222,7 @@ function delimitBreaks(type, delimiter) {
 # main
 
 BEGIN {
+    programname = "traversal"
     processCLIArgs()
 }
 
@@ -240,14 +234,17 @@ BEGIN {
 
     for (i = 1; i <= NF; ++i) {
         if (length(prevroot) == 0) {
-            if ($i in leaves) {
-                delete roots[$i]
-            } else {
+            if (!($i in leaves)) {
                 roots[$i] = 1
+                ++nroots
             }
             prevroot = $i
         } else {
             leaves[$i] = 1
+            if ($i in roots && nroots > 1) {
+                delete roots[$i]
+                --nroots
+            }
             addChild(gr, prevroot, $i)
             prevroot = ""
         }
@@ -262,7 +259,7 @@ END {
     }
     delim = ""
     for (root in roots) {
-        delimitBreaks(type, delim)
+        printPathDelimiter(type, delim)
         algorithm(type, gr, root)
         delim = "\n"
     }        
