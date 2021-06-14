@@ -16,12 +16,14 @@ destination="/tmp"
 options=()
 
 print_help() {
-	echo "usage: screenshot [option] [...args]"
-	echo ""
-	echo "-h|--help         show this help"
-	echo "-s                allows mouse selection"
-	echo "-f FORMAT         use FORMAT instead of default $format. FORMAT has to be a valid image MIME type"
-	echo "-d DESTINATION    use DESTINATION instead of default $destination"
+	cat <<EOF
+usage: screenshot [option] [...args]
+
+-h|--help         show this help
+-s                allows mouse selection
+-f FORMAT         use FORMAT instead of default $format. FORMAT has to be a valid image MIME type
+-d DESTINATION    use DESTINATION instead of default $destination
+EOF
 }
 
 while [ "$#" -gt 0 ]; do

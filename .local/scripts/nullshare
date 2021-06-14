@@ -1,8 +1,8 @@
-#! /bin/bash
+#! /bin/sh
 
 print_help() {
     cat << EOF
-nullshare [options] ...filelist
+${0##*/} [options] ...filelist
 
 Upload filelist to 0x0.st (The null pointer, https://github.com/mia-0/0x0)
 
@@ -48,11 +48,13 @@ delete_tmp() {
     fi
 }
 
+[ "$#" = 0 ] && print_help && exit 0
+
 tflag=
 xflag=
 while getopts ":htx" o
 do
-    case "$o" in
+    case $o in
         "h") print_help && exit 0 ;;
         "t") tflag=1 ;;
         "x") xflag=1 ;;

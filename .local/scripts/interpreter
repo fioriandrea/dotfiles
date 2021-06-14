@@ -4,7 +4,7 @@ file="$1"
 directory="$(dirname "$file")"
 directory="$(cd "$directory" && pwd)"
 file=$(basename "$file")
-filename="${file%%.*}"
+filename="${file%.*}"
 extension="${file##*.}"
 shift
 
