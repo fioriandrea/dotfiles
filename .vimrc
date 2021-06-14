@@ -1,3 +1,5 @@
+set noesckeys
+
 " syntax highlighting
 syntax enable
 
@@ -113,3 +115,12 @@ iabbrev heigth height
 
 " autointerpret
 noremap <leader>i :w<cr>:!clear ; interpreter %<cr>
+
+" autoclose
+inoremap " ""<left>
+inoremap ' ''<left>
+inoremap ( ()<left>
+inoremap [ []<left>
+inoremap { {}<left>
+inoremap {<CR> {<CR>}<ESC>O
+inoremap {;<CR> {<CR>};<ESC>O
