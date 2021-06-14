@@ -9,17 +9,7 @@ usage: ${0##*/} [options]
 -m MINUTES          wait for MINUTES minutes before performing action
 -s SECONDS          wait for SECONDS seconds before performing action
 -t TIMESTR          wait for TIMESTR before performing action
--a ACTION ARGS...   call ACTION with its ARGS after TIMESTR is elapsed
 EOF
-}
-
-error_exit() {
-    printf '%s\n' "$1" >&2
-    if [[ -z $2 ]]; then
-        exit 1
-    else
-        exit "$2"
-    fi
 }
 
 (($# == 0)) && print_help && exit 0
@@ -27,53 +17,28 @@ error_exit() {
 hours=0
 minutes=0
 seconds=0
-action=()
-while (($# > 0)); do
-    case $1 in
-        "-h") print_help && exit 0 ;;
-        "-H")
-            (($# < 2)) && error_exit "must supply hours"
-            hours=$2
-            shift
-            shift
-            ;;
-        "-m")
-            (($# < 2)) && error_exit "must supply minutes"
-            minutes=$2
-            shift
-            shift
-            ;;
-        "-s")
-            (($# < 2)) && error_exit "must supply seconds"
-            seconds=$2
-            shift
-            shift
-            ;;
-        "-t") 
-            (($# < 2)) && error_exit "must supply time string"
-            IFS=':' read -r hours minutes seconds <<< "$2"
+while getopts ":hH:m:s:t:" o; do
+    case "$o" in
+        "h") print_help && exit 0 ;;
+        "H") hours="$OPTARG" ;;
+        "m") minutes="$OPTARG" ;;
+        "s") seconds="$OPTARG" ;;
+        "t") 
+            IFS=':' read -r hours minutes seconds <<< "$OPTARG"
             shopt -s extglob
             hours=${hours##+(0)}
             minutes=${minutes##+(0)}
             seconds=${seconds##+(0)}
             shopt -u extglob
-            shift
-            shift
             ;;
-        "-a")
-            (($# < 2)) && error_exit "must supply a command"
-            shift
-            while (($# > 0)); do
-                action+=("$1")
-                shift
-            done
-            ;;
-        *) error_exit "unrecognized option '$1'" ;;
+        ":") echo "must supply argument to '$OPTARG'" >&2 && exit 1 ;;
+        "?") echo "unknown option '$OPTARG'" >&2 && exit 1 ;;
     esac
 done
 
+shift "$(($OPTIND - 1))"
+
 nsecs=$((hours * 60 * 60 + minutes * 60 + seconds))
-((${#action[@]} == 0)) && action=(notify-send "$nsecs seconds elapsed")
 
 for ((i = nsecs; i >= 0; i--)); do
     sleep 1 &
@@ -86,4 +51,3 @@ for ((i = nsecs; i >= 0; i--)); do
 done
 
 printf '\n'
-"${action[@]}"
