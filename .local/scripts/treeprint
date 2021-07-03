@@ -3,19 +3,20 @@
 function treeprint(tree, root, level, lastchild, closedlevels,    i, j) {
     if (!root)
         return
-    if (lastchild)
-        closedlevels[level] = 1
     if (level > 0) {
         for (j = 1; j <= level - 1; j++) {
             printf("%s   ", j in closedlevels ? " " : pipe)
         }
         printf("%s%s%s%s", lastchild ? el : tee, dash, dash, dash)
     }
+    if (lastchild)
+        closedlevels[level] = 1
     printf("%s\n", root)
     for (i = 1; i <= tree[root, "nchildren"]; i++) {
         lastchild = i == tree[root, "nchildren"]
         treeprint(tree, tree[root, i], level + 1, lastchild, closedlevels)
     }
+    delete closedlevels[level]
 }
 
 function errorprint(message) {
