@@ -13,6 +13,7 @@ cd "$directory" || exit 1
 case "$extension" in
     py) python "$file" "$@" ;;
     js) node "$file" "$@" ;;
+    ts) deno run -A "$file" "$@" ;;
     awk) awk -f "$file" "$@" ;;
     sh) sh "$file" "$@" ;;
     bash) bash "$file" "$@" ;;
@@ -20,5 +21,6 @@ case "$extension" in
     m) octave "$file" "$@" ;;
     c) cc "$file" -o "$filename" && ./"$filename" ;;
     c++) g++ "$file" -o "$filename" && ./"$filename" ;;
+    rs) rustc "$file" -o "$filename" && ./"$filename" ;;
     *) echo "file format not supported '$extension'" >&2 ;;
 esac
