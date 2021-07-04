@@ -17,12 +17,6 @@ function usageError() {
     printError("usage: brightness-set [+|-]NUM")
 }
 
-function trim(str) {
-    sub(/[ \t\n]+$/, "", str)
-    sub(/^[ \t\n]+/, "", str)
-    return str
-}
-
 function map(n, r1, r2, r3, r4,    m, q) {
     m = (r3 - r4) / (r1 - r2)
     q = r4 - r2 * m
@@ -49,14 +43,6 @@ BEGIN {
         exit 0
     }
     
-    num = trim(ARGV[1])
-
-    if (num !~ /^[+-]?[0-9]+(\.[0-9]+)?$/) {
-        printError("Wrong number format: " num)
-        usageError()
-        exit 1
-    }
-
     dir = "/sys/class/backlight/intel_backlight"
     maxPath = dir "/max_brightness"
     currentPath = dir "/brightness"
