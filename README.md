@@ -10,3 +10,9 @@ Although some things are optimized for arch in particular (especially some alias
 # Scripts
 
 Some scripts that are used in the various configs can be found in .local/scripts.
+
+# Installation
+
+```sh
+curl https://raw.githubusercontent.com/fioriandrea/dotfiles/master/.local/scripts/install-dotfiles | bash
+```
