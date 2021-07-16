@@ -9,14 +9,15 @@ hc() {
 hc emit_hook reload
 
 hc set_layout horizontal
+hc set default_frame_layout horizontal
 
 # autostart
-
-pgrep tint2 || tint2 &
-pgrep nm-applet || nm-applet &
-pgrep pasystray || pasystray &
-shufwall &
-#pgrep picom || picom --inactive-opacity=1.0 --experimental-backends &
+if hc silent new_attr bool my_not_first_autostart ; then
+    tint2 &
+    nm-applet &
+    pasystray &
+    shufwall &
+fi
 
 # remove all existing keybindings
 hc keyunbind --all
@@ -36,6 +37,7 @@ hc keybind $Mod-w spawn "$BROWSER"
 hc keybind Control-Mod1-t spawn "$TERMINAL"
 hc keybind $Mod-Return spawn "$TERMINAL"
 hc keybind $Mod-Shift-d spawn program-menu
+hc keybind $Mod-m spawn program-menu
 hc keybind $Mod-Shift-Return spawn "$FILE_MANAGER"
 hc keybind $Mod-v spawn pavucontrol
 
@@ -157,15 +159,10 @@ hc set frame_bg_transparent on
 hc set frame_transparent_width 5
 hc set frame_gap 4
 
-hc attr theme.title_height 15
-hc attr theme.title_font 'Dejavu Sans:pixelsize=12'  # example using Xft
-# hc attr theme.title_font '-*-fixed-medium-r-*-*-13-*-*-*-*-*-*-*'
-hc attr theme.padding_top 2  # space below the title's baseline (i.e. text depth)
 hc attr theme.active.color '#345F0Cef'
 hc attr theme.title_color '#ffffff'
 hc attr theme.normal.color '#323232dd'
 hc attr theme.urgent.color '#7811A1dd'
-hc attr theme.normal.title_color '#898989'
 hc attr theme.inner_width 1
 hc attr theme.inner_color black
 hc attr theme.border_width 3
