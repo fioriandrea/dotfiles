@@ -6,4 +6,4 @@
 
 . "$HOME/.xprofile"
 
-exec openbox-session
+exec herbstluftwm
