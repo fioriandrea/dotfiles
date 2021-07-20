@@ -115,8 +115,8 @@ done
 hc keybind $Mod-period use_index +1 --skip-visible
 hc keybind $Mod-comma  use_index -1 --skip-visible
 hc keybind $Mod-apostrophe  use_previous
-hc keybind Control-Mod1-Left use_index +1 --skip-visible
-hc keybind Control-Mod1-Right  use_index -1 --skip-visible
+hc keybind Control-Mod1-Right  use_index +1 --skip-visible
+hc keybind Control-Mod1-Left use_index -1 --skip-visible
 
 # layouting
 hc keybind $Mod-r remove
