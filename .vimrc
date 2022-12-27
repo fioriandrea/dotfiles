@@ -1,17 +1,5 @@
-" plugins
-
-if filereadable(expand("~/.vim/autoload/plug.vim"))
-    call plug#begin()
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
-    call plug#end()
-
-    nnoremap <C-p> :Files<Cr>
-    nnoremap <C-g> :Rg<Cr>
-    nnoremap <C-u> :Buffers<Cr>
-endif
-
-" normal config
+" load Plugins.vim, searching it in "all vim places"
+runtime Plugins.vim
 
 " disable bells
 set visualbell t_vb=
