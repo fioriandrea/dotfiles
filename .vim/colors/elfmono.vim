@@ -13,7 +13,7 @@ function! DumpAllGroups()
     endfor
 endfunction
 
-function! ClearSyntax()
+function! DisableHighlightingAllGroups()
     let synlist = GetAllGroups()
     for item in synlist
         try
@@ -29,7 +29,7 @@ function! ApplySyntax()
         syntax reset
     endif
 
-    call ClearSyntax()
+    call DisableHighlightingAllGroups()
     let g:colors_name = 'elfmono'
 
     let table = {
