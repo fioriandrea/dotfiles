@@ -1,6 +1,5 @@
 " load Plugins.vim, searching it in "all vim places"
-runtime Plugins.vim
-
+runtime PlugPlugins.vim
 " disable bells
 set visualbell t_vb=
 " no sound when at end of line
@@ -80,8 +79,13 @@ set ttyfast
 set fileformat=unix
 
 " syntax highlighting
-syntax on
-colorscheme elflord
+try
+    syntax on
+    colorscheme elfmono
+catch
+	syntax off
+    set t_Co=0
+endtry
 
 " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
 filetype plugin indent on
@@ -125,4 +129,3 @@ inoremap ? ?<c-g>u
 inoremap : :<c-g>u
 inoremap ; ;<c-g>u
 inoremap <space> <space><c-g>u
-
