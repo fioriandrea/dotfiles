@@ -76,13 +76,8 @@ set ttyfast
 set fileformat=unix
 
 " syntax highlighting
-try
-    syntax on
-    colorscheme elflord
-catch
-    syntax off
-    set t_Co=0
-endtry
+syntax off
+" set t_Co=0
 
 " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
 filetype plugin indent on
@@ -98,6 +93,9 @@ nnoremap <silent> <C-Up> :resize -2<CR>
 nnoremap <silent> <C-Down> :resize +2<CR>
 nnoremap <silent> <C-Left> :vertical resize -2<CR>
 nnoremap <silent> <C-Right> :vertical resize +2<CR>
+
+" make new splits position more intuitive
+set splitbelow splitright
 
 " move to the previous buffer
 nnoremap gp :bp<CR>
