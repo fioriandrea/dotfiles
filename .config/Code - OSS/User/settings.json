@@ -1,16 +1,18 @@
 {
-    "workbench.startupEditor": "newUntitledFile",
-    "editor.fontSize": 18,
-    "editor.tabSize": 4,
-    "editor.wordWrap": "on",
-    "terminal.integrated.fontSize": 18,
-    "vim.useCtrlKeys": true,
-    "vim.useSystemClipboard": true,
-    "typescript.updateImportsOnFileMove.enabled": "always",
-    "window.zoomLevel": 3,
-    "workbench.colorTheme": "Default High Contrast Light",
-    "workbench.colorCustomizations": {
-        "editorIndentGuide.background": "#00ff00",
-        "editorIndentGuide.activeBackground": "#ff0000"
-    }
+  "workbench.startupEditor": "newUntitledFile",
+  "editor.fontSize": 18,
+  "editor.tabSize": 4,
+  "editor.wordWrap": "on",
+  "terminal.integrated.fontSize": 18,
+  "vim.useCtrlKeys": true,
+  "vim.useSystemClipboard": true,
+  "vim.handleKeys": {
+    "<C-p>": false
+  },
+  "workbench.colorTheme": "Default Light Modern",
+  "workbench.colorCustomizations": {
+    "editorIndentGuide.background1": "#00ff00",
+    "editorIndentGuide.activeBackground1": "#ff0000"
+  },
+  "window.zoomLevel": 1,
 }
