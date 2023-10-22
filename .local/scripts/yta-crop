@@ -1,0 +1,60 @@
+#!/bin/bash
+
+usage() {
+    printf "Usage: %s -u <video_url> [-s <start_time>] [-e <end_time>] [-f <output_format>]\n" "${0##*/}"
+}
+
+usage_and_die() {
+    usage
+    exit 1
+}
+
+help() {
+    usage
+    printf "Options:\n"
+    printf "  -u <video_url>    Video URL to download (mandatory)\n"
+    printf "  -s <start_time>   Start time for cropping (optional)\n"
+    printf "  -e <end_time>     End time for cropping (optional)\n"
+    printf "  -f <output_format> Output audio format (optional, defaults to 'mp3')\n"
+}
+
+ytdl() {
+    declare -a args
+    if [ -n "$start_time" ]; then
+        args+=(-ss "$start_time")
+    fi
+    if [ -n "$end_time" ]; then
+        args+=(-to "$end_time")
+    fi
+    yt-dlp -x --audio-format "$output_format" -f best "$input_url" --external-downloader ffmpeg --external-downloader-args "ffmpeg_i:${args[*]}"
+}
+
+input_url=""
+start_time=""
+end_time=""
+output_format="mp3"
+
+while getopts ":u:s:e:f:h" opt; do
+    case $opt in
+        u) input_url="$OPTARG" ;;
+        s) start_time="$OPTARG" ;;
+        e) end_time="$OPTARG" ;;
+        f) output_format="$OPTARG" ;;
+        h) help; exit 0 ;;
+        \?)
+            printf "Invalid option: -%s\n" "$OPTARG"
+            usage_and_die
+            ;;
+        :)
+            printf "Option -%s requires an argument.\n" "$OPTARG"
+            usage_and_die
+            ;;
+    esac
+done
+
+if [ -z "$input_url" ]; then
+    printf "Error: Video URL is mandatory.\n"
+    usage_and_die
+fi
+
+ytdl
