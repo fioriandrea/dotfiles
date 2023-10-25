@@ -1,6 +1,5 @@
 acpi
 arandr
-arc-gtk-theme-eos
 archlinux-xdg-menu
 capitaine-cursors
 default-cursors
@@ -8,6 +7,7 @@ dex
 dmenu
 dunst
 feh
+gnome-keyring
 gtk-engine-murrine
 gvfs
 gvfs-afc
@@ -17,8 +17,6 @@ gvfs-nfs
 gvfs-smb
 jgmenu
 jq
-lightdm
-lightdm-slick-greeter
 lxappearance-gtk3
 mpv
 network-manager-applet
@@ -28,7 +26,8 @@ openbox
 pasystray
 picom
 polkit-gnome
-polkit-gnome
+redshift
+redshift-gtk
 rofi
 scrot
 slock
