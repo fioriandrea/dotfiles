@@ -493,12 +493,12 @@
         <command>named-alt-tab</command>
       </action>
     </keybind>
-    <keybind key="W-x">
+    <keybind key="W-space">
       <action name="ShowMenu">
         <menu>root-menu</menu>
       </action>
     </keybind>
-    <keybind key="W-space">
+    <keybind key="W-x">
       <action name="Execute">
         <command>env-invoke GUI_COMMAND_MENU</command>
       </action>
