@@ -19,18 +19,15 @@ print_help() {
 usage: ${0##*/} [option] [...args]
 
 -h|--help         show this help
--s                allows mouse selection
 -f FORMAT         use FORMAT instead of default $format. FORMAT has to be a valid image MIME type
 -d DESTINATION    use DESTINATION instead of default $destination
+
+option can be a scrot option (e.g. -s, -u) (see scrot --help)
 EOF
 }
 
 while (($# > 0)); do
 	case $1 in
-		-s)
-			options+=(-s)
-			shift
-		;;
 		-f)
             (($# < 2)) && error_exit "error: must supply format"
 
@@ -39,7 +36,7 @@ while (($# > 0)); do
 			shift
 		;;
 		-d)
-            (($# < 2)) && error_exit "error: must supply format"
+            (($# < 2)) && error_exit "error: must supply destination"
 			shift
             destination=$(cd "$1"; pwd)
             destination=${destination%/}
@@ -50,7 +47,8 @@ while (($# > 0)); do
 			exit 0
 		;;
 		*)
-            error_exit "unknown option $1"
+			options+=("$1")
+            shift
 		;;
 	esac
 done
