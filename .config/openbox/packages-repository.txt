@@ -7,7 +7,6 @@ dex
 dmenu
 dunst
 feh
-gnome-keyring
 gtk-engine-murrine
 gvfs
 gvfs-afc
