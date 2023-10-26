@@ -16,6 +16,7 @@ gvfs-nfs
 gvfs-smb
 jgmenu
 jq
+jumpapp
 lxappearance-gtk3
 mpv
 network-manager-applet
@@ -40,6 +41,7 @@ ttf-nerd-fonts-symbols
 tumbler
 xbindkeys
 xdg-user-dirs-gtk
+xdotool
 xed
 xf86-video-intel
 xfce4-terminal

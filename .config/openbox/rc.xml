@@ -433,6 +433,16 @@
         </finalactions>
       </action>
     </keybind>
+    <keybind key="Alt-grave">
+      <action name="Execute">
+        <command>jumpapp-focused -w</command>
+      </action>
+    </keybind>
+    <keybind key="Alt-S-grave">
+      <action name="Execute">
+        <command>jumpapp-focused -w -r</command>
+      </action>
+    </keybind>
     <keybind key="C-A-Down">
       <action name="NextWindow">
         <dialog>list</dialog>
