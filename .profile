@@ -7,7 +7,6 @@ export EDITOR="vim"
 export VISUAL="$EDITOR"
 export PAGER="less"
 export BROWSER="firefox"
-export GUI_EDITOR="code"
 export SCRIPTS_DIR="$HOME/.local/scripts"
 export WALLPAPER_DIR="$XDG_DATA_HOME/wallpapers"
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
@@ -35,8 +34,8 @@ pathappend() {
 
 recursive_pathappend() {
     PATH=$(
-        find "$@" -type d -print 2>/dev/null | {
-            while read -r dir; do
+        find "$@" -type d -print0 2>/dev/null | {
+            while IFS= read -r -d '' dir; do
                 pathappend "$dir"
             done
             printf '%s' "$PATH"
