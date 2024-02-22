@@ -7,12 +7,14 @@
   "vim.useCtrlKeys": true,
   "vim.useSystemClipboard": true,
   "vim.handleKeys": {
-    "<C-p>": false
+    "<C-p>": false,
+    "<C-b>": false
   },
-  "workbench.colorTheme": "Default Light Modern",
+  "workbench.colorTheme": "Visual Studio Light",
   "workbench.colorCustomizations": {
     "editorIndentGuide.background1": "#00ff00",
     "editorIndentGuide.activeBackground1": "#ff0000"
   },
-  "window.zoomLevel": 1,
+  "window.zoomLevel": 2,
+  "telemetry.telemetryLevel": "off"
 }
