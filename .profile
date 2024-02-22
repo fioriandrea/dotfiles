@@ -27,4 +27,4 @@ pathappend() {
     export PATH
 }
 
-pathappend "$HOME/.local/scripts" "$HOME/.local/bin" "$GOPATH/bin"
+pathappend "$HOME/.local/scripts" "$HOME/.local/bin" "$GOPATH/bin" "$HOME/.cargo/bin"
