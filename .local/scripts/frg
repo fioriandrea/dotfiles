@@ -27,10 +27,10 @@ fzfargs=(
 )
 
 rgargs=(
+    --hidden
     --line-number
     --no-heading
     --with-filename
-    --color=always
     --line-buffered
     "$@"
 )
@@ -40,5 +40,5 @@ rgargs=(
 FZF_DEFAULT_COMMAND="rg ${rgargs[*]} ''" fzf "${fzfargs[@]}" | \
     while IFS= read -r; do
         splitter <<< "$REPLY"
-        printf '%s\n' "$file"
+        printf '%s:%d:0\n' "$file" "$linenr"
     done
