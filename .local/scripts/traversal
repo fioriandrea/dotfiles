@@ -239,9 +239,11 @@ BEGIN {
                 ++nroots
             }
             prevroot = $i
+        } else if ($i == prevroot) {
+            prevroot = ""
         } else {
             leaves[$i] = 1
-            if ($i in roots && nroots > 1) {
+            if (i in roots && nroots > 1) {
                 delete roots[$i]
                 --nroots
             }
