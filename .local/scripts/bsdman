@@ -28,4 +28,4 @@ for arg in "$@"; do
     set -- "$arg" "$@"
 done
 
-echo "$1${2:+.$2}"
+manpage "$1${2:+.$2}"
