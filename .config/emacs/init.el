@@ -256,7 +256,9 @@
 
 (use-package eglot
   :defer t
-  :ensure nil)
+  :ensure nil
+  :config
+  (remove-hook 'eldoc-display-functions 'eldoc-display-in-echo-area))
 
 (use-package org-tempo
   :after org
@@ -266,7 +268,10 @@
 ;;; Git integration for Emacs (Magit)
 (use-package magit
   :ensure t
-  :bind ("C-c g" . magit-status)
+  :hook (magit-diff-mode . (lambda () (setq truncate-lines nil)))
+  :bind
+  ("C-c g" . magit-status)
+  ("C-c C-g" . magit-status)
   :custom
   (magit-auto-revert-mode nil))
 
