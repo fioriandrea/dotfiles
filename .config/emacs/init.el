@@ -47,7 +47,7 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
-(setq use-package-always-ensure nil)
+(setq use-package-always-ensure t)
 (setq use-package-always-defer nil)
 (setq use-package-verbose t)
 (setq use-package-compute-statistics t)
@@ -61,6 +61,17 @@
   :hook (before-save . delete-trailing-whitespace)
   ;; https://github.com/jwiegley/use-package/issues/517 (Advantages of custom?)
   :custom
+  (pop-up-windows nil)
+
+  (global-display-line-numbers-mode t)
+  (ring-bell-function 'ignore)
+  (truncate-lines nil)
+  (indent-tabs-mode nil)
+  (show-paren-mode t)
+  (select-enable-clipboard t)
+  (byte-compile-docstring-max-column 240)
+
+  ;; Auto-revert
   (global-auto-revert-mode t)
   (auto-revert-verbose nil)
   (global-auto-revert-non-file-buffers t)
@@ -69,7 +80,6 @@
   ;; https://lists.gnu.org/archive/html/emacs-devel/2014-10/msg00743.html
   ;; https://emacs.stackexchange.com/a/50134 (read comments)
   (auto-revert-interval 5)
-  (indent-tabs-mode nil)
   :init
   ;; Remove scroll-bar, tool-bar and menu-bar
   (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -82,24 +92,22 @@
   (defun font-available-p (font-name)
 	(if (member font-name (font-family-list)) t nil))
   (cond
-   ((font-available-p "JetBrains Mono")
-	(set-frame-font "JetBrains Mono 14" nil t))
+   ((font-available-p "Fira Code")
+    (set-frame-font "Fira Code 14" nil t))
+   ((font-available-p "Ubuntu Mono")
+    (set-frame-font "Ubuntu Mono 14" nil t))
+   ((font-available-p "Consolas")
+    (set-frame-font "Consolas 14" nil t))
    ((font-available-p "Cascadia Code")
 	(set-frame-font "Cascadia Code 14" nil t))
+   ((font-available-p "JetBrains Mono")
+	(set-frame-font "JetBrains Mono 14" nil t))
    ((font-available-p "Inconsolata")
 	(set-frame-font "Inconsolata 16" nil t))
    (t (set-face-attribute 'default nil :height 140)))
 
-  ;; Load Theme
-  (defconst light-theme 'modus-operandi)
-  (defconst dark-theme 'modus-vivendi)
-  (load-theme light-theme t)
-
   ;; Open Emacs in fullscreen
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-  ;; Display Line Numbers
-  (global-display-line-numbers-mode)
 
   ;; Line number format
   (setq linum-format "%4d ")
@@ -112,16 +120,12 @@
   ;; (setq custom-file (make-temp-file "emacs-custom"))
 
   ;; Useful Defaults (most from https://sanemacs.com/)
-  ;; Disable bell sound
-  (setq ring-bell-function 'ignore)
   ;; Line-style cursor similar to other text editors
   (setq-default cursor-type 'bar)
   ;; Make window title the buffer name
   (setq-default frame-title-format '("%b"))
   ;; y-or-n-p makes answering questions faster
   (fset 'yes-or-no-p 'y-or-n-p)
-  ;; Show closing parens by default
-  (show-paren-mode 1)
 
   ;; Backups
   (defconst emacs-backup-dir
@@ -143,40 +147,58 @@
   ;; Disable Lockfiles
   (setq create-lockfiles nil)
 
-  ;; Use system Clipboard
-  (setq select-enable-clipboard t)
-
-  (setq byte-compile-docstring-max-column 240)
-  (setq org-startup-truncated nil)
-  (setq truncate-lines nil)
-  (setq org-link-descriptive nil)
-
   ;; http://xahlee.info/emacs/emacs/emacs_buffer_management.html
   (defalias 'list-buffers 'ibuffer))
 
-;;; Tramp
+(use-package windmove
+  :defer t
+  :ensure nil
+  :custom
+  ;; https://irreal.org/blog/?p=1562
+  (winner-mode t)
+  :init
+  (windmove-default-keybindings))
+
+(use-package tab-bar
+  :defer t
+  :ensure nil
+  :bind
+  ("C-c 1" . (lambda () (interactive)(tab-bar-select-tab 1)))
+  ("C-c 2" . (lambda () (interactive)(tab-bar-select-tab 2)))
+  ("C-c 3" . (lambda () (interactive)(tab-bar-select-tab 3)))
+  ("C-c 4" . (lambda () (interactive)(tab-bar-select-tab 4)))
+  ("C-c 5" . (lambda () (interactive)(tab-bar-select-tab 5)))
+  ("C-c 6" . (lambda () (interactive)(tab-bar-select-tab 6)))
+  ("C-c 7" . (lambda () (interactive)(tab-bar-select-tab 7)))
+  ("C-c 8" . (lambda () (interactive)(tab-bar-select-tab 8)))
+  ("C-c 9" . (lambda () (interactive)(tab-bar-select-tab 9))))
+
 (use-package tramp
   :defer t
   :demand nil
   :custom
   (auto-revert-remote-files nil)
-  :init
+  :config
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
   ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
   (setq tramp-backup-directory-alist backup-directory-alist)
   (setq tramp-auto-save-directory emacs-autosave-dir)
+  (setq enable-remote-dir-locals nil)
   (setq remote-file-name-inhibit-locks t)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
+  ;; https://robbmann.io/emacsd/
+  ;; https://git.sr.ht/~cfeeley/doom-emacs-config/commit/1cb3f6704f38f9dbc64ff434866b5e2537d8c2ba
+  (setq debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
+  (remove-hook 'find-file-hook 'vc-find-file-hook)
   (setq vc-ignore-dir-regexp
 		(format "\\(%s\\)\\|\\(%s\\)"
 				vc-ignore-dir-regexp
 				tramp-file-name-regexp)))
 
-;;; Evil Mode
 (use-package evil
   :demand t
-  :ensure t
+  ;; https://emacs.stackexchange.com/questions/61833/how-can-i-re-enable-c-z-in-evil-mode-to-pause-emacs
   :bind (("<escape>" . keyboard-escape-quit)
 		 ("C-c v g" . evil-mode)
 		 ("C-c v l" . evil-local-mode)
@@ -202,7 +224,6 @@
 ;;; Additional Vim bindings
 (use-package evil-collection
   :after evil
-  :ensure t
   :custom
   (evil-collection-want-find-usages-bindings t)
   (evil-collection-setup-minibuffer t)
@@ -213,7 +234,7 @@
 ;;; https://www.reddit.com/r/emacs/comments/e81u80/comment/fa98l7z
 ;; (use-package viper
 ;;   :demand t
-;;   :ensure t
+;;   :ensure nil
 ;;   :config
 ;;   (setq viper-mode t)
 ;;   (viper-mode)
@@ -223,9 +244,7 @@
 ;;   :bind
 ;;   ("C-c v" . toggle-viper-mode))
 
-;;; Icomplete
 (use-package icomplete
-  :ensure t
   :demand t
   :custom
   ;; https://www.scss.tcd.ie/~sulimanm/posts/default-emacs-completion.html
@@ -260,6 +279,15 @@
   :config
   (remove-hook 'eldoc-display-functions 'eldoc-display-in-echo-area))
 
+(use-package org
+  :ensure nil
+  :init
+  (setq org-startup-truncated nil)
+  :custom
+  (org-link-descriptive nil)
+  ;; https://irreal.org/blog/?p=1562
+  (org-replace-disputed-keys t))
+
 (use-package org-tempo
   :after org
   ;; https://edoput.it/2022/07/19/use-package.html
@@ -267,7 +295,6 @@
 
 ;;; Git integration for Emacs (Magit)
 (use-package magit
-  :ensure t
   :hook (magit-diff-mode . (lambda () (setq truncate-lines nil)))
   :bind
   ("C-c g" . magit-status)
@@ -290,5 +317,20 @@
   :demand t
   :after dired
   :ensure nil)
+
+(use-package dired-subtree
+  :after dired
+  :config
+  (set-face-attribute 'dired-subtree-depth-1-face nil :background nil)
+  (set-face-attribute 'dired-subtree-depth-2-face nil :background nil)
+  (set-face-attribute 'dired-subtree-depth-3-face nil :background nil)
+  (set-face-attribute 'dired-subtree-depth-4-face nil :background nil)
+  (set-face-attribute 'dired-subtree-depth-5-face nil :background nil)
+  (set-face-attribute 'dired-subtree-depth-6-face nil :background nil))
+
+(use-package consult
+  :bind
+  ("C-S-f" . consult-grep)
+  ("C-S-p" . consult-find))
 
 ;;; END
