@@ -63,6 +63,9 @@
   :custom
   (pop-up-windows nil)
 
+  ;; https://irreal.org/blog/?p=1562
+  (winner-mode t)
+
   (global-display-line-numbers-mode t)
   (ring-bell-function 'ignore)
   (truncate-lines nil)
@@ -92,19 +95,17 @@
   (defun font-available-p (font-name)
 	(if (member font-name (font-family-list)) t nil))
   (cond
+   ((font-available-p "Comic Mono")
+    (set-frame-font "Comic Mono 18" nil t))
    ((font-available-p "Fira Code")
-    (set-frame-font "Fira Code 14" nil t))
-   ((font-available-p "Ubuntu Mono")
-    (set-frame-font "Ubuntu Mono 14" nil t))
-   ((font-available-p "Consolas")
-    (set-frame-font "Consolas 14" nil t))
-   ((font-available-p "Cascadia Code")
-	(set-frame-font "Cascadia Code 14" nil t))
+    (set-frame-font "Fira Code 16" nil t))
    ((font-available-p "JetBrains Mono")
-	(set-frame-font "JetBrains Mono 14" nil t))
+	(set-frame-font "JetBrains Mono 16" nil t))
+   ((font-available-p "Cascadia Code")
+	(set-frame-font "Cascadia Code 16" nil t))
    ((font-available-p "Inconsolata")
-	(set-frame-font "Inconsolata 16" nil t))
-   (t (set-face-attribute 'default nil :height 140)))
+	(set-frame-font "Inconsolata 18" nil t))
+   (t (set-face-attribute 'default nil :height 160)))
 
   ;; Open Emacs in fullscreen
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -149,15 +150,6 @@
 
   ;; http://xahlee.info/emacs/emacs/emacs_buffer_management.html
   (defalias 'list-buffers 'ibuffer))
-
-(use-package windmove
-  :defer t
-  :ensure nil
-  :custom
-  ;; https://irreal.org/blog/?p=1562
-  (winner-mode t)
-  :init
-  (windmove-default-keybindings))
 
 (use-package tab-bar
   :defer t
@@ -205,6 +197,8 @@
 		 :map evil-normal-state-map
 		 ("C-n" . evil-next-line)
 		 ("C-p" . evil-previous-line))
+  :custom
+  (evil-symbol-word-search t)
   :init
   (setq evil-search-module 'evil-search)
   (setq evil-want-keybinding nil)
@@ -330,6 +324,10 @@
 
 (use-package consult
   :bind
+  ("M-S-b" . consult-project-buffer)
+  ("M-B" . consult-project-buffer)
+  ("C-S-n" . consult-recent-file)
+  ("C-S-b" . consult-buffer)
   ("C-S-f" . consult-grep)
   ("C-S-p" . consult-find))
 
