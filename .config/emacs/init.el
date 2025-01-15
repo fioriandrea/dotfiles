@@ -29,7 +29,7 @@
   "Kill all buffers except current buffer."
   (interactive)
   (let* ((predicate (lambda (b) (not (eq b (current-buffer)))))
-		(buffers (seq-filter predicate (buffer-list))))
+		 (buffers (seq-filter predicate (buffer-list))))
 	(mapc 'kill-buffer buffers)
 	(delete-other-windows)))
 
@@ -151,12 +151,18 @@
   ;; http://xahlee.info/emacs/emacs/emacs_buffer_management.html
   (defalias 'list-buffers 'ibuffer))
 
+(use-package solarized-theme
+  :config
+  (load-theme 'solarized-gruvbox-light t))
+
 (use-package tab-bar
   :defer t
   :ensure nil
   :custom
   (tab-bar-show 1)
   :bind
+  ("M-L" . tab-next)
+  ("M-H" . tab-previous)
   ("M-S-<right>" . tab-next)
   ("M-S-<left>" . tab-previous))
 
@@ -190,8 +196,9 @@
 		 ("C-c v g" . evil-mode)
 		 ("C-c v l" . evil-local-mode)
 		 :map evil-normal-state-map
-		 ("C-n" . evil-next-line)
-		 ("C-p" . evil-previous-line))
+         ("M-." . nil)
+         ("C-n" . evil-next-line)
+         ("C-p" . evil-previous-line))
   :custom
   (evil-symbol-word-search t)
   :init
@@ -318,8 +325,9 @@
   (set-face-attribute 'dired-subtree-depth-6-face nil :background nil))
 
 (use-package consult
+  :custom
+  (recentf-mode t)
   :bind
-  ("M-S-b" . consult-project-buffer)
   ("M-B" . consult-project-buffer)
   ("C-S-n" . consult-recent-file)
   ("C-S-b" . consult-buffer)
