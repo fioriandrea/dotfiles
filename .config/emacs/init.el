@@ -29,9 +29,9 @@
   "Kill all buffers except current buffer."
   (interactive)
   (let* ((predicate (lambda (b) (not (eq b (current-buffer)))))
-		 (buffers (seq-filter predicate (buffer-list))))
-	(mapc 'kill-buffer buffers)
-	(delete-other-windows)))
+	     (buffers (seq-filter predicate (buffer-list))))
+    (mapc 'kill-buffer buffers)
+    (delete-other-windows)))
 
 ;;; Packages
 
@@ -93,18 +93,18 @@
 
   ;; Defalut Font
   (defun font-available-p (font-name)
-	(if (member font-name (font-family-list)) t nil))
+    (if (member font-name (font-family-list)) t nil))
   (cond
    ((font-available-p "Comic Mono")
     (set-frame-font "Comic Mono 18" nil t))
    ((font-available-p "Fira Code")
     (set-frame-font "Fira Code 16" nil t))
    ((font-available-p "JetBrains Mono")
-	(set-frame-font "JetBrains Mono 16" nil t))
+    (set-frame-font "JetBrains Mono 16" nil t))
    ((font-available-p "Cascadia Code")
-	(set-frame-font "Cascadia Code 16" nil t))
+    (set-frame-font "Cascadia Code 16" nil t))
    ((font-available-p "Inconsolata")
-	(set-frame-font "Inconsolata 18" nil t))
+    (set-frame-font "Inconsolata 18" nil t))
    (t (set-face-attribute 'default nil :height 160)))
 
   ;; Open Emacs in fullscreen
@@ -116,7 +116,7 @@
   ;; Don't put garbage in my config file
   (setq custom-file (concat user-emacs-directory "custom.el"))
   (when (file-exists-p custom-file)
-	(load custom-file))
+    (load custom-file))
   ;; Uncomment this to use a temp file as custom file
   ;; (setq custom-file (make-temp-file "emacs-custom"))
 
@@ -130,11 +130,11 @@
 
   ;; Backups
   (defconst emacs-backup-dir
-	(file-name-as-directory
-	 (expand-file-name "backups" user-emacs-directory)))
+    (file-name-as-directory
+     (expand-file-name "backups" user-emacs-directory)))
   (defconst emacs-autosave-dir
-	(file-name-as-directory
-	 (expand-file-name "autosave" user-emacs-directory)))
+    (file-name-as-directory
+     (expand-file-name "autosave" user-emacs-directory)))
   (setq
    backup-by-copying t
    delete-old-versions t
@@ -148,8 +148,7 @@
   ;; Disable Lockfiles
   (setq create-lockfiles nil)
 
-  ;; http://xahlee.info/emacs/emacs/emacs_buffer_management.html
-  (defalias 'list-buffers 'ibuffer))
+  (xterm-mouse-mode +1))
 
 (use-package solarized-theme
   :config
@@ -159,12 +158,7 @@
   :defer t
   :ensure nil
   :custom
-  (tab-bar-show 1)
-  :bind
-  ("M-L" . tab-next)
-  ("M-H" . tab-previous)
-  ("M-S-<right>" . tab-next)
-  ("M-S-<left>" . tab-previous))
+  (tab-bar-show 1))
 
 (use-package tramp
   :defer t
@@ -185,17 +179,17 @@
   (setq debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
   (remove-hook 'find-file-hook 'vc-find-file-hook)
   (setq vc-ignore-dir-regexp
-		(format "\\(%s\\)\\|\\(%s\\)"
-				vc-ignore-dir-regexp
-				tramp-file-name-regexp)))
+	    (format "\\(%s\\)\\|\\(%s\\)"
+		        vc-ignore-dir-regexp
+		        tramp-file-name-regexp)))
 
 (use-package evil
   :demand t
   ;; https://emacs.stackexchange.com/questions/61833/how-can-i-re-enable-c-z-in-evil-mode-to-pause-emacs
   :bind (("<escape>" . keyboard-escape-quit)
-		 ("C-c v g" . evil-mode)
-		 ("C-c v l" . evil-local-mode)
-		 :map evil-normal-state-map
+	     ("C-c v g" . evil-mode)
+	     ("C-c v l" . evil-local-mode)
+	     :map evil-normal-state-map
          ("M-." . nil)
          ("C-n" . evil-next-line)
          ("C-p" . evil-previous-line))
@@ -243,6 +237,7 @@
 (use-package icomplete
   :demand t
   :custom
+  (tab-always-indent 'complete)
   ;; https://www.scss.tcd.ie/~sulimanm/posts/default-emacs-completion.html
   (completions-format 'one-column)
   (completions-header-format nil)
@@ -251,23 +246,23 @@
   :config
   (fido-vertical-mode 1)
   :bind (:map icomplete-fido-mode-map
-			  ("RET" . icomplete-fido-ret)
-			  ("C-RET" . icomplete-fido-ret)
-			  ("C-<return>" . icomplete-fido-ret)
-			  ("M-RET" . icomplete-fido-ret)
-			  ("TAB" . icomplete-force-complete)
-			  :map icomplete-minibuffer-map
-			  ("C-RET" . icomplete-fido-ret)
-			  ("C-<return>" . icomplete-fido-ret)
-			  ("C-n" . icomplete-forward-completions)
-			  ("C-p" . icomplete-backward-completions)
-			  :map completion-in-region-mode-map
-			  ("M-n" . minibuffer-next-completion)
-			  ("M-p" . minibuffer-previous-completion)
-			  ("C-n" . minibuffer-next-completion)
-			  ("C-p" . minibuffer-previous-completion)
-			  ("C-<return>" . minibuffer-choose-completion)
-			  ("C-RET" . minibuffer-choose-completion)))
+	          ("RET" . icomplete-fido-ret)
+	          ("C-RET" . icomplete-fido-ret)
+	          ("C-<return>" . icomplete-fido-ret)
+	          ("M-RET" . icomplete-fido-ret)
+	          ("TAB" . icomplete-force-complete)
+	          :map icomplete-minibuffer-map
+	          ("C-RET" . icomplete-fido-ret)
+	          ("C-<return>" . icomplete-fido-ret)
+	          ("C-n" . icomplete-forward-completions)
+	          ("C-p" . icomplete-backward-completions)
+	          :map completion-in-region-mode-map
+	          ("M-n" . minibuffer-next-completion)
+	          ("M-p" . minibuffer-previous-completion)
+	          ("C-n" . minibuffer-next-completion)
+	          ("C-p" . minibuffer-previous-completion)
+	          ("C-<return>" . minibuffer-choose-completion)
+	          ("C-RET" . minibuffer-choose-completion)))
 
 (use-package eglot
   :defer t
@@ -294,7 +289,6 @@
   :hook (magit-diff-mode . (lambda () (setq truncate-lines nil)))
   :bind
   ("C-c g" . magit-status)
-  ("C-c C-g" . magit-status)
   :custom
   (magit-auto-revert-mode nil))
 
@@ -327,11 +321,41 @@
 (use-package consult
   :custom
   (recentf-mode t)
+  :init
+  (defun consult-project-buffer-or-buffer ()
+    (interactive)
+    (if (project-current)
+        (call-interactively #'consult-project-buffer)
+      (call-interactively #'consult-buffer)))
   :bind
-  ("M-B" . consult-project-buffer)
-  ("C-S-n" . consult-recent-file)
-  ("C-S-b" . consult-buffer)
-  ("C-S-f" . consult-grep)
-  ("C-S-p" . consult-find))
+  (("M-N" . consult-recent-file)
+  ("M-L" . consult-project-buffer)
+  ("M-B" . consult-buffer)
+  ("M-F" . consult-grep)
+  ("M-P" . consult-find)
+  ("M-I" . consult-imenu)
+  :map icomplete-minibuffer-map
+  ("M-N" . icomplete-forward-completions)
+  ("M-P" . icomplete-backward-completions))
+  :init
+  (setq completion-in-region-function #'consult-completion-in-region))
+
+(use-package perspective
+  :custom
+  (persp-mode-prefix-key (kbd "C-x C-x"))
+  :bind
+  ("C-x C-x" . nil)
+  ("C-x C-x C-x" . exchange-point-and-mark)
+  ("C-x C-b" . persp-list-buffers)
+  :init
+  (persp-mode)
+  :config
+  ;; https://git.sr.ht/~sirn/dotfiles/commit/b09e00e50ea54f34e4850abf2473cc81a499e6ae
+  (with-eval-after-load 'consult
+    (consult-customize consult--source-buffer :hidden t :default nil)
+    (add-to-list 'consult-buffer-sources persp-consult-source))
+  (setq switch-to-prev-buffer-skip
+        (lambda (win buff bury-or-kill)
+          (not (persp-is-current-buffer buff)))))
 
 ;;; END
