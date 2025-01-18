@@ -193,7 +193,17 @@
          ("C-p" . evil-previous-line))
   :custom
   (evil-symbol-word-search t)
-  (evil-default-state 'normal)
+  (evil-default-state 'insert)
+  (evil-emacs-state-modes '(term-mode))
+  (evil-insert-state-modes '(magit-section-mode))
+  (evil-motion-state-modes '(special-mode
+                             compilation-mode))
+  :init
+  ;; Don't know why, but this cannot be under customize for some reason
+  (setq evil-normal-state-modes '(text-mode
+                                  prog-mode
+                                  fundamental-mode
+                                  dired-mode))
   :init
   (setq evil-search-module 'evil-search)
   (setq evil-want-keybinding t)
@@ -209,8 +219,6 @@
   (setq evil-disable-insert-state-bindings t)
   :config
   (evil-mode 1)
-  (evil-set-initial-state 'special-mode 'motion)
-  (evil-set-initial-state 'term-mode 'emacs)
   (evil-set-undo-system 'undo-redo))
 
 ;;; Alternative to evil mode. Has less features
@@ -261,8 +269,14 @@
   :defer t
   :ensure nil
   :init
-  (evil-define-key 'normal 'eglot-mode-map "K" 'eldoc)
+  (evil-define-key 'motion 'eglot-mode-map "K" 'eldoc)
   (remove-hook 'eldoc-display-functions 'eldoc-display-in-echo-area))
+
+(use-package xref
+  :defer t
+  :ensure nil
+  :config
+  (evil-make-overriding-map xref--xref-buffer-mode-map 'motion))
 
 (use-package org
   :ensure nil
