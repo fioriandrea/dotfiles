@@ -187,17 +187,16 @@
   :demand t
   ;; https://emacs.stackexchange.com/questions/61833/how-can-i-re-enable-c-z-in-evil-mode-to-pause-emacs
   :bind (("<escape>" . keyboard-escape-quit)
-	     ("C-c v g" . evil-mode)
-	     ("C-c v l" . evil-local-mode)
-	     :map evil-normal-state-map
+         :map evil-normal-state-map
          ("M-." . nil)
          ("C-n" . evil-next-line)
          ("C-p" . evil-previous-line))
   :custom
   (evil-symbol-word-search t)
+  (evil-default-state 'normal)
   :init
   (setq evil-search-module 'evil-search)
-  (setq evil-want-keybinding nil)
+  (setq evil-want-keybinding t)
   (setq evil-vsplit-window-right t)
   (setq evil-split-window-below t)
   (setq evil-overriding-maps nil)
@@ -210,15 +209,9 @@
   (setq evil-disable-insert-state-bindings t)
   :config
   (evil-mode 1)
+  (evil-set-initial-state 'special-mode 'motion)
+  (evil-set-initial-state 'term-mode 'emacs)
   (evil-set-undo-system 'undo-redo))
-;;; Additional Vim bindings
-(use-package evil-collection
-  :after evil
-  :custom
-  (evil-collection-want-find-usages-bindings t)
-  (evil-collection-setup-minibuffer t)
-  :init
-  (evil-collection-init))
 
 ;;; Alternative to evil mode. Has less features
 ;;; https://www.reddit.com/r/emacs/comments/e81u80/comment/fa98l7z
@@ -226,9 +219,9 @@
 ;;   :demand t
 ;;   :ensure nil
 ;;   :config
-;;   (setq viper-mode t)
 ;;   (viper-mode)
 ;;   :init
+;;   (setq viper-mode t)
 ;;   (setq viper-inhibit-startup-message 't)
 ;;   (setq viper-expert-level '3)
 ;;   :bind
@@ -267,7 +260,8 @@
 (use-package eglot
   :defer t
   :ensure nil
-  :config
+  :init
+  (evil-define-key 'normal 'eglot-mode-map "K" 'eldoc)
   (remove-hook 'eldoc-display-functions 'eldoc-display-in-echo-area))
 
 (use-package org
@@ -287,8 +281,6 @@
 ;;; Git integration for Emacs (Magit)
 (use-package magit
   :hook (magit-diff-mode . (lambda () (setq truncate-lines nil)))
-  :bind
-  ("C-c g" . magit-status)
   :custom
   (magit-auto-revert-mode nil))
 
@@ -310,6 +302,9 @@
 
 (use-package dired-subtree
   :after dired
+  :bind
+  (:map dired-mode-map
+        ("TAB" . dired-subtree-toggle))
   :config
   (set-face-attribute 'dired-subtree-depth-1-face nil :background nil)
   (set-face-attribute 'dired-subtree-depth-2-face nil :background nil)
@@ -321,41 +316,32 @@
 (use-package consult
   :custom
   (recentf-mode t)
-  :init
-  (defun consult-project-buffer-or-buffer ()
-    (interactive)
-    (if (project-current)
-        (call-interactively #'consult-project-buffer)
-      (call-interactively #'consult-buffer)))
   :bind
-  (("M-N" . consult-recent-file)
-  ("M-L" . consult-project-buffer)
-  ("M-B" . consult-buffer)
-  ("M-F" . consult-grep)
-  ("M-P" . consult-find)
-  ("M-I" . consult-imenu)
-  :map icomplete-minibuffer-map
-  ("M-N" . icomplete-forward-completions)
-  ("M-P" . icomplete-backward-completions))
-  :init
+  (("M-I" . consult-imenu)
+   ("M-B" . consult-buffer)
+   ("M-L" . consult-project-buffer)
+   ("M-F" . consult-ripgrep)
+   ("M-P" . consult-fd)
+   :map icomplete-minibuffer-map
+   ("C-M-i" . icomplete-forward-completions)
+   ("C-M-o" . icomplete-backward-completions)
+   ("C-S-n" . icomplete-forward-completions)
+   ("C-S-p" . icomplete-backward-completions)
+   ("M-N" . icomplete-forward-completions)
+   ("M-P" . icomplete-backward-completions))
+  :config
   (setq completion-in-region-function #'consult-completion-in-region))
 
-(use-package perspective
-  :custom
-  (persp-mode-prefix-key (kbd "C-x C-x"))
-  :bind
-  ("C-x C-x" . nil)
-  ("C-x C-x C-x" . exchange-point-and-mark)
-  ("C-x C-b" . persp-list-buffers)
-  :init
-  (persp-mode)
+
+(use-package project
   :config
-  ;; https://git.sr.ht/~sirn/dotfiles/commit/b09e00e50ea54f34e4850abf2473cc81a499e6ae
-  (with-eval-after-load 'consult
-    (consult-customize consult--source-buffer :hidden t :default nil)
-    (add-to-list 'consult-buffer-sources persp-consult-source))
-  (setq switch-to-prev-buffer-skip
-        (lambda (win buff bury-or-kill)
-          (not (persp-is-current-buffer buff)))))
+  ;; https://www.reddit.com/r/emacs/comments/lfbyq5/comment/gml2hqe/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+  (defun local/project-try-explicit (dir)
+    "Find a super-directory of DIR containing a root file."
+    (locate-dominating-file dir ".root"))
+  (cl-defmethod project-root ((project string))
+    project)
+  (add-hook 'project-find-functions
+	        #'local/project-try-explicit))
 
 ;;; END
