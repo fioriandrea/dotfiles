@@ -157,9 +157,6 @@
 (use-package tab-bar
   :defer t
   :ensure nil
-  :demand nil
-  :bind
-  ("C-<tab>" . nil)
   :custom
   (tab-bar-show 1))
 
@@ -190,6 +187,9 @@
   :demand t
   ;; https://emacs.stackexchange.com/questions/61833/how-can-i-re-enable-c-z-in-evil-mode-to-pause-emacs
   :bind (("<escape>" . keyboard-escape-quit)
+         :map evil-motion-state-map
+         ("TAB" . nil)
+         ("RET" . nil)
          :map evil-normal-state-map
          ("M-." . nil)
          ("C-n" . evil-next-line)
