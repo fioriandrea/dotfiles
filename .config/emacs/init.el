@@ -157,6 +157,9 @@
 (use-package tab-bar
   :defer t
   :ensure nil
+  :demand nil
+  :bind
+  ("C-<tab>" . nil)
   :custom
   (tab-bar-show 1))
 
@@ -195,9 +198,8 @@
   (evil-symbol-word-search t)
   (evil-default-state 'insert)
   (evil-emacs-state-modes '(term-mode))
-  (evil-insert-state-modes '(magit-section-mode))
-  (evil-motion-state-modes '(special-mode
-                             compilation-mode))
+  (evil-insert-state-modes '())
+  (evil-motion-state-modes '(special-mode compilation-mode))
   :init
   ;; Don't know why, but this cannot be under customize for some reason
   (setq evil-normal-state-modes '(text-mode
@@ -269,7 +271,7 @@
   :defer t
   :ensure nil
   :init
-  (evil-define-key 'motion 'eglot-mode-map "K" 'eldoc)
+  (evil-define-key 'motion eglot-mode-map "K" 'eldoc)
   (remove-hook 'eldoc-display-functions 'eldoc-display-in-echo-area))
 
 (use-package xref
@@ -282,6 +284,8 @@
   :ensure nil
   :init
   (setq org-startup-truncated nil)
+  :config
+  (evil-define-key 'motion org-mode-map (kbd "TAB") 'org-cycle)
   :custom
   (org-link-descriptive nil)
   ;; https://irreal.org/blog/?p=1562
