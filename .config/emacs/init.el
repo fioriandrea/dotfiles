@@ -190,6 +190,7 @@
          :map evil-motion-state-map
          ("TAB" . nil)
          ("RET" . nil)
+         ("<backtab>" . nil)
          :map evil-normal-state-map
          ("M-." . nil)
          ("C-n" . evil-next-line)
@@ -199,7 +200,7 @@
   (evil-default-state 'insert)
   (evil-emacs-state-modes '(term-mode))
   (evil-insert-state-modes '())
-  (evil-motion-state-modes '(special-mode compilation-mode))
+  (evil-motion-state-modes '(completion-list-mode special-mode compilation-mode))
   :init
   ;; Don't know why, but this cannot be under customize for some reason
   (setq evil-normal-state-modes '(text-mode
@@ -340,15 +341,14 @@
    ("M-L" . consult-project-buffer)
    ("M-F" . consult-ripgrep)
    ("M-P" . consult-fd)
+   ("M-E" . consult-flymake)
    :map icomplete-minibuffer-map
-   ("C-M-i" . icomplete-forward-completions)
-   ("C-M-o" . icomplete-backward-completions)
    ("C-S-n" . icomplete-forward-completions)
    ("C-S-p" . icomplete-backward-completions)
+   ("C-M-n" . icomplete-forward-completions)
+   ("C-M-p" . icomplete-backward-completions)
    ("M-N" . icomplete-forward-completions)
-   ("M-P" . icomplete-backward-completions))
-  :config
-  (setq completion-in-region-function #'consult-completion-in-region))
+   ("M-P" . icomplete-backward-completions)))
 
 
 (use-package project
