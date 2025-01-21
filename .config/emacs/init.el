@@ -35,14 +35,22 @@
 
 ;;; Packages
 
+;; Web Proxy Config
+(defconst proxy-file (concat user-emacs-directory "proxy.el"))
+(when (file-exists-p proxy-file)
+  (load proxy-file))
+
 ;;; Setup package.el
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (unless package--initialized (package-initialize))
+;; https://stackoverflow.com/questions/24280325/emacs-use-package-and-package-refresh-contents
+(unless package-archive-contents (package-refresh-contents))
 
 ;;; Setup use-package
 ;; https://www.gnu.org/software/emacs/manual/html_mono/use-package.html
+;; Should not be necessary, since use-package is build-in
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -52,12 +60,17 @@
 (setq use-package-verbose t)
 (setq use-package-compute-statistics t)
 
+(setq custom-file (concat user-emacs-directory "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 ;;; General emacs config
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
   :defer t
   :ensure nil
+  ;; https://www.gnu.org/software/emacs/manual/html_node/autotype/Hippie-Expand.html
+  :bind ("M-/" . hippie-expand)
   :hook (before-save . delete-trailing-whitespace)
   ;; https://github.com/jwiegley/use-package/issues/517 (Advantages of custom?)
   :custom
@@ -113,10 +126,6 @@
   ;; Line number format
   (setq linum-format "%4d ")
 
-  ;; Don't put garbage in my config file
-  (setq custom-file (concat user-emacs-directory "custom.el"))
-  (when (file-exists-p custom-file)
-    (load custom-file))
   ;; Uncomment this to use a temp file as custom file
   ;; (setq custom-file (make-temp-file "emacs-custom"))
 
@@ -204,6 +213,8 @@
   :init
   ;; Don't know why, but this cannot be under customize for some reason
   (setq evil-normal-state-modes '(text-mode
+                                  conf-mode
+                                  Custom-mode
                                   prog-mode
                                   fundamental-mode
                                   dired-mode))
@@ -246,7 +257,8 @@
   (completions-format 'one-column)
   (completions-header-format nil)
   (completions-max-height 20)
-  (completion-auto-select 'second-tab)
+  ;; (completion-auto-select 'second-tab)
+  (completion-auto-select t)
   :config
   (fido-vertical-mode 1)
   :bind (:map icomplete-fido-mode-map
@@ -299,7 +311,9 @@
 
 ;;; Git integration for Emacs (Magit)
 (use-package magit
-  :hook (magit-diff-mode . (lambda () (setq truncate-lines nil)))
+  :hook
+  (magit-diff-mode . (lambda () (setq truncate-lines nil)))
+  (magit-status-mode . (lambda () (setq truncate-lines nil)))
   :custom
   (magit-auto-revert-mode nil))
 
@@ -349,7 +363,6 @@
    ("C-M-p" . icomplete-backward-completions)
    ("M-N" . icomplete-forward-completions)
    ("M-P" . icomplete-backward-completions)))
-
 
 (use-package project
   :config
