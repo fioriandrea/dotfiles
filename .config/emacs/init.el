@@ -209,7 +209,10 @@
   (evil-default-state 'insert)
   (evil-emacs-state-modes '(term-mode))
   (evil-insert-state-modes '())
-  (evil-motion-state-modes '(completion-list-mode special-mode compilation-mode))
+  (evil-motion-state-modes '(completion-list-mode
+                             special-mode
+                             archive-mode
+                             compilation-mode))
   :init
   ;; Don't know why, but this cannot be under customize for some reason
   (setq evil-normal-state-modes '(text-mode
@@ -257,8 +260,8 @@
   (completions-format 'one-column)
   (completions-header-format nil)
   (completions-max-height 20)
-  ;; (completion-auto-select 'second-tab)
-  (completion-auto-select t)
+  (completion-auto-select 'second-tab)
+  ;; (completion-auto-select t)
   :config
   (fido-vertical-mode 1)
   :bind (:map icomplete-fido-mode-map
@@ -314,6 +317,9 @@
   :hook
   (magit-diff-mode . (lambda () (setq truncate-lines nil)))
   (magit-status-mode . (lambda () (setq truncate-lines nil)))
+  :bind
+  ("C-x g" . magit-status)
+  ("C-x p m" . magit-project-status)
   :custom
   (magit-auto-revert-mode nil))
 
