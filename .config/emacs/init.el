@@ -15,7 +15,7 @@
 
 (defun ctags-file-create (dir-name)
   "Create tags file."
-  (interactive "Directory: ")
+  (interactive "DDirectory: ")
   (shell-command
    ;; -e for emacs format
    (format "%s -f TAGS -e -R %s" "ctags" (directory-file-name dir-name))))
@@ -74,7 +74,15 @@
   :hook (before-save . delete-trailing-whitespace)
   ;; https://github.com/jwiegley/use-package/issues/517 (Advantages of custom?)
   :custom
-  (pop-up-windows nil)
+  ;; (pop-up-windows nil)
+  ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Choosing-Window-Options.html#index-pop_002dup_002dwindows_002c-replacement-for
+  (display-buffer-base-action
+   '((display-buffer-reuse-window
+      display-buffer-same-window
+      display-buffer-in-previous-window
+      display-buffer-use-some-window)))
+
+  (native-comp-async-report-warnings-errors 'silent)
 
   ;; https://irreal.org/blog/?p=1562
   (winner-mode t)
@@ -200,6 +208,8 @@
          ("TAB" . nil)
          ("RET" . nil)
          ("<backtab>" . nil)
+         ("M-n" . evil-ex-search-next)
+         ("M-N" . evil-ex-search-previous)
          :map evil-normal-state-map
          ("M-." . nil)
          ("C-n" . evil-next-line)
@@ -286,6 +296,8 @@
 (use-package eglot
   :defer t
   :ensure nil
+  :bind
+  ("C-x p E" . flymake-show-project-diagnostics)
   :init
   (evil-define-key 'motion eglot-mode-map "K" 'eldoc)
   (remove-hook 'eldoc-display-functions 'eldoc-display-in-echo-area))
@@ -303,6 +315,7 @@
   :config
   (evil-define-key 'motion org-mode-map (kbd "TAB") 'org-cycle)
   :custom
+  (org-html-validation-link nil)
   (org-link-descriptive nil)
   ;; https://irreal.org/blog/?p=1562
   (org-replace-disputed-keys t))
@@ -326,6 +339,8 @@
 (use-package dired
   :demand t
   :ensure nil
+  :hook
+  (dired-mode . dired-hide-details-mode)
   :custom
   (dired-auto-revert-buffer t)
   :config
