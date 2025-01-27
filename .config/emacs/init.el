@@ -299,7 +299,6 @@
   :bind
   ("C-x p E" . flymake-show-project-diagnostics)
   :init
-  (evil-define-key 'motion eglot-mode-map "K" 'eldoc)
   (remove-hook 'eldoc-display-functions 'eldoc-display-in-echo-area))
 
 (use-package xref
