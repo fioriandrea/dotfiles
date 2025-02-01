@@ -311,6 +311,8 @@
   :ensure nil
   :init
   (setq org-startup-truncated nil)
+  :bind
+  ("C-c l" . org-store-link)
   :config
   (evil-define-key 'motion org-mode-map (kbd "TAB") 'org-cycle)
   :custom
