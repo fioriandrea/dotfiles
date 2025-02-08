@@ -109,6 +109,7 @@
   (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   ;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+
   ;; Disable startup screen
   (setq inhibit-startup-screen t)
 
@@ -311,13 +312,14 @@
   :ensure nil
   :init
   (setq org-startup-truncated nil)
-  :bind
-  ("C-c l" . org-store-link)
+  :bind (("C-c l" . org-store-link)
+         :map org-mode-map
+         ("C-c z" . org-toggle-link-display))
   :config
   (evil-define-key 'motion org-mode-map (kbd "TAB") 'org-cycle)
   :custom
   (org-html-validation-link nil)
-  (org-link-descriptive nil)
+  (org-link-descriptive t)
   ;; https://irreal.org/blog/?p=1562
   (org-replace-disputed-keys t))
 
@@ -335,6 +337,8 @@
   ("C-x g" . magit-status)
   ("C-x p m" . magit-project-status)
   :custom
+  (magit-diff-refine-hunk 'all)
+  (magit-diff-refine-ignore-whitespace nil)
   (magit-auto-revert-mode nil))
 
 (use-package dired
