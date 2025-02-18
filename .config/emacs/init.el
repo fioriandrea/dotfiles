@@ -119,21 +119,10 @@
   (cond
    ((font-available-p "Comic Mono")
     (set-frame-font "Comic Mono 18" nil t))
-   ((font-available-p "Fira Code")
-    (set-frame-font "Fira Code 16" nil t))
-   ((font-available-p "JetBrains Mono")
-    (set-frame-font "JetBrains Mono 16" nil t))
-   ((font-available-p "Cascadia Code")
-    (set-frame-font "Cascadia Code 16" nil t))
-   ((font-available-p "Inconsolata")
-    (set-frame-font "Inconsolata 18" nil t))
    (t (set-face-attribute 'default nil :height 160)))
 
   ;; Open Emacs in fullscreen
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-  ;; Line number format
-  (setq linum-format "%4d ")
 
   ;; Uncomment this to use a temp file as custom file
   ;; (setq custom-file (make-temp-file "emacs-custom"))
@@ -222,6 +211,7 @@
   (evil-insert-state-modes '())
   (evil-motion-state-modes '(completion-list-mode
                              special-mode
+                             diff-mode
                              archive-mode
                              compilation-mode))
   :init
@@ -349,6 +339,8 @@
   :custom
   (dired-auto-revert-buffer t)
   :config
+  (evil-define-key 'normal dired-mode-map (kbd "g g") 'beginning-of-buffer)
+  (evil-define-key 'normal dired-mode-map (kbd "G") 'end-of-buffer)
   (setq dired-listing-switches "-alh")
   (setq dired-mouse-drag-files t)
   ;; Refresh dired automatically
