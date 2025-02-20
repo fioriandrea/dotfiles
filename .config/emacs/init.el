@@ -118,14 +118,11 @@
     (if (member font-name (font-family-list)) t nil))
   (cond
    ((font-available-p "Comic Mono")
-    (set-frame-font "Comic Mono 18" nil t))
-   (t (set-face-attribute 'default nil :height 160)))
+    (set-frame-font "Comic Mono 20" nil t))
+   (t (set-face-attribute 'default nil :height 180)))
 
   ;; Open Emacs in fullscreen
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-  ;; Uncomment this to use a temp file as custom file
-  ;; (setq custom-file (make-temp-file "emacs-custom"))
 
   ;; Useful Defaults (most from https://sanemacs.com/)
   ;; Line-style cursor similar to other text editors
@@ -200,11 +197,26 @@
          ("<backtab>" . nil)
          ("M-n" . evil-ex-search-next)
          ("M-N" . evil-ex-search-previous)
+         ("M-i" . evil-jump-forward)
+         ("M-o" . evil-jump-backward)
          :map evil-normal-state-map
          ("M-." . nil)
          ("C-n" . evil-next-line)
          ("C-p" . evil-previous-line))
   :custom
+  (evil-want-keybinding t)
+  (evil-vsplit-window-right t)
+  (evil-split-window-below t)
+  (evil-overriding-maps nil)
+  (evil-want-integration t)
+  (evil-want-minibuffer nil)
+  (evil-want-C-i-jump nil)
+  (evil-want-C-d-scroll nil)
+  (evil-want-C-u-scroll nil)
+  (evil-search-module 'evil-search)
+  ;; use emacs keys in insert mode
+  (evil-disable-insert-state-bindings t)
+
   (evil-symbol-word-search t)
   (evil-default-state 'insert)
   (evil-emacs-state-modes '(term-mode))
@@ -222,19 +234,6 @@
                                   prog-mode
                                   fundamental-mode
                                   dired-mode))
-  :init
-  (setq evil-search-module 'evil-search)
-  (setq evil-want-keybinding t)
-  (setq evil-vsplit-window-right t)
-  (setq evil-split-window-below t)
-  (setq evil-overriding-maps nil)
-  (setq evil-want-integration t)
-  (setq evil-want-minibuffer nil)
-  (setq evil-want-C-i-jump t)
-  (setq evil-want-C-d-scroll nil)
-  (setq evil-want-C-u-scroll nil)
-  ;; use emacs keys in insert mode
-  (setq evil-disable-insert-state-bindings t)
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo))
@@ -287,8 +286,6 @@
 (use-package eglot
   :defer t
   :ensure nil
-  :bind
-  ("C-x p E" . flymake-show-project-diagnostics)
   :init
   (remove-hook 'eldoc-display-functions 'eldoc-display-in-echo-area))
 
@@ -368,7 +365,7 @@
   :custom
   (recentf-mode t)
   :bind
-  (("M-I" . consult-imenu)
+  (("M-I" . consult-imenu-multi)
    ("M-B" . consult-buffer)
    ("M-L" . consult-project-buffer)
    ("M-F" . consult-ripgrep)
