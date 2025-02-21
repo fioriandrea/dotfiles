@@ -195,12 +195,9 @@
          ("TAB" . nil)
          ("RET" . nil)
          ("<backtab>" . nil)
-         ("M-n" . evil-ex-search-next)
-         ("M-N" . evil-ex-search-previous)
-         ("M-i" . evil-jump-forward)
-         ("M-o" . evil-jump-backward)
-         :map evil-normal-state-map
          ("M-." . nil)
+         :map evil-normal-state-map
+         ("C-i" . evil-jump-forward)
          ("C-n" . evil-next-line)
          ("C-p" . evil-previous-line))
   :custom
@@ -213,9 +210,6 @@
   (evil-want-C-i-jump nil)
   (evil-want-C-d-scroll nil)
   (evil-want-C-u-scroll nil)
-  (evil-search-module 'evil-search)
-  ;; use emacs keys in insert mode
-  (evil-disable-insert-state-bindings t)
 
   (evil-symbol-word-search t)
   (evil-default-state 'insert)
@@ -228,6 +222,8 @@
                              compilation-mode))
   :init
   ;; Don't know why, but this cannot be under customize for some reason
+  (setq evil-search-module 'evil-search)
+  (setq evil-disable-insert-state-bindings t)
   (setq evil-normal-state-modes '(text-mode
                                   conf-mode
                                   Custom-mode
@@ -243,12 +239,16 @@
 ;; (use-package viper
 ;;   :demand t
 ;;   :ensure nil
+;;   :custom
+;;   (viper-want-ctl-h-help t)
+;;   (viper-want-emacs-keys-in-vi t)
+;;   (viper-want-emacs-keys-in-insert t)
 ;;   :config
 ;;   (viper-mode)
 ;;   :init
 ;;   (setq viper-mode t)
 ;;   (setq viper-inhibit-startup-message 't)
-;;   (setq viper-expert-level '3)
+;;   (setq viper-expert-level '5)
 ;;   :bind
 ;;   ("C-c v" . toggle-viper-mode))
 
@@ -303,7 +303,8 @@
          :map org-mode-map
          ("C-c z" . org-toggle-link-display))
   :config
-  (evil-define-key 'motion org-mode-map (kbd "TAB") 'org-cycle)
+  (evil-define-key 'normal org-mode-map (kbd "<return>") 'org-cycle)
+  (evil-define-key 'normal org-mode-map (kbd "RET") 'org-cycle)
   :custom
   (org-html-validation-link nil)
   (org-link-descriptive t)
@@ -338,6 +339,8 @@
   :config
   (evil-define-key 'normal dired-mode-map (kbd "g g") 'beginning-of-buffer)
   (evil-define-key 'normal dired-mode-map (kbd "G") 'end-of-buffer)
+  (evil-define-key 'normal dired-mode-map (kbd "n") 'evil-ex-search-next)
+  (evil-define-key 'normal dired-mode-map (kbd "N") 'evil-ex-search-previous)
   (setq dired-listing-switches "-alh")
   (setq dired-mouse-drag-files t)
   ;; Refresh dired automatically
