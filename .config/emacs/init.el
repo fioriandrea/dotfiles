@@ -70,7 +70,8 @@
   :defer t
   :ensure nil
   ;; https://www.gnu.org/software/emacs/manual/html_node/autotype/Hippie-Expand.html
-  :bind ("M-/" . hippie-expand)
+  :bind
+  ("M-/" . hippie-expand)
   :hook (before-save . delete-trailing-whitespace)
   ;; https://github.com/jwiegley/use-package/issues/517 (Advantages of custom?)
   :custom
@@ -124,11 +125,6 @@
   ;; Open Emacs in fullscreen
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-  ;; Useful Defaults (most from https://sanemacs.com/)
-  ;; Line-style cursor similar to other text editors
-  (setq-default cursor-type 'bar)
-  ;; Make window title the buffer name
-  (setq-default frame-title-format '("%b"))
   ;; y-or-n-p makes answering questions faster
   (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -149,6 +145,7 @@
    auto-save-list-file-prefix (file-name-as-directory emacs-autosave-dir)
    auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t))
    backup-directory-alist `((".*" . ,emacs-backup-dir)))
+
   ;; Disable Lockfiles
   (setq create-lockfiles nil)
 
@@ -234,11 +231,19 @@
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo))
 
-;;; Alternative to evil mode. Has less features
-;;; https://www.reddit.com/r/emacs/comments/e81u80/comment/fa98l7z
+;;; Alternative to evil mode. Has less features. For visual mode, you
+;;; can use emacs selections, and then you can operate on the region
+;;; using the "r" text object (for example, cr or dr).
+;;; https://www.reddit.com/r/emacs/comments/e81u80/comment/fa98l7za
 ;; (use-package viper
 ;;   :demand t
 ;;   :ensure nil
+;;   :bind
+;;   (:map viper-vi-basic-map
+;;         ("C-y" . nil)
+;;         ("C-b" . nil)
+;;         ("C-f" . nil)
+;;         ("C-e" . nil))
 ;;   :custom
 ;;   (viper-want-ctl-h-help t)
 ;;   (viper-want-emacs-keys-in-vi t)
@@ -265,7 +270,6 @@
   :config
   (fido-vertical-mode 1)
   :bind (:map icomplete-fido-mode-map
-	          ("RET" . icomplete-fido-ret)
 	          ("C-RET" . icomplete-fido-ret)
 	          ("C-<return>" . icomplete-fido-ret)
 	          ("M-RET" . icomplete-fido-ret)
@@ -273,13 +277,7 @@
 	          :map icomplete-minibuffer-map
 	          ("C-RET" . icomplete-fido-ret)
 	          ("C-<return>" . icomplete-fido-ret)
-	          ("C-n" . icomplete-forward-completions)
-	          ("C-p" . icomplete-backward-completions)
 	          :map completion-in-region-mode-map
-	          ("M-n" . minibuffer-next-completion)
-	          ("M-p" . minibuffer-previous-completion)
-	          ("C-n" . minibuffer-next-completion)
-	          ("C-p" . minibuffer-previous-completion)
 	          ("C-<return>" . minibuffer-choose-completion)
 	          ("C-RET" . minibuffer-choose-completion)))
 
@@ -363,24 +361,6 @@
   (set-face-attribute 'dired-subtree-depth-4-face nil :background nil)
   (set-face-attribute 'dired-subtree-depth-5-face nil :background nil)
   (set-face-attribute 'dired-subtree-depth-6-face nil :background nil))
-
-(use-package consult
-  :custom
-  (recentf-mode t)
-  :bind
-  (("M-I" . consult-imenu-multi)
-   ("M-B" . consult-buffer)
-   ("M-L" . consult-project-buffer)
-   ("M-F" . consult-ripgrep)
-   ("M-P" . consult-fd)
-   ("M-E" . consult-flymake)
-   :map icomplete-minibuffer-map
-   ("C-S-n" . icomplete-forward-completions)
-   ("C-S-p" . icomplete-backward-completions)
-   ("C-M-n" . icomplete-forward-completions)
-   ("C-M-p" . icomplete-backward-completions)
-   ("M-N" . icomplete-forward-completions)
-   ("M-P" . icomplete-backward-completions)))
 
 (use-package project
   :config
