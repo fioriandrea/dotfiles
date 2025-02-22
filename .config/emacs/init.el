@@ -105,6 +105,7 @@
   ;; https://lists.gnu.org/archive/html/emacs-devel/2014-10/msg00743.html
   ;; https://emacs.stackexchange.com/a/50134 (read comments)
   (auto-revert-interval 5)
+  (global-auto-revert-ignore-modes '(Buffer-menu-mode))
   :init
   ;; Remove scroll-bar, tool-bar and menu-bar
   (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -166,19 +167,19 @@
   :demand nil
   :custom
   (auto-revert-remote-files nil)
-  :config
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
   ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
-  (setq tramp-backup-directory-alist backup-directory-alist)
-  (setq tramp-auto-save-directory emacs-autosave-dir)
-  (setq enable-remote-dir-locals nil)
+  (enable-remote-dir-locals nil)
+  (tramp-auto-save-directory emacs-autosave-dir)
+  :config
+  (customize-set-variable 'tramp-backup-directory-alist backup-directory-alist)
   (setq remote-file-name-inhibit-locks t)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
   ;; https://robbmann.io/emacsd/
   ;; https://git.sr.ht/~cfeeley/doom-emacs-config/commit/1cb3f6704f38f9dbc64ff434866b5e2537d8c2ba
   (setq debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
-  (remove-hook 'find-file-hook 'vc-find-file-hook)
+  (remove-hook 'find-file-hook 'vc-refresh-state)
   (setq vc-ignore-dir-regexp
 	    (format "\\(%s\\)\\|\\(%s\\)"
 		        vc-ignore-dir-regexp
