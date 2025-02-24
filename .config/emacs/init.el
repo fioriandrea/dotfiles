@@ -208,7 +208,6 @@
   (evil-want-C-i-jump nil)
   (evil-want-C-d-scroll nil)
   (evil-want-C-u-scroll nil)
-
   (evil-symbol-word-search t)
   (evil-default-state 'insert)
   (evil-emacs-state-modes '(term-mode))
@@ -261,6 +260,8 @@
 (use-package icomplete
   :demand t
   :custom
+  (fido-mode t)
+  (fido-vertical-mode t)
   (tab-always-indent 'complete)
   ;; https://www.scss.tcd.ie/~sulimanm/posts/default-emacs-completion.html
   (completions-format 'one-column)
@@ -268,8 +269,6 @@
   (completions-max-height 20)
   (completion-auto-select 'second-tab)
   ;; (completion-auto-select t)
-  :config
-  (fido-vertical-mode 1)
   :bind (:map icomplete-fido-mode-map
 	          ("C-RET" . icomplete-fido-ret)
 	          ("C-<return>" . icomplete-fido-ret)
