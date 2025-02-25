@@ -150,7 +150,10 @@
   ;; Disable Lockfiles
   (setq create-lockfiles nil)
 
-  (xterm-mouse-mode +1))
+  (xterm-mouse-mode +1)
+
+  (windmove-default-keybindings)
+  (windmove-swap-states-default-keybindings '(shift control)))
 
 (use-package solarized-theme
   :config
@@ -193,8 +196,8 @@
          ("TAB" . nil)
          ("RET" . nil)
          ("<backtab>" . nil)
-         ("M-." . nil)
          :map evil-normal-state-map
+         ("M-" . nil)
          ("C-i" . evil-jump-forward)
          ("C-n" . evil-next-line)
          ("C-p" . evil-previous-line))
