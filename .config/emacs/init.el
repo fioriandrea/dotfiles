@@ -192,6 +192,7 @@
   :demand t
   ;; https://emacs.stackexchange.com/questions/61833/how-can-i-re-enable-c-z-in-evil-mode-to-pause-emacs
   :bind (("<escape>" . keyboard-escape-quit)
+         ("C-c e" . evil-mode)
          :map evil-motion-state-map
          ("TAB" . nil)
          ("RET" . nil)
