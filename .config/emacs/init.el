@@ -55,14 +55,25 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
-(setq use-package-always-ensure t)
-(setq use-package-always-defer nil)
-(setq use-package-verbose t)
-(setq use-package-compute-statistics t)
+(use-package use-package
+  :ensure nil
+  :demand nil
+  :custom
+  (use-package-always-ensure t)
+  (use-package-always-defer nil)
+  (use-package-verbose t)
+  (use-package-compute-statistics t))
 
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
+
+(defconst emacs-backup-dir
+  (file-name-as-directory
+   (expand-file-name "backups" user-emacs-directory)))
+(defconst emacs-autosave-dir
+  (file-name-as-directory
+   (expand-file-name "autosave" user-emacs-directory)))
 
 ;;; General emacs config
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
@@ -106,15 +117,30 @@
   ;; https://emacs.stackexchange.com/a/50134 (read comments)
   (auto-revert-interval 5)
   (global-auto-revert-ignore-modes '(Buffer-menu-mode))
+
+  (scroll-bar-mode nil)
+  (tool-bar-mode nil)
+  (menu-bar-mode t)
+  (context-menu-mode t)
+  (inhibit-startup-screen t)
+
+  (use-short-answers t)
+
+  (create-lockfiles nil)
+
+  (xterm-mouse-mode t)
+
+  ;; backups
+  (backup-by-copying t)
+  (delete-old-versions t)
+  (kept-new-versions 6)
+  (kept-old-versions 2)
+  (version-control t)
+  ;; https://emacs.stackexchange.com/questions/17210/how-to-place-all-auto-save-files-in-a-directory
+  (auto-save-list-file-prefix (file-name-as-directory emacs-autosave-dir))
+  (auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t)))
+  (backup-directory-alist `((".*" . ,emacs-backup-dir)))
   :init
-  ;; Remove scroll-bar, tool-bar and menu-bar
-  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  ;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-
-  ;; Disable startup screen
-  (setq inhibit-startup-screen t)
-
   ;; Defalut Font
   (defun font-available-p (font-name)
     (if (member font-name (font-family-list)) t nil))
@@ -125,32 +151,6 @@
 
   ;; Open Emacs in fullscreen
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-  ;; y-or-n-p makes answering questions faster
-  (fset 'yes-or-no-p 'y-or-n-p)
-
-  ;; Backups
-  (defconst emacs-backup-dir
-    (file-name-as-directory
-     (expand-file-name "backups" user-emacs-directory)))
-  (defconst emacs-autosave-dir
-    (file-name-as-directory
-     (expand-file-name "autosave" user-emacs-directory)))
-  (setq
-   backup-by-copying t
-   delete-old-versions t
-   kept-new-versions 6
-   kept-old-versions 2
-   version-control t
-   ;; https://emacs.stackexchange.com/questions/17210/how-to-place-all-auto-save-files-in-a-directory
-   auto-save-list-file-prefix (file-name-as-directory emacs-autosave-dir)
-   auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t))
-   backup-directory-alist `((".*" . ,emacs-backup-dir)))
-
-  ;; Disable Lockfiles
-  (setq create-lockfiles nil)
-
-  (xterm-mouse-mode +1)
 
   (windmove-default-keybindings)
   (windmove-swap-states-default-keybindings '(shift control)))
@@ -175,18 +175,17 @@
   ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
   (enable-remote-dir-locals nil)
   (tramp-auto-save-directory emacs-autosave-dir)
-  :config
-  (customize-set-variable 'tramp-backup-directory-alist backup-directory-alist)
-  (setq remote-file-name-inhibit-locks t)
+
+  (tramp-backup-directory-alist backup-directory-alist)
+  (remote-file-name-inhibit-locks t)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
   ;; https://robbmann.io/emacsd/
   ;; https://git.sr.ht/~cfeeley/doom-emacs-config/commit/1cb3f6704f38f9dbc64ff434866b5e2537d8c2ba
-  (setq debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
-  (remove-hook 'find-file-hook 'vc-refresh-state)
-  (setq vc-ignore-dir-regexp
-	    (format "\\(%s\\)\\|\\(%s\\)"
-		        vc-ignore-dir-regexp
-		        tramp-file-name-regexp)))
+  (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
+  (vc-ignore-dir-regexp
+   (format "\\(%s\\)\\|\\(%s\\)"
+	   vc-ignore-dir-regexp
+	   tramp-file-name-regexp)))
 
 (use-package evil
   :demand t
@@ -323,9 +322,6 @@
   :hook
   (magit-diff-mode . (lambda () (setq truncate-lines nil)))
   (magit-status-mode . (lambda () (setq truncate-lines nil)))
-  :bind
-  ("C-x g" . magit-status)
-  ("C-x p m" . magit-project-status)
   :custom
   (magit-diff-refine-hunk 'all)
   (magit-diff-refine-ignore-whitespace nil)
@@ -338,15 +334,14 @@
   (dired-mode . dired-hide-details-mode)
   :custom
   (dired-auto-revert-buffer t)
+  (dired-listing-switches "-alh")
+  (dired-mouse-drag-files t)
+  (dired-dwim-target t)
   :config
   (evil-define-key 'normal dired-mode-map (kbd "g g") 'beginning-of-buffer)
   (evil-define-key 'normal dired-mode-map (kbd "G") 'end-of-buffer)
   (evil-define-key 'normal dired-mode-map (kbd "n") 'evil-ex-search-next)
-  (evil-define-key 'normal dired-mode-map (kbd "N") 'evil-ex-search-previous)
-  (setq dired-listing-switches "-alh")
-  (setq dired-mouse-drag-files t)
-  ;; Refresh dired automatically
-  (setq-default dired-dwim-target t))
+  (evil-define-key 'normal dired-mode-map (kbd "N") 'evil-ex-search-previous))
 
 (use-package dired-x
   :demand t
