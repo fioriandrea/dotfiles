@@ -34,10 +34,12 @@
 
 (defconst emacs-backup-dir
   (file-name-as-directory
-   (expand-file-name "backups" user-emacs-directory)))
+   (abbreviate-file-name
+    (expand-file-name "backups" user-emacs-directory))))
 (defconst emacs-autosave-dir
   (file-name-as-directory
-   (expand-file-name "autosave" user-emacs-directory)))
+   (abbreviate-file-name
+    (expand-file-name "autosave" user-emacs-directory))))
 
 (defconst proxy-file (concat user-emacs-directory "proxy.el"))
 (when (file-exists-p proxy-file)
@@ -86,7 +88,7 @@
   (kept-old-versions 2)
   (auto-save-list-file-prefix (file-name-as-directory emacs-autosave-dir))
   (auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t)))
-  (backup-directory-alist `((".*" . ,emacs-backup-dir)))
+  (backup-directory-alist `(("." . ,emacs-backup-dir)))
   ;; Auto-revert
   (global-auto-revert-mode t)
   (auto-revert-verbose nil)
@@ -116,8 +118,8 @@
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
   ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
-  (enable-remote-dir-locals nil)
   (tramp-auto-save-directory emacs-autosave-dir)
+  ;; https://stackoverflow.com/a/47021266
   (tramp-backup-directory-alist backup-directory-alist)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
   ;; https://robbmann.io/emacsd/
@@ -159,17 +161,6 @@
   :after org
   :ensure nil)
 
-(use-package magit
-  :ensure nil
-  :defer t
-  :hook
-  (magit-diff-mode . (lambda () (setq truncate-lines nil)))
-  (magit-status-mode . (lambda () (setq truncate-lines nil)))
-  :custom
-  (magit-diff-refine-hunk 'all)
-  (magit-diff-refine-ignore-whitespace nil)
-  (magit-auto-revert-mode nil))
-
 (use-package dired
   :defer t
   :ensure nil
@@ -180,3 +171,14 @@
   (dired-listing-switches "-alh")
   (dired-mouse-drag-files t)
   (dired-dwim-target t))
+
+(use-package magit
+  :ensure nil
+  :defer t
+  :hook
+  (magit-diff-mode . (lambda () (setq truncate-lines nil)))
+  (magit-status-mode . (lambda () (setq truncate-lines nil)))
+  :custom
+  (magit-diff-refine-hunk 'all)
+  (magit-diff-refine-ignore-whitespace nil)
+  (magit-auto-revert-mode nil))
