@@ -176,6 +176,11 @@
   (dired-mouse-drag-files t)
   (dired-dwim-target t))
 
+(use-package dired-x
+  :demand t
+  :after dired
+  :ensure nil)
+
 (use-package magit
   :ensure nil
   :defer t
