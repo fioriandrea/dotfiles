@@ -61,6 +61,10 @@
   :bind
   ("M-/" . hippie-expand)
   :custom
+  (hippie-expand-try-functions-list '(try-complete-file-name
+                                      try-expand-dabbrev
+                                      try-expand-dabbrev-all-buffers
+                                      try-expand-dabbrev-from-kill))
   ;; (pop-up-windows nil)
   ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Choosing-Window-Options.html#index-pop_002dup_002dwindows_002c-replacement-for
   (display-buffer-base-action
