@@ -124,8 +124,8 @@
   (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
   (vc-ignore-dir-regexp
    (format "\\(%s\\)\\|\\(%s\\)"
-	   vc-ignore-dir-regexp
-	   tramp-file-name-regexp)))
+           vc-ignore-dir-regexp
+           tramp-file-name-regexp)))
 
 (use-package icomplete
   :custom
@@ -191,3 +191,52 @@
   (set-face-attribute 'dired-subtree-depth-4-face nil :background 'unspecified)
   (set-face-attribute 'dired-subtree-depth-5-face nil :background 'unspecified)
   (set-face-attribute 'dired-subtree-depth-6-face nil :background 'unspecified))
+
+(use-package consult
+  :if (package-installed-p 'consult)
+  :bind (("C-x b" . consult-buffer)
+         ("C-x p b" . consult-project-buffer)
+         :map icomplete-fido-mode-map
+         ("C-k" . icomplete-consult-fido-kill))
+  :config
+  (consult-customize
+   consult-buffer
+   consult-project-buffer
+   :preview-key nil
+   :annotate (lambda (x) ""))
+  :init
+  ;; massive hack stolen from https://debbugs.gnu.org/cgi/bugreport.cgi?bug=72210
+  (defun icomplete-consult-fido-kill (&optional pcat pthing)
+    (interactive)
+    (let* ((end (icomplete--field-end))
+           (cat (or pcat (icomplete--category)))
+           (all (completion-all-sorted-completions))
+           (thing (or pthing (car all)))
+           (mc (get-text-property 0 'multi-category (car all))))
+      (cond
+       ((< (point) end)
+        (call-interactively 'kill-line))
+       ((eq cat 'multi-category)
+        (icomplete-consult-fido-kill (car mc) (format "%s" (cdr mc))))
+       (t (let ((action
+                 (cl-case cat
+                   (buffer
+                    (lambda ()
+                      (when (yes-or-no-p (concat "Kill buffer " thing "? "))
+                        (kill-buffer thing))))
+                   ((project-file file)
+                    (lambda ()
+                      (let* ((dir (file-name-directory (icomplete--field-string)))
+                             (path (expand-file-name thing dir)))
+                        (when (yes-or-no-p (concat "Delete file " path "? "))
+                          (delete-file path) t))))
+                   (t
+                    (error "Sorry, don't know how to kill things for `%s'" cat)))))
+            (when (let ((enable-recursive-minibuffers t)
+                        (icomplete-mode nil))
+                    (funcall action))
+              (completion--cache-all-sorted-completions
+               (icomplete--field-beg)
+               (icomplete--field-end)
+               (cdr all))))
+          (message nil))))))
