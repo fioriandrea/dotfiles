@@ -88,14 +88,9 @@
          ("TAB" . nil)
          ("RET" . nil)
          ("<backtab>" . nil)
-         ("C-e" . nil)
-         ("C-f" . nil)
-         ("C-b" . nil)
          :map evil-normal-state-map
          ("M-." . nil)
-         ("C-i" . evil-jump-forward)
-         ("C-n" . evil-next-line)
-         ("C-p" . evil-previous-line))
+         ("C-i" . evil-jump-forward))
   :custom
   (evil-want-keybinding t)
   (evil-vsplit-window-right t)
@@ -129,6 +124,9 @@
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
+  (when (package-installed-p 'consult)
+    (evil-global-set-key 'normal (kbd "C-p") #'consult-fd)
+    (evil-global-set-key 'normal (kbd "C-S-f") #'consult-ripgrep))
   (with-eval-after-load 'org
     (evil-define-key 'normal org-mode-map (kbd "<return>") 'org-cycle)
     (evil-define-key 'normal org-mode-map (kbd "RET") 'org-cycle))
