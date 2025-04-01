@@ -65,6 +65,10 @@
   :init
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
+(use-package ediff
+  :custom
+  (ediff-window-setup-function 'ediff-setup-windows-plain))
+
 (use-package autorevert
   :custom
   (global-auto-revert-mode t)
