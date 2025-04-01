@@ -69,6 +69,64 @@
   :custom
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
+(use-package evil
+  :if (package-installed-p 'evil)
+  :demand t
+  :bind (("<escape>" . keyboard-escape-quit)
+         ("C-c e" . evil-mode)
+         :map evil-motion-state-map
+         ("TAB" . nil)
+         ("RET" . nil)
+         ("<backtab>" . nil)
+         ("C-e" . nil)
+         ("C-f" . nil)
+         ("C-b" . nil)
+         :map evil-normal-state-map
+         ("M-." . nil)
+         ("C-i" . evil-jump-forward)
+         ("C-n" . evil-next-line)
+         ("C-p" . evil-previous-line))
+  :custom
+  (evil-want-keybinding t)
+  (evil-vsplit-window-right t)
+  (evil-split-window-below t)
+  (evil-overriding-maps nil)
+  (evil-want-integration t)
+  (evil-want-minibuffer t)
+  (evil-want-C-i-jump nil)
+  (evil-want-C-d-scroll nil)
+  (evil-want-C-u-scroll nil)
+  (evil-symbol-word-search t)
+  (evil-default-state 'insert)
+  (evil-emacs-state-modes '(term-mode))
+  (evil-insert-state-modes '())
+  (evil-motion-state-modes '(completion-list-mode
+                             special-mode
+                             diff-mode
+                             archive-mode
+                             compilation-mode))
+  :init
+  ;; Don't know why, but this cannot be under customize for some reason
+  (setq evil-search-module 'evil-search)
+  (setq evil-disable-insert-state-bindings t)
+  (setq evil-normal-state-modes '(text-mode
+                                  conf-mode
+                                  Custom-mode
+                                  prog-mode
+                                  fundamental-mode
+                                  authinfo-mode
+                                  dired-mode))
+  :config
+  (evil-mode 1)
+  (evil-set-undo-system 'undo-redo)
+  (with-eval-after-load 'org
+    (evil-define-key 'normal org-mode-map (kbd "<return>") 'org-cycle)
+    (evil-define-key 'normal org-mode-map (kbd "RET") 'org-cycle))
+  (with-eval-after-load 'xref
+    (evil-make-overriding-map xref--xref-buffer-mode-map 'motion))
+  (with-eval-after-load 'cus-edit
+    (evil-make-overriding-map custom-mode-map 'normal)))
+
 (use-package autorevert
   :custom
   (global-auto-revert-mode t)
