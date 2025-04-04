@@ -92,11 +92,15 @@
          ("C-b" . nil)
          ("C-y" . nil)
          ("C-e" . nil)
+         ("C-o" . nil)
+         ("M-n" . evil-ex-search-next)
+         ("M-N" . evil-ex-search-previous)
+         ("?" . evil-ex-search-backward)
          :map evil-normal-state-map
          ("M-." . nil)
          ("C-p" . nil)
          ("C-n" . nil)
-         ("C-i" . evil-jump-forward))
+         ("DEL" . nil))
   :custom
   (evil-want-keybinding t)
   (evil-vsplit-window-right t)
@@ -108,35 +112,48 @@
   (evil-want-C-d-scroll nil)
   (evil-want-C-u-scroll nil)
   (evil-symbol-word-search t)
-  (evil-default-state 'insert)
+  (evil-default-state 'normal)
   (evil-emacs-state-modes '(term-mode))
-  (evil-insert-state-modes '())
-  (evil-motion-state-modes '(completion-list-mode
-                             special-mode
-                             diff-mode
-                             archive-mode
-                             compilation-mode))
   :init
   ;; Don't know why, but this cannot be under customize for some reason
   (setq evil-search-module 'evil-search)
   (setq evil-disable-insert-state-bindings t)
-  (setq evil-normal-state-modes '(text-mode
-                                  conf-mode
-                                  Custom-mode
-                                  prog-mode
-                                  fundamental-mode
-                                  authinfo-mode
-                                  dired-mode))
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
-  (with-eval-after-load 'org
-    (evil-define-key 'normal org-mode-map (kbd "<return>") 'org-cycle)
-    (evil-define-key 'normal org-mode-map (kbd "RET") 'org-cycle))
-  (with-eval-after-load 'xref
-    (evil-make-overriding-map xref--xref-buffer-mode-map 'motion))
-  (with-eval-after-load 'cus-edit
-    (evil-make-overriding-map custom-mode-map 'normal)))
+  (dolist (mode evil-emacs-state-modes)
+    (evil-set-initial-state mode 'emacs))
+  (defvar my-evil-normal-overriding-modes '(completion-list-mode
+                                            special-mode
+                                            diff-mode
+                                            archive-mode
+                                            Custom-mode
+                                            dired-mode
+                                            compilation-mode))
+  (defun my-evil-std-keys (state map)
+    (evil-add-hjkl-bindings map state
+      "/"   'evil-ex-search-forward
+      "?"   'evil-ex-search-backward
+      "0"   'evil-beginning-of-line
+      "$"   'evil-end-of-line
+      (kbd "M-n") 'evil-ex-search-next
+      (kbd "M-N") 'evil-ex-search-previous))
+  (defun my-evil-apply-evil-std-keys-to-mode (mode)
+    (let* ((map-name (format "%s-map" (symbol-name mode)))
+           (map-sym (intern map-name))
+           (fn-name (format "my-evil-apply-evil-std-keys-to-%s" map-name)))
+      (eval
+       `(evil-with-delay
+            (and
+             (boundp ',map-sym)
+             (keymapp ,map-sym))
+            (after-load-functions t nil ,fn-name)
+          (with-demoted-errors "Error in my-evil-apply-evil-std-keys-to-mode: %S"
+            (evil-make-overriding-map ,map-sym)
+            (my-evil-std-keys '(normal motion) ,map-sym))))))
+  (dolist (mode my-evil-normal-overriding-modes)
+    (evil-set-initial-state mode 'normal)
+    (my-evil-apply-evil-std-keys-to-mode mode)))
 
 (use-package autorevert
   :custom
