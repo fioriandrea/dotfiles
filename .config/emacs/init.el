@@ -40,6 +40,8 @@
 
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
+  :bind
+  ("C-x f" . nil)
   :custom
   (help-window-select t)
   (global-display-line-numbers-mode t)
