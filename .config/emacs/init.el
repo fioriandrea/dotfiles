@@ -271,6 +271,8 @@
   :if (package-installed-p 'consult)
   :bind (("C-x b" . consult-buffer)
          ("C-x p b" . consult-project-buffer)
+         ("C-c f" . consult-fd)
+         ("C-c g" . consult-ripgrep)
          :map icomplete-fido-mode-map
          ("C-k" . icomplete-consult-fido-kill))
   :config
