@@ -174,12 +174,7 @@
 
 (use-package hippie-exp
   :bind
-  ("M-/" . hippie-expand)
-  :custom
-  (hippie-expand-try-functions-list '(try-complete-file-name
-                                      try-expand-dabbrev
-                                      try-expand-dabbrev-all-buffers
-                                      try-expand-dabbrev-from-kill)))
+  ("C-c h" . hippie-expand))
 
 (use-package tab-bar
   :custom
