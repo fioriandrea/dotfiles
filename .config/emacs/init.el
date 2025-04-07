@@ -95,6 +95,7 @@
          ("C-y" . nil)
          ("C-e" . nil)
          ("C-o" . nil)
+         ("C-r" . nil)
          ("M-n" . evil-ex-search-next)
          ("M-N" . evil-ex-search-previous)
          ("?" . evil-ex-search-backward)
