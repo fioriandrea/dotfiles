@@ -95,12 +95,12 @@
          ("C-y" . nil)
          ("C-e" . nil)
          ("C-o" . nil)
-         ("C-r" . nil)
          ("M-n" . evil-ex-search-next)
          ("M-N" . evil-ex-search-previous)
          ("?" . evil-ex-search-backward)
          :map evil-normal-state-map
          ("M-." . nil)
+         ("C-r" . nil)
          ("C-p" . nil)
          ("C-n" . nil)
          ("DEL" . nil))
@@ -110,7 +110,7 @@
   (evil-split-window-below t)
   (evil-overriding-maps nil)
   (evil-want-integration t)
-  (evil-want-minibuffer t)
+  (evil-want-minibuffer nil)
   (evil-want-C-i-jump nil)
   (evil-want-C-d-scroll nil)
   (evil-want-C-u-scroll nil)
@@ -124,9 +124,19 @@
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
+
+  (defvar my-space-map (cl-copy-list ctl-x-map))
+  (define-key my-space-map (kbd "x") 'execute-extended-command)
+  (define-key my-space-map (kbd "f") 'find-file)
+  (define-key my-space-map (kbd "j") 'dired-jump)
+  (evil-define-key '(motion normal) 'global
+    (kbd "SPC") my-space-map)
+
   (dolist (mode evil-emacs-state-modes)
     (evil-set-initial-state mode 'emacs))
   (defvar my-evil-normal-overriding-modes '(completion-list-mode
+                                            help-mode
+                                            Info-mode
                                             special-mode
                                             diff-mode
                                             archive-mode
@@ -139,6 +149,7 @@
       "?"   'evil-ex-search-backward
       "0"   'evil-beginning-of-line
       "$"   'evil-end-of-line
+      (kbd "SPC") my-space-map
       (kbd "M-n") 'evil-ex-search-next
       (kbd "M-N") 'evil-ex-search-previous))
   (defun my-evil-apply-evil-std-keys-to-mode (mode)
