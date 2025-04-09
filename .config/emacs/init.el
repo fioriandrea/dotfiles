@@ -171,7 +171,7 @@
   (global-auto-revert-ignore-modes '(Buffer-menu-mode)))
 
 (use-package windmove
-  :custom
+  :init
   (windmove-default-keybindings)
   (windmove-swap-states-default-keybindings '(shift control)))
 
