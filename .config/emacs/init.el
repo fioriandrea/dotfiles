@@ -126,30 +126,36 @@
   (evil-set-undo-system 'undo-redo)
 
   (defvar my-space-map (cl-copy-list ctl-x-map))
-  (define-key my-space-map (kbd "x") 'execute-extended-command)
-  (define-key my-space-map (kbd "f") 'find-file)
-  (define-key my-space-map (kbd "j") 'dired-jump)
-  (evil-define-key '(motion normal) 'global
-    (kbd "SPC") my-space-map)
+  (define-key my-space-map "x" 'execute-extended-command)
+  (define-key my-space-map " " 'execute-extended-command)
+  (define-key my-space-map "f" 'find-file)
+  (define-key my-space-map "j" 'dired-jump)
+  (evil-define-key '(motion normal visual) 'global
+    " " my-space-map)
 
   (dolist (mode evil-emacs-state-modes)
     (evil-set-initial-state mode 'emacs))
-  (defvar my-evil-normal-overriding-modes '(completion-list-mode
-                                            help-mode
-                                            Info-mode
-                                            special-mode
-                                            diff-mode
-                                            archive-mode
-                                            Custom-mode
-                                            dired-mode
-                                            compilation-mode))
+  (defvar my-evil-normal-overriding-modes (cl-union
+                                           evil-motion-state-modes
+                                           '(completion-list-mode
+                                             org-agenda-mode
+                                             occur-mode
+                                             magit-mode
+                                             help-mode
+                                             Info-mode
+                                             special-mode
+                                             diff-mode
+                                             archive-mode
+                                             Custom-mode
+                                             dired-mode
+                                             compilation-mode)))
   (defun my-evil-std-keys (state map)
     (evil-add-hjkl-bindings map state
       "/"   'evil-ex-search-forward
       "?"   'evil-ex-search-backward
       "0"   'evil-beginning-of-line
       "$"   'evil-end-of-line
-      (kbd "SPC") my-space-map
+      " " my-space-map
       (kbd "M-n") 'evil-ex-search-next
       (kbd "M-N") 'evil-ex-search-previous))
   (defun my-evil-apply-evil-std-keys-to-mode (mode)
