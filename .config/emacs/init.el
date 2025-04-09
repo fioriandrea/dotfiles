@@ -116,11 +116,15 @@
   (evil-want-C-u-scroll nil)
   (evil-symbol-word-search t)
   (evil-default-state 'normal)
-  (evil-emacs-state-modes '(term-mode))
   :init
   ;; Don't know why, but this cannot be under customize for some reason
   (setq evil-search-module 'evil-search)
   (setq evil-disable-insert-state-bindings t)
+
+  (setq evil-insert-state-modes
+        (append evil-insert-state-modes
+                (cl-copy-list evil-emacs-state-modes)))
+  (setq evil-emacs-state-modes '(term-mode))
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
