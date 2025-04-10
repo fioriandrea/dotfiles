@@ -105,40 +105,46 @@
          ("C-n" . nil)
          ("DEL" . nil))
   :custom
-  (evil-want-keybinding t)
+  (evil-want-keybinding nil)
   (evil-vsplit-window-right t)
   (evil-split-window-below t)
   (evil-overriding-maps nil)
-  (evil-want-integration t)
+  (evil-want-integration nil)
   (evil-want-minibuffer nil)
   (evil-want-C-i-jump nil)
   (evil-want-C-d-scroll nil)
   (evil-want-C-u-scroll nil)
   (evil-symbol-word-search t)
   (evil-default-state 'normal)
+  (evil-emacs-state-modes '(term-mode))
   :init
   ;; Don't know why, but this cannot be under customize for some reason
   (setq evil-search-module 'evil-search)
   (setq evil-disable-insert-state-bindings t)
-
-  (setq evil-insert-state-modes
-        (append evil-insert-state-modes
-                (cl-copy-list evil-emacs-state-modes)))
-  (setq evil-emacs-state-modes '(term-mode))
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
 
-  (defvar my-space-map (cl-copy-list ctl-x-map))
-  (define-key my-space-map "x" 'execute-extended-command)
-  (define-key my-space-map " " 'execute-extended-command)
-  (define-key my-space-map "f" 'find-file)
-  (define-key my-space-map "j" 'dired-jump)
+  ;; https://emacs.stackexchange.com/a/13433
+  (defun simulate-key-press (key)
+    "Return a command that pretends KEY was presssed.
+KEY must be given in `kbd' notation."
+    `(lambda () (interactive)
+       (setq prefix-arg current-prefix-arg)
+       (setq unread-command-events (listify-key-sequence (read-kbd-macro ,key)))))
+  (defvar-keymap my-space-map
+    :parent ctl-x-map
+    "c" (simulate-key-press "C-c")
+    "x" 'execute-extended-command
+    "SPC" 'execute-extended-command
+    "f" 'find-file
+    "j" 'dired-jump)
   (evil-define-key '(motion normal visual) 'global
-    " " my-space-map)
+    (kbd "SPC") my-space-map)
 
   (dolist (mode evil-emacs-state-modes)
     (evil-set-initial-state mode 'emacs))
+
   (defvar my-evil-normal-overriding-modes (cl-union
                                            evil-motion-state-modes
                                            '(completion-list-mode
@@ -159,7 +165,7 @@
       "?"   'evil-ex-search-backward
       "0"   'evil-beginning-of-line
       "$"   'evil-end-of-line
-      " " my-space-map
+      (kbd "SPC") my-space-map
       (kbd "M-n") 'evil-ex-search-next
       (kbd "M-N") 'evil-ex-search-previous))
   (defun my-evil-apply-evil-std-keys-to-mode (mode)
