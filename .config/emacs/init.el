@@ -179,8 +179,8 @@ KEY must be given in `kbd' notation."
              (keymapp ,map-sym))
             (after-load-functions t nil ,fn-name)
           (with-demoted-errors "Error in my-evil-apply-evil-std-keys-to-mode: %S"
-            (evil-make-overriding-map ,map-sym)
-            (my-evil-std-keys '(normal motion visual) ,map-sym))))))
+            (evil-make-overriding-map ,map-sym 'normal)
+            (my-evil-std-keys '(normal motion) ,map-sym))))))
   (dolist (mode my-evil-normal-overriding-modes)
     (evil-set-initial-state mode 'normal)
     (my-evil-apply-evil-std-keys-to-mode mode)))
