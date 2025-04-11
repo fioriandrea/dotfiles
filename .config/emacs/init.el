@@ -104,11 +104,13 @@
          ("C-p" . nil)
          ("C-n" . nil)
          ("DEL" . nil))
+  :hook
+  ;; https://www.reddit.com/r/emacs/comments/gxzsjn/trying_to_have_minor_mode_key_bindings_for_edebug/
+  (view-mode . evil-normalize-keymaps)
   :custom
   (evil-want-keybinding nil)
   (evil-vsplit-window-right t)
   (evil-split-window-below t)
-  (evil-overriding-maps nil)
   (evil-want-integration nil)
   (evil-want-minibuffer nil)
   (evil-want-C-i-jump nil)
@@ -145,12 +147,16 @@ KEY must be given in `kbd' notation."
   (dolist (mode evil-emacs-state-modes)
     (evil-set-initial-state mode 'emacs))
 
+  ;; For minor modes, add hook
+  ;; see https://www.reddit.com/r/emacs/comments/gxzsjn/trying_to_have_minor_mode_key_bindings_for_edebug/
+  ;; and https://github.com/emacs-evil/evil/issues/301
   (defvar my-evil-normal-overriding-modes (cl-union
                                            evil-motion-state-modes
                                            '(completion-list-mode
                                              org-agenda-mode
                                              occur-mode
                                              magit-mode
+                                             view-mode
                                              help-mode
                                              Info-mode
                                              special-mode
