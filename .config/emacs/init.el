@@ -44,6 +44,9 @@
   ("C-x f" . nil)
   :custom
   (help-window-select t)
+  (help-window-keep-selected t)
+  (completions-detailed t)
+  (suggest-key-bindings t)
   (global-display-line-numbers-mode t)
   (ring-bell-function 'ignore)
   (truncate-lines nil)
