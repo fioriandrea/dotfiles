@@ -108,10 +108,10 @@
   ;; https://www.reddit.com/r/emacs/comments/gxzsjn/trying_to_have_minor_mode_key_bindings_for_edebug/
   (view-mode . evil-normalize-keymaps)
   :custom
-  (evil-want-keybinding nil)
+  (evil-want-keybinding t)
   (evil-vsplit-window-right t)
   (evil-split-window-below t)
-  (evil-want-integration nil)
+  (evil-want-integration t)
   (evil-want-minibuffer nil)
   (evil-want-C-i-jump nil)
   (evil-want-C-d-scroll nil)
@@ -126,6 +126,9 @@
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
+
+  (dolist (mode evil-emacs-state-modes)
+    (evil-set-initial-state mode 'emacs))
 
   ;; https://emacs.stackexchange.com/a/13433
   (defun simulate-key-press (key)
@@ -144,27 +147,6 @@ KEY must be given in `kbd' notation."
   (evil-define-key '(motion normal visual) 'global
     (kbd "SPC") my-space-map)
 
-  (dolist (mode evil-emacs-state-modes)
-    (evil-set-initial-state mode 'emacs))
-
-  ;; For minor modes, add hook
-  ;; see https://www.reddit.com/r/emacs/comments/gxzsjn/trying_to_have_minor_mode_key_bindings_for_edebug/
-  ;; and https://github.com/emacs-evil/evil/issues/301
-  (defvar my-evil-normal-overriding-modes (cl-union
-                                           evil-motion-state-modes
-                                           '(completion-list-mode
-                                             org-agenda-mode
-                                             occur-mode
-                                             magit-mode
-                                             view-mode
-                                             help-mode
-                                             Info-mode
-                                             special-mode
-                                             diff-mode
-                                             archive-mode
-                                             Custom-mode
-                                             dired-mode
-                                             compilation-mode)))
   (defun my-evil-std-keys (state map)
     (evil-add-hjkl-bindings map state
       "/"   'evil-ex-search-forward
@@ -174,22 +156,50 @@ KEY must be given in `kbd' notation."
       (kbd "SPC") my-space-map
       (kbd "M-n") 'evil-ex-search-next
       (kbd "M-N") 'evil-ex-search-previous))
-  (defun my-evil-apply-evil-std-keys-to-mode (mode)
+
+  ;; For minor modes, add hook
+  ;; see https://www.reddit.com/r/emacs/comments/gxzsjn/trying_to_have_minor_mode_key_bindings_for_edebug/
+  ;; and https://github.com/emacs-evil/evil/issues/301
+  ;; and https://github.com/noctuid/evil-guide?tab=readme-ov-file#why-dont-keys-defined-with-evil-define-key-work-immediately
+  (defvar my-evil-normal-overriding-modes '(completion-list-mode
+                                            org-agenda-mode
+                                            occur-mode
+                                            magit-mode
+                                            view-mode
+                                            special-mode
+                                            diff-mode
+                                            archive-mode
+                                            Custom-mode
+                                            dired-mode
+                                            compilation-mode))
+  (defun my-evil-make-overriding-map (mode state)
     (let* ((map-name (format "%s-map" (symbol-name mode)))
            (map-sym (intern map-name))
-           (fn-name (format "my-evil-apply-evil-std-keys-to-%s" map-name)))
+           (fn-name (format "my-evil-make-overriding-map-to-%s" map-name)))
       (eval
        `(evil-with-delay
             (and
              (boundp ',map-sym)
              (keymapp ,map-sym))
             (after-load-functions t nil ,fn-name)
-          (with-demoted-errors "Error in my-evil-apply-evil-std-keys-to-mode: %S"
-            (evil-make-overriding-map ,map-sym 'normal)
-            (my-evil-std-keys '(normal motion) ,map-sym))))))
+          (with-demoted-errors "Error in my-evil-apply-evil-std-keys-to: %S"
+            (evil-make-overriding-map ,map-sym ',state))))))
   (dolist (mode my-evil-normal-overriding-modes)
     (evil-set-initial-state mode 'normal)
-    (my-evil-apply-evil-std-keys-to-mode mode)))
+    (my-evil-make-overriding-map mode 'normal))
+
+  ;; https://github.com/noctuid/evil-guide
+  (defvar my-evil-intercept-mode-map (make-sparse-keymap)
+    "High precedence keymap.")
+  (define-minor-mode my-evil-intercept-mode
+    "Global minor mode for higher precedence evil keybindings."
+    :global t)
+  (my-evil-intercept-mode)
+  (dolist (state '(normal visual insert))
+    (evil-make-intercept-map
+     (evil-get-auxiliary-keymap my-evil-intercept-mode-map state t t)
+     state))
+  (my-evil-std-keys '(normal motion visual) my-evil-intercept-mode-map))
 
 (use-package autorevert
   :custom
