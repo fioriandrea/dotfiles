@@ -83,9 +83,8 @@
 
 (use-package evil
   :if (package-installed-p 'evil)
-  :demand t
-  :bind (("<escape>" . keyboard-escape-quit)
-         ("C-c e" . evil-mode)
+  ;; :demand t
+  :bind (("C-c e" . evil-mode)
          :map evil-motion-state-map
          ("TAB" . nil)
          ("RET" . nil)
@@ -124,7 +123,7 @@
   (setq evil-search-module 'evil-search)
   (setq evil-disable-insert-state-bindings t)
   :config
-  (evil-mode 1)
+  ;; (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
 
   (dolist (mode evil-emacs-state-modes)
@@ -161,17 +160,17 @@ KEY must be given in `kbd' notation."
   ;; see https://www.reddit.com/r/emacs/comments/gxzsjn/trying_to_have_minor_mode_key_bindings_for_edebug/
   ;; and https://github.com/emacs-evil/evil/issues/301
   ;; and https://github.com/noctuid/evil-guide?tab=readme-ov-file#why-dont-keys-defined-with-evil-define-key-work-immediately
-  (defvar my-evil-normal-overriding-modes '(completion-list-mode
-                                            org-agenda-mode
-                                            occur-mode
-                                            magit-mode
-                                            view-mode
-                                            special-mode
-                                            diff-mode
-                                            archive-mode
-                                            Custom-mode
-                                            dired-mode
-                                            compilation-mode))
+  (defconst my-evil-normal-overriding-modes '(completion-list-mode
+                                              org-agenda-mode
+                                              occur-mode
+                                              magit-mode
+                                              view-mode
+                                              special-mode
+                                              diff-mode
+                                              archive-mode
+                                              Custom-mode
+                                              dired-mode
+                                              compilation-mode))
   (defun my-evil-make-overriding-map (mode state)
     (let* ((map-name (format "%s-map" (symbol-name mode)))
            (map-sym (intern map-name))
