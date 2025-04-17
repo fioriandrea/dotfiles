@@ -224,6 +224,7 @@ KEY must be given in `kbd' notation."
 
 (use-package tramp
   :custom
+  (tramp-histfile-override t)
   (auto-revert-remote-files nil)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
