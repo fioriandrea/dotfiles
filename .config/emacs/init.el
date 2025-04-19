@@ -246,7 +246,13 @@ KEY must be given in `kbd' notation."
   ;; (tab-always-indent 'complete)
   ;; (completion-auto-select 'second-tab)
   (fido-mode t)
-  (fido-vertical-mode t))
+  (fido-vertical-mode t)
+  :init
+  ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
+  ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
+  (defun my-icomplete-styles ()
+    (setq-local completion-styles '(flex partial-completion)))
+  (add-hook 'icomplete-minibuffer-setup-hook 'my-icomplete-styles))
 
 (use-package eldoc
   :custom
