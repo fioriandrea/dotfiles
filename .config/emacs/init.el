@@ -183,6 +183,7 @@ KEY must be given in `kbd' notation."
                                               diff-mode
                                               archive-mode
                                               Custom-mode
+                                              custom-mode
                                               dired-mode
                                               compilation-mode))
   (defun my-evil-make-overriding-map (mode state)
