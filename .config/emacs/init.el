@@ -71,6 +71,8 @@
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 (use-package window
+  :bind
+  ("C-c w s" . window-swap-states)
   :custom
   ;; (pop-up-windows nil)
   ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Choosing-Window-Options.html#index-pop_002dup_002dwindows_002c-replacement-for
@@ -79,6 +81,13 @@
       display-buffer-same-window
       display-buffer-in-previous-window
       display-buffer-use-some-window))))
+
+(use-package windmove
+  :bind
+  ("C-c <left>" . windmove-left)
+  ("C-c <right>" . windmove-right)
+  ("C-c <up>" . windmove-up)
+  ("C-c <down>" . windmove-down))
 
 (use-package ediff
   :custom
@@ -216,11 +225,6 @@ KEY must be given in `kbd' notation."
   ;; https://emacs.stackexchange.com/a/50134 (read comments)
   (auto-revert-interval 5)
   (global-auto-revert-ignore-modes '(Buffer-menu-mode)))
-
-(use-package windmove
-  :init
-  (windmove-default-keybindings)
-  (windmove-swap-states-default-keybindings '(shift control)))
 
 (use-package hippie-exp
   :bind
