@@ -176,6 +176,7 @@ KEY must be given in `kbd' notation."
   ;; and https://github.com/noctuid/evil-guide?tab=readme-ov-file#why-dont-keys-defined-with-evil-define-key-work-immediately
   (defconst my-evil-normal-overriding-modes '(completion-list-mode
                                               org-agenda-mode
+                                              Info-mode
                                               occur-mode
                                               magit-mode
                                               view-mode
