@@ -47,8 +47,9 @@
   (text-mode . visual-line-mode)
   (prog-mode . display-line-numbers-mode)
   :custom
-  (help-window-select t)
-  (help-window-keep-selected t)
+  (tab-bar-show 1)
+  (recentf-mode t)
+  (savehist-mode t)
   (completions-detailed t)
   (suggest-key-bindings t)
   (ring-bell-function 'ignore)
@@ -73,6 +74,16 @@
   :init
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
+(use-package hippie-exp
+  :bind
+  ("C-c h" . hippie-expand))
+
+
+(use-package help
+  :custom
+  (help-window-select t)
+  (help-window-keep-selected t))
+
 (use-package window
   :bind
   ("C-c w s" . window-swap-states)
@@ -95,6 +106,80 @@
 (use-package ediff
   :custom
   (ediff-window-setup-function 'ediff-setup-windows-plain))
+
+(use-package autorevert
+  :custom
+  (global-auto-revert-mode t)
+  (auto-revert-verbose nil)
+  (global-auto-revert-non-file-buffers t)
+  (auto-revert-use-notify t)
+  (auto-revert-avoid-polling t)
+  ;; https://lists.gnu.org/archive/html/emacs-devel/2014-10/msg00743.html
+  ;; https://emacs.stackexchange.com/a/50134 (read comments)
+  (auto-revert-interval 5)
+  (global-auto-revert-ignore-modes '(Buffer-menu-mode)))
+
+(use-package tramp
+  :custom
+  (auto-revert-remote-files nil)
+  ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
+  ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
+  ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
+  (tramp-auto-save-directory emacs-autosave-dir)
+  ;; https://stackoverflow.com/a/47021266
+  (tramp-backup-directory-alist backup-directory-alist)
+  ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
+  ;; https://robbmann.io/emacsd/
+  ;; https://git.sr.ht/~cfeeley/doom-emacs-config/commit/1cb3f6704f38f9dbc64ff434866b5e2537d8c2ba
+  (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
+  (vc-ignore-dir-regexp
+   (format "\\(%s\\)\\|\\(%s\\)"
+           vc-ignore-dir-regexp
+           tramp-file-name-regexp)))
+
+(use-package icomplete
+  :custom
+  ;; (tab-always-indent 'complete)
+  ;; (completion-auto-select 'second-tab)
+  (fido-mode t)
+  (fido-vertical-mode t)
+  :init
+  ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
+  ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
+  (defun my-icomplete-styles ()
+    (setq-local completion-styles '(flex partial-completion)))
+  (add-hook 'icomplete-minibuffer-setup-hook 'my-icomplete-styles))
+
+(use-package eldoc
+  :custom
+  (eldoc-echo-area-use-multiline-p nil))
+
+(use-package org
+  :bind (("C-c l" . org-store-link)
+         ("C-c a" . org-agenda)
+         ("C-c c" . org-capture)
+         :map org-mode-map
+         ("C-c z" . org-toggle-link-display))
+  :custom
+  (org-startup-truncated nil)
+  (org-html-validation-link nil))
+
+(use-package org-tempo
+  :demand t
+  :after org)
+
+(use-package dired
+  :hook
+  (dired-mode . dired-hide-details-mode)
+  :custom
+  (dired-auto-revert-buffer t)
+  (dired-listing-switches "-alh")
+  (dired-mouse-drag-files t)
+  (dired-dwim-target t))
+
+(use-package dired-x
+  :demand t
+  :after dired)
 
 (use-package evil
   :if (package-installed-p 'evil)
@@ -218,96 +303,6 @@ KEY must be given in `kbd' notation."
      (evil-get-auxiliary-keymap my-evil-intercept-mode-map state t t)
      state))
   (my-evil-std-keys '(normal motion visual) my-evil-intercept-mode-map))
-
-(use-package autorevert
-  :custom
-  (global-auto-revert-mode t)
-  (auto-revert-verbose nil)
-  (global-auto-revert-non-file-buffers t)
-  (auto-revert-use-notify t)
-  (auto-revert-avoid-polling t)
-  ;; https://lists.gnu.org/archive/html/emacs-devel/2014-10/msg00743.html
-  ;; https://emacs.stackexchange.com/a/50134 (read comments)
-  (auto-revert-interval 5)
-  (global-auto-revert-ignore-modes '(Buffer-menu-mode)))
-
-(use-package hippie-exp
-  :bind
-  ("C-c h" . hippie-expand))
-
-(use-package tab-bar
-  :custom
-  (tab-bar-show 1))
-
-(use-package recentf
-  :custom
-  (recentf-mode t))
-
-(use-package savehist
-  :custom
-  (savehist-mode t))
-
-(use-package tramp
-  :custom
-  (auto-revert-remote-files nil)
-  ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
-  ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
-  ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
-  (tramp-auto-save-directory emacs-autosave-dir)
-  ;; https://stackoverflow.com/a/47021266
-  (tramp-backup-directory-alist backup-directory-alist)
-  ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
-  ;; https://robbmann.io/emacsd/
-  ;; https://git.sr.ht/~cfeeley/doom-emacs-config/commit/1cb3f6704f38f9dbc64ff434866b5e2537d8c2ba
-  (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
-  (vc-ignore-dir-regexp
-   (format "\\(%s\\)\\|\\(%s\\)"
-           vc-ignore-dir-regexp
-           tramp-file-name-regexp)))
-
-(use-package icomplete
-  :custom
-  ;; (tab-always-indent 'complete)
-  ;; (completion-auto-select 'second-tab)
-  (fido-mode t)
-  (fido-vertical-mode t)
-  :init
-  ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
-  ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
-  (defun my-icomplete-styles ()
-    (setq-local completion-styles '(flex partial-completion)))
-  (add-hook 'icomplete-minibuffer-setup-hook 'my-icomplete-styles))
-
-(use-package eldoc
-  :custom
-  (eldoc-echo-area-use-multiline-p nil))
-
-(use-package org
-  :bind (("C-c l" . org-store-link)
-         ("C-c a" . org-agenda)
-         ("C-c c" . org-capture)
-         :map org-mode-map
-         ("C-c z" . org-toggle-link-display))
-  :custom
-  (org-startup-truncated nil)
-  (org-html-validation-link nil))
-
-(use-package org-tempo
-  :demand t
-  :after org)
-
-(use-package dired
-  :hook
-  (dired-mode . dired-hide-details-mode)
-  :custom
-  (dired-auto-revert-buffer t)
-  (dired-listing-switches "-alh")
-  (dired-mouse-drag-files t)
-  (dired-dwim-target t))
-
-(use-package dired-x
-  :demand t
-  :after dired)
 
 (use-package magit
   :if (package-installed-p 'magit)
