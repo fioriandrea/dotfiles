@@ -139,8 +139,8 @@
 
 (use-package icomplete
   :custom
-  ;; (tab-always-indent 'complete)
-  ;; (completion-auto-select 'second-tab)
+  (tab-always-indent 'complete)
+  (completion-auto-select 'second-tab)
   (fido-mode t)
   (fido-vertical-mode t)
   :init
