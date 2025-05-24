@@ -42,6 +42,7 @@
 (use-package emacs
   :bind
   ("C-x f" . nil)
+  ("C-x C-b" . buffer-menu)
   :hook
   (text-mode . display-line-numbers-mode)
   (text-mode . visual-line-mode)
