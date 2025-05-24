@@ -243,6 +243,10 @@ KEY must be given in `kbd' notation."
   :custom
   (recentf-mode t))
 
+(use-package savehist
+  :custom
+  (savehist-mode t))
+
 (use-package tramp
   :custom
   (auto-revert-remote-files nil)
