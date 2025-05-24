@@ -42,12 +42,14 @@
 (use-package emacs
   :bind
   ("C-x f" . nil)
+  :hook
+  (text-mode . display-line-numbers-mode)
+  (prog-mode . display-line-numbers-mode)
   :custom
   (help-window-select t)
   (help-window-keep-selected t)
   (completions-detailed t)
   (suggest-key-bindings t)
-  (global-display-line-numbers-mode t)
   (ring-bell-function 'ignore)
   (truncate-lines nil)
   (truncate-partial-width-windows nil)
