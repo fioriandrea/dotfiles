@@ -44,6 +44,7 @@
   ("C-x f" . nil)
   :hook
   (text-mode . display-line-numbers-mode)
+  (text-mode . visual-line-mode)
   (prog-mode . display-line-numbers-mode)
   :custom
   (help-window-select t)
