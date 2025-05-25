@@ -51,7 +51,6 @@
   (tab-bar-show 1)
   (recentf-mode t)
   (savehist-mode t)
-  (completions-detailed t)
   (suggest-key-bindings t)
   (ring-bell-function 'ignore)
   (truncate-lines nil)
@@ -145,6 +144,9 @@
   (completion-auto-select 'second-tab)
   (fido-mode t)
   (fido-vertical-mode t)
+  (completions-detailed t)
+  (completion-styles '(flex partial-completion))
+  (completions-sort 'historical)
   :init
   ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
   ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
