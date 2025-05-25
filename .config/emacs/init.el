@@ -143,7 +143,7 @@
   (fido-mode t)
   (fido-vertical-mode t)
   (tab-always-indent 'complete)
-  (completion-auto-select 'second-tab)
+  ;; (completion-auto-select 'second-tab)
   (completion-auto-help 'always)
   (completions-detailed t)
   (completion-styles '(flex partial-completion))
