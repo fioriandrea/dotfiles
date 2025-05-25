@@ -140,10 +140,11 @@
 
 (use-package icomplete
   :custom
-  (tab-always-indent 'complete)
-  (completion-auto-select 'second-tab)
   (fido-mode t)
   (fido-vertical-mode t)
+  (tab-always-indent 'complete)
+  (completion-auto-select 'second-tab)
+  (completion-auto-help 'always)
   (completions-detailed t)
   (completion-styles '(flex partial-completion))
   (completions-sort 'historical)
