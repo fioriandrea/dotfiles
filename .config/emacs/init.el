@@ -176,6 +176,10 @@
   :hook
   (dired-mode . dired-hide-details-mode)
   :custom
+  (dired-clean-confirm-killing-deleted-buffers t)
+  (dired-clean-up-buffers-too t)
+  (dired-recursive-deletes 'top)
+  (dired-recursive-copies 'always)
   (dired-auto-revert-buffer t)
   (dired-listing-switches "-alh")
   (dired-mouse-drag-files t)
