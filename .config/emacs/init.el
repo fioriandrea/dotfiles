@@ -78,7 +78,6 @@
   :bind
   ("C-c h" . hippie-expand))
 
-
 (use-package help
   :custom
   (help-window-select t)
@@ -144,10 +143,9 @@
   (fido-vertical-mode t)
   (tab-always-indent 'complete)
   ;; (completion-auto-select 'second-tab)
-  (completion-auto-help 'always)
+  ;; (completion-auto-help 'always)
+  (completion-styles '(flex basic partial-completion))
   (completions-detailed t)
-  (completion-styles '(flex partial-completion))
-  (completions-sort 'historical)
   :init
   ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
   ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
