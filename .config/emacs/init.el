@@ -144,7 +144,6 @@
   (tab-always-indent 'complete)
   ;; (completion-auto-select 'second-tab)
   ;; (completion-auto-help 'always)
-  (completion-styles '(flex basic partial-completion))
   (completions-detailed t)
   :init
   ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
