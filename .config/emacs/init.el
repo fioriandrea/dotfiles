@@ -138,6 +138,9 @@
            tramp-file-name-regexp)))
 
 (use-package icomplete
+  :bind (:map icomplete-fido-mode-map
+              ("C-s" . nil)
+              ("C-r" . nil))
   :custom
   (fido-mode t)
   (fido-vertical-mode t)
