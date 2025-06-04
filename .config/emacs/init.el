@@ -44,6 +44,11 @@
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
   :hook
+  (kill-buffer . (lambda ()
+                   (when buffer-file-name
+                     (let ((auto-save-file (make-auto-save-file-name)))
+                       (when (file-exists-p auto-save-file)
+                         (delete-file auto-save-file))))))
   (text-mode . display-line-numbers-mode)
   (text-mode . visual-line-mode)
   (prog-mode . display-line-numbers-mode)
