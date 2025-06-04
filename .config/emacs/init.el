@@ -265,17 +265,17 @@ KEY must be given in `kbd' notation."
     "f" 'find-file
     "j" 'dired-jump)
   (evil-define-key '(motion normal visual) 'global
-    (kbd "SPC") my-space-map)
+                   (kbd "SPC") my-space-map)
 
   (defun my-evil-std-keys (state map)
     (evil-add-hjkl-bindings map state
-      "/"   'evil-ex-search-forward
-      "?"   'evil-ex-search-backward
-      "0"   'evil-beginning-of-line
-      "$"   'evil-end-of-line
-      (kbd "SPC") my-space-map
-      (kbd "M-n") 'evil-ex-search-next
-      (kbd "M-N") 'evil-ex-search-previous))
+                            "/"   'evil-ex-search-forward
+                            "?"   'evil-ex-search-backward
+                            "0"   'evil-beginning-of-line
+                            "$"   'evil-end-of-line
+                            (kbd "SPC") my-space-map
+                            (kbd "M-n") 'evil-ex-search-next
+                            (kbd "M-N") 'evil-ex-search-previous))
 
   ;; For minor modes, add hook
   ;; see https://www.reddit.com/r/emacs/comments/gxzsjn/trying_to_have_minor_mode_key_bindings_for_edebug/
@@ -300,12 +300,12 @@ KEY must be given in `kbd' notation."
            (fn-name (format "my-evil-make-overriding-map-to-%s" map-name)))
       (eval
        `(evil-with-delay
-            (and
-             (boundp ',map-sym)
-             (keymapp ,map-sym))
-            (after-load-functions t nil ,fn-name)
-          (with-demoted-errors "Error in my-evil-apply-evil-std-keys-to: %S"
-            (evil-make-overriding-map ,map-sym ',state))))))
+         (and
+          (boundp ',map-sym)
+          (keymapp ,map-sym))
+         (after-load-functions t nil ,fn-name)
+         (with-demoted-errors "Error in my-evil-apply-evil-std-keys-to: %S"
+           (evil-make-overriding-map ,map-sym ',state))))))
   (dolist (mode my-evil-normal-overriding-modes)
     (evil-set-initial-state mode 'normal)
     (my-evil-make-overriding-map mode 'normal))
