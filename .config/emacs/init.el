@@ -88,11 +88,6 @@
   (help-window-select t)
   (help-window-keep-selected t))
 
-(use-package mb-depth
-  :custom
-  (enable-recursive-minibuffers t)
-  (minibuffer-depth-indicate-mode t))
-
 (use-package window
   :bind
   ("C-c w s" . window-swap-states)
