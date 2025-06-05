@@ -79,6 +79,7 @@
   (auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t)))
   (backup-directory-alist `(("." . ,emacs-backup-dir)))
   :init
+  (setq-default bidi-inhibit-bpa t)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 (use-package hippie-exp
