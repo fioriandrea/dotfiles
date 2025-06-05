@@ -136,11 +136,7 @@
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
   ;; https://robbmann.io/emacsd/
   ;; https://git.sr.ht/~cfeeley/doom-emacs-config/commit/1cb3f6704f38f9dbc64ff434866b5e2537d8c2ba
-  (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors))
-  (vc-ignore-dir-regexp
-   (format "\\(%s\\)\\|\\(%s\\)"
-           vc-ignore-dir-regexp
-           tramp-file-name-regexp)))
+  (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors)))
 
 (use-package icomplete
   :bind (:map icomplete-fido-mode-map
