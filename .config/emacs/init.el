@@ -68,6 +68,7 @@
   (inhibit-startup-screen t)
   (use-short-answers t)
   (xterm-mouse-mode t)
+  (mouse-wheel-progressive-speed nil)
   ;; Backup
   (version-control t)
   (delete-old-versions t)
