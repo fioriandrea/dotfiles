@@ -69,6 +69,7 @@
   (use-short-answers t)
   (xterm-mouse-mode t)
   (mouse-wheel-progressive-speed nil)
+  (fast-but-imprecise-scrolling t)
   ;; Backup
   (version-control t)
   (delete-old-versions t)
