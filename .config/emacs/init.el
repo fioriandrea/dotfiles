@@ -53,6 +53,7 @@
   (text-mode . visual-line-mode)
   (prog-mode . display-line-numbers-mode)
   :custom
+  (sentence-end-double-space t)
   (tab-bar-show 1)
   (recentf-mode t)
   (savehist-mode t)
@@ -70,7 +71,9 @@
   (xterm-mouse-mode t)
   (mouse-wheel-progressive-speed nil)
   (fast-but-imprecise-scrolling t)
+  (scroll-preserve-screen-position t)
   ;; Backup
+  (backup-by-copying t)
   (version-control t)
   (delete-old-versions t)
   (kept-new-versions 6)
