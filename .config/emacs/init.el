@@ -348,6 +348,7 @@ KEY must be given in `kbd' notation."
   :if (package-installed-p 'consult)
   :bind (("C-x b" . consult-buffer)
          ("C-x p b" . consult-project-buffer)
+         ("C-x 4 b" . consult-buffer-other-window)
          ("C-c f" . consult-fd)
          ("C-c g" . consult-ripgrep)
          :map icomplete-fido-mode-map
@@ -356,6 +357,7 @@ KEY must be given in `kbd' notation."
   (consult-customize
    consult-buffer
    consult-project-buffer
+   consult-buffer-other-window
    :preview-key nil
    :annotate (lambda (x) ""))
   :init
