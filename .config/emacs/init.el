@@ -53,6 +53,7 @@
   (text-mode . visual-line-mode)
   (prog-mode . display-line-numbers-mode)
   :custom
+  (electric-pair-mode t)
   (sentence-end-double-space t)
   (tab-bar-show 1)
   (recentf-mode t)
