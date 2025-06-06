@@ -86,10 +86,6 @@
   (setq-default bidi-inhibit-bpa t)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
-(use-package hippie-exp
-  :bind
-  ("C-c h" . hippie-expand))
-
 (use-package help
   :custom
   (help-window-select t)
