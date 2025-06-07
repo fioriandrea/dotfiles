@@ -63,7 +63,7 @@
   (truncate-lines nil)
   (truncate-partial-width-windows nil)
   (indent-tabs-mode nil)
-  (scroll-bar-mode nil)
+  (scroll-bar-mode 'right)
   (menu-bar-mode t)
   (context-menu-mode t)
   (tool-bar-mode nil)
@@ -84,6 +84,7 @@
   (backup-directory-alist `(("." . ,emacs-backup-dir)))
   :init
   (setq-default bidi-inhibit-bpa t)
+  (set-window-scroll-bars (minibuffer-window) nil nil nil nil 1)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 (use-package help
