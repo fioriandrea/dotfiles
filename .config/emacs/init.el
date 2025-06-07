@@ -97,6 +97,11 @@
   (help-window-select t)
   (help-window-keep-selected t))
 
+(use-package isearch
+  :custom
+  ;; `no-ding' makes keyboard macros never quit
+  (isearch-wrap-pause 'no))
+
 (use-package saveplace
   :custom
   (save-place-mode t)
