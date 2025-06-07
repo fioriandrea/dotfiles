@@ -63,16 +63,18 @@
   (truncate-lines nil)
   (truncate-partial-width-windows nil)
   (indent-tabs-mode nil)
-  (scroll-bar-mode 'right)
   (menu-bar-mode t)
   (context-menu-mode t)
   (tool-bar-mode nil)
   (inhibit-startup-screen t)
   (use-short-answers t)
   (xterm-mouse-mode t)
+  ;; Scrolling
+  (scroll-bar-mode 'right)
   (mouse-wheel-progressive-speed nil)
   (fast-but-imprecise-scrolling t)
   (scroll-preserve-screen-position t)
+  (scroll-conservatively 10)
   ;; Backup
   (backup-by-copying t)
   (version-control t)
@@ -84,7 +86,8 @@
   (backup-directory-alist `(("." . ,emacs-backup-dir)))
   :init
   (setq-default bidi-inhibit-bpa t)
-  (set-window-scroll-bars (minibuffer-window) nil nil nil nil 1)
+  (when scroll-bar-mode
+    (set-window-scroll-bars (minibuffer-window) nil nil nil nil :persistent))
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 (use-package help
