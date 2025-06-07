@@ -56,8 +56,6 @@
   (electric-pair-mode t)
   (sentence-end-double-space t)
   (tab-bar-show 1)
-  (recentf-mode t)
-  (savehist-mode t)
   (suggest-key-bindings t)
   (ring-bell-function 'ignore)
   (truncate-lines nil)
@@ -94,6 +92,21 @@
   :custom
   (help-window-select t)
   (help-window-keep-selected t))
+
+(use-package recentf
+  :custom
+  (recentf-mode t))
+
+(use-package savehist
+  :custom
+  (savehist-mode t)
+  (savehist-autosave-interval nil)
+  (history-delete-duplicates t)
+  (savehist-save-minibuffer-history t)
+  (savehist-additional-variables
+   '(kill-ring
+     search-ring
+     regexp-search-ring)))
 
 (use-package window
   :bind
