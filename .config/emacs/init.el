@@ -66,9 +66,12 @@
   (tool-bar-mode nil)
   (inhibit-startup-screen t)
   (use-short-answers t)
+  (frame-inhibit-implied-resize t)
+  (save-interprogram-paste-before-kill t)
   (xterm-mouse-mode t)
   ;; Scrolling
   (scroll-bar-mode 'right)
+  (horizontal-scroll-bar-mode nil)
   (mouse-wheel-progressive-speed nil)
   (fast-but-imprecise-scrolling t)
   (scroll-preserve-screen-position t)
@@ -93,6 +96,12 @@
   :custom
   (help-window-select t)
   (help-window-keep-selected t))
+
+(use-package saveplace
+  :custom
+  (save-place-mode t)
+  ;; https://www.emacswiki.org/emacs/SavePlace
+  (save-place-forget-unreadable-files nil))
 
 (use-package recentf
   :custom
