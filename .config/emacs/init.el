@@ -23,6 +23,10 @@
 (when (file-exists-p proxy-file)
   (load proxy-file))
 
+(defconst custom-file (concat user-emacs-directory "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 (use-package use-package
   :ensure nil
   :custom
@@ -33,10 +37,6 @@
 (use-package package
   :config
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
-
-(setq custom-file (concat user-emacs-directory "custom.el"))
-(when (file-exists-p custom-file)
-  (load custom-file))
 
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
@@ -412,3 +412,7 @@ KEY must be given in `kbd' notation."
                (icomplete--field-end)
                (cdr all))))
           (message nil))))))
+
+(defconst after-file (concat user-emacs-directory "after.el"))
+(when (file-exists-p after-file)
+  (load after-file))
