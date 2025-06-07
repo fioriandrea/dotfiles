@@ -73,6 +73,7 @@
   (fast-but-imprecise-scrolling t)
   (scroll-preserve-screen-position t)
   (scroll-conservatively 10)
+  (scroll-margin 4)
   ;; Backup
   (backup-by-copying t)
   (version-control t)
