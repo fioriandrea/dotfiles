@@ -10,6 +10,19 @@
   (let ((output (shell-command-to-string cmd)))
     (string-trim output)))
 
+(defun delete-autosave-current-buffer ()
+  (interactive)
+  (when buffer-file-name
+    (let ((auto-save-file (make-auto-save-file-name)))
+      (when (file-exists-p auto-save-file)
+        (delete-file auto-save-file)))))
+
+(defun delete-autosave-opened-files ()
+  (interactive)
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (delete-autosave-current-buffer))))
+
 (defconst emacs-backup-dir
   (file-name-as-directory
    (abbreviate-file-name
@@ -44,11 +57,6 @@
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
   :hook
-  (kill-buffer . (lambda ()
-                   (when buffer-file-name
-                     (let ((auto-save-file (make-auto-save-file-name)))
-                       (when (file-exists-p auto-save-file)
-                         (delete-file auto-save-file))))))
   (text-mode . display-line-numbers-mode)
   (text-mode . visual-line-mode)
   (prog-mode . display-line-numbers-mode)
@@ -87,6 +95,13 @@
   (auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t)))
   (backup-directory-alist `(("." . ,emacs-backup-dir)))
   :init
+  (setq-default confirm-kill-emacs nil)
+  (add-hook 'kill-buffer-hook 'delete-autosave-current-buffer)
+  ;; hack to delete auto-save files on C-x C-c
+  (add-to-list 'kill-emacs-query-functions
+               (lambda () (progn
+                            (delete-autosave-opened-files)
+                            t)))
   (setq-default bidi-paragraph-direction 'left-to-right)
   (setq-default bidi-inhibit-bpa t)
   (when scroll-bar-mode
