@@ -53,10 +53,10 @@
   (text-mode . visual-line-mode)
   (prog-mode . display-line-numbers-mode)
   :custom
+  (global-so-long-mode t)
   (electric-pair-mode t)
   (sentence-end-double-space t)
   (tab-bar-show 1)
-  (suggest-key-bindings t)
   (ring-bell-function 'ignore)
   (truncate-lines nil)
   (truncate-partial-width-windows nil)
@@ -87,6 +87,7 @@
   (auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t)))
   (backup-directory-alist `(("." . ,emacs-backup-dir)))
   :init
+  (setq-default bidi-paragraph-direction 'left-to-right)
   (setq-default bidi-inhibit-bpa t)
   (when scroll-bar-mode
     (set-window-scroll-bars (minibuffer-window) nil nil nil nil :persistent))
@@ -183,7 +184,8 @@
   (tab-always-indent 'complete)
   ;; (completion-auto-select 'second-tab)
   ;; (completion-auto-help 'always)
-  (completions-detailed t)
+  (suggest-key-bindings t)
+  (completions-detailed nil)
   :init
   ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
   ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
