@@ -51,6 +51,10 @@
   :config
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
 
+(defconst before-file (concat user-emacs-directory "before.el"))
+(when (file-exists-p before-file)
+  (load before-file))
+
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
   :bind
