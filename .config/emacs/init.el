@@ -23,6 +23,14 @@
     (with-current-buffer buf
       (delete-autosave-current-buffer))))
 
+;; https://www.emacswiki.org/emacs/AlarmBell
+(defun subtly-flash-modeline-bg ()
+  (let ((orig-bg (face-background 'mode-line)))
+    (set-face-background 'mode-line "#F2804F")
+    (run-with-idle-timer 0.1 nil
+                         (lambda (bg) (set-face-background 'mode-line bg))
+                         orig-bg)))
+
 (defconst emacs-backup-dir
   (file-name-as-directory
    (abbreviate-file-name
@@ -114,7 +122,16 @@
   (help-window-keep-selected t))
 
 (use-package isearch
+  :hook
+  (isearch-mode . (lambda ()
+                    (setq my-isearch-prev-ring-bell-function ring-bell-function)
+                    (when (equal ring-bell-function 'ignore)
+                      (setq ring-bell-function 'subtly-flash-modeline-bg))))
+  (isearch-mode-end . (lambda ()
+                        (setq ring-bell-function my-isearch-prev-ring-bell-function)))
   :custom
+  (isearch-lazy-count t)
+  (isearch-lazy-highlight t)
   ;; `no-ding' makes keyboard macros never quit
   (isearch-wrap-pause 'no))
 
