@@ -173,7 +173,7 @@
   ;; https://lists.gnu.org/archive/html/emacs-devel/2014-10/msg00743.html
   ;; https://emacs.stackexchange.com/a/50134 (read comments)
   (auto-revert-interval 5)
-  (global-auto-revert-ignore-modes '(Buffer-menu-mode)))
+  (global-auto-revert-ignore-modes '(Buffer-menu-mode electric-buffer-menu-mode)))
 
 (use-package tramp
   :custom
