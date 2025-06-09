@@ -188,12 +188,14 @@
   :custom
   (global-auto-revert-mode t)
   (auto-revert-verbose nil)
-  (global-auto-revert-non-file-buffers t)
   (auto-revert-use-notify t)
+  ;; see function auto-revert--polled-buffers
   (auto-revert-avoid-polling t)
   ;; https://lists.gnu.org/archive/html/emacs-devel/2014-10/msg00743.html
   ;; https://emacs.stackexchange.com/a/50134 (read comments)
+  ;; The first revert gets done after auto-revert-interval, even when using notifications
   (auto-revert-interval 5)
+  (global-auto-revert-non-file-buffers t)
   (global-auto-revert-ignore-modes '(Buffer-menu-mode electric-buffer-menu-mode)))
 
 (use-package tramp
