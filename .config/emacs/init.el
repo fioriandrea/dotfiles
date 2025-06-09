@@ -239,10 +239,6 @@
   (org-startup-truncated nil)
   (org-html-validation-link nil))
 
-(use-package org-tempo
-  :demand t
-  :after org)
-
 (use-package dired
   :hook
   (dired-mode . dired-hide-details-mode)
