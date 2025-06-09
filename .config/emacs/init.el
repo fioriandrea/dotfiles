@@ -122,13 +122,18 @@
   (help-window-keep-selected t))
 
 (use-package isearch
+  :init
+  (defvar my-isearch-prev-ring-bell-function nil)
   :hook
   (isearch-mode . (lambda ()
-                    (setq my-isearch-prev-ring-bell-function ring-bell-function)
-                    (when (equal ring-bell-function 'ignore)
-                      (setq ring-bell-function 'subtly-flash-modeline-bg))))
+                    (when (not my-isearch-prev-ring-bell-function)
+                      (setq my-isearch-prev-ring-bell-function ring-bell-function)
+                      (when (equal ring-bell-function 'ignore)
+                        (setq ring-bell-function 'subtly-flash-modeline-bg)))))
   (isearch-mode-end . (lambda ()
-                        (setq ring-bell-function my-isearch-prev-ring-bell-function)))
+                        (when my-isearch-prev-ring-bell-function
+                          (setq ring-bell-function my-isearch-prev-ring-bell-function)
+                          (setq my-isearch-prev-ring-bell-function nil))))
   :custom
   (isearch-lazy-count t)
   (isearch-lazy-highlight t)
