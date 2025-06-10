@@ -171,25 +171,27 @@
      search-ring
      regexp-search-ring)))
 
-(use-package window
-  :bind
-  ("C-c w s" . window-swap-states)
-  ;; :custom
-  ;; (pop-up-windows nil)
-  ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Choosing-Window-Options.html#index-pop_002dup_002dwindows_002c-replacement-for
-  ;; (display-buffer-base-action
-  ;;  '((display-buffer-reuse-window
-  ;;     display-buffer-same-window
-  ;;     display-buffer-in-previous-window
-  ;;     display-buffer-use-some-window)))
-  )
+;; (use-package window
+;;   :custom
+;;   (pop-up-windows nil)
+;;   https://www.gnu.org/software/emacs/manual/html_node/elisp/Choosing-Window-Options.html#index-pop_002dup_002dwindows_002c-replacement-for
+;;   (display-buffer-base-action
+;;    '((display-buffer-reuse-window
+;;       display-buffer-same-window
+;;       display-buffer-in-previous-window
+;;       display-buffer-use-some-window))))
 
 (use-package windmove
   :bind
   ("C-c <left>" . windmove-left)
   ("C-c <right>" . windmove-right)
   ("C-c <up>" . windmove-up)
-  ("C-c <down>" . windmove-down))
+  ("C-c <down>" . windmove-down)
+  ("C-c w s" . window-swap-states)
+  ("C-c w <left>" . windmove-swap-states-left)
+  ("C-c w <right>" . windmove-swap-states-right)
+  ("C-c w <up>" . windmove-swap-states-up)
+  ("C-c w <down>" . windmove-swap-states-down))
 
 (use-package ediff
   :custom
