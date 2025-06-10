@@ -24,12 +24,12 @@
       (delete-autosave-current-buffer))))
 
 ;; https://www.emacswiki.org/emacs/AlarmBell
-(defun subtly-flash-modeline-bg ()
-  (let ((orig-bg (face-background 'mode-line)))
-    (set-face-background 'mode-line "#F2804F")
-    (run-with-idle-timer 0.1 nil
-                         (lambda (bg) (set-face-background 'mode-line bg))
-                         orig-bg)))
+(defun subtly-flash-modeline-fg (&optional delay)
+  (let ((orig-fg (face-foreground 'mode-line)))
+    (set-face-foreground 'mode-line "#FF0000")
+    (run-with-idle-timer (or delay 0.1) nil
+                         (lambda (fg) (set-face-foreground 'mode-line fg))
+                         orig-fg)))
 
 (defconst emacs-backup-dir
   (file-name-as-directory
@@ -133,7 +133,8 @@
                     (when (not my-isearch-prev-ring-bell-function)
                       (setq my-isearch-prev-ring-bell-function ring-bell-function)
                       (when (equal ring-bell-function 'ignore)
-                        (setq ring-bell-function 'subtly-flash-modeline-bg)))))
+                        (setq ring-bell-function (lambda ()
+                                                   (subtly-flash-modeline-fg 0.2)))))))
   (isearch-mode-end . (lambda ()
                         (when my-isearch-prev-ring-bell-function
                           (setq ring-bell-function my-isearch-prev-ring-bell-function)
