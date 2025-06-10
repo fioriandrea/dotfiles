@@ -121,6 +121,15 @@
   (help-window-select t)
   (help-window-keep-selected t))
 
+(use-package uniquify
+  :custom
+  (uniquify-strip-common-suffix nil)
+  (uniquify-after-kill-buffer-p t)
+  ;; https://emacs.stackexchange.com/questions/68499/automatically-uniquify-certain-buffers
+  (uniquify-min-dir-content 3)
+  (uniquify-buffer-name-style 'post-forward-angle-brackets)
+  (uniquify-trailing-separator-p t))
+
 (use-package isearch
   :init
   (defvar my-isearch-prev-ring-bell-function nil)
