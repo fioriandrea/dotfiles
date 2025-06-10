@@ -171,16 +171,6 @@
      search-ring
      regexp-search-ring)))
 
-;; (use-package window
-;;   :custom
-;;   (pop-up-windows nil)
-;;   https://www.gnu.org/software/emacs/manual/html_node/elisp/Choosing-Window-Options.html#index-pop_002dup_002dwindows_002c-replacement-for
-;;   (display-buffer-base-action
-;;    '((display-buffer-reuse-window
-;;       display-buffer-same-window
-;;       display-buffer-in-previous-window
-;;       display-buffer-use-some-window))))
-
 (use-package windmove
   :bind
   ("C-c <left>" . windmove-left)
