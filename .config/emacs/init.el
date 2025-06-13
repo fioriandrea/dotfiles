@@ -158,7 +158,8 @@
 
 (use-package recentf
   :custom
-  (recentf-mode t))
+  (recentf-mode t)
+  (recentf-max-saved-items 200))
 
 (use-package savehist
   :custom
@@ -418,19 +419,19 @@ KEY must be given in `kbd' notation."
 (use-package consult
   :if (package-installed-p 'consult)
   :bind (("C-x b" . consult-buffer)
-         ("C-x p b" . consult-project-buffer)
          ("C-x 4 b" . consult-buffer-other-window)
-         ("C-c f" . consult-fd)
-         ("C-c g" . consult-ripgrep)
          :map icomplete-fido-mode-map
          ("C-k" . icomplete-consult-fido-kill))
   :config
   (consult-customize
    consult-buffer
-   consult-project-buffer
    consult-buffer-other-window
    :preview-key nil
    :annotate (lambda (x) ""))
+  (dolist (source '(consult--source-bookmark
+                    consult--source-buffer-register
+                    consult--source-file-register))
+    (delete source consult-buffer-sources))
   :init
   ;; massive hack stolen from https://debbugs.gnu.org/cgi/bugreport.cgi?bug=72210
   (defun icomplete-consult-fido-kill (&optional pcat pthing)
