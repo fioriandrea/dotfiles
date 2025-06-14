@@ -73,7 +73,6 @@
   (text-mode . visual-line-mode)
   (prog-mode . display-line-numbers-mode)
   :custom
-  (set-mark-command-repeat-pop t)
   (global-so-long-mode t)
   (electric-pair-mode t)
   (sentence-end-double-space t)
@@ -90,6 +89,10 @@
   (save-interprogram-paste-before-kill t)
   (xterm-mouse-mode t)
   (mouse-autoselect-window -0.1)
+  ;; Mark
+  (set-mark-command-repeat-pop t)
+  (mark-ring-max 6)
+  (global-mark-ring-max 8)
   ;; Scrolling
   (scroll-bar-mode 'right)
   (horizontal-scroll-bar-mode nil)
