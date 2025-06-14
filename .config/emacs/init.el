@@ -73,6 +73,7 @@
   (text-mode . visual-line-mode)
   (prog-mode . display-line-numbers-mode)
   :custom
+  (set-mark-command-repeat-pop t)
   (global-so-long-mode t)
   (electric-pair-mode t)
   (sentence-end-double-space t)
