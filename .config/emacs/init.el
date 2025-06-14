@@ -175,17 +175,16 @@
      search-ring
      regexp-search-ring)))
 
-(use-package windmove
+(use-package window
   :bind
-  ("C-c <left>" . windmove-left)
-  ("C-c <right>" . windmove-right)
-  ("C-c <up>" . windmove-up)
-  ("C-c <down>" . windmove-down)
-  ("C-c w s" . window-swap-states)
-  ("C-c w <left>" . windmove-swap-states-left)
-  ("C-c w <right>" . windmove-swap-states-right)
-  ("C-c w <up>" . windmove-swap-states-up)
-  ("C-c w <down>" . windmove-swap-states-down))
+  ("<f6>" . other-window)
+  ("C-c x" . window-swap-states))
+
+(use-package winner
+  :custom
+  (winner-dont-bind-my-keys nil)
+  :init
+  (winner-mode 1))
 
 (use-package ediff
   :custom
