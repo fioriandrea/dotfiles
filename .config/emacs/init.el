@@ -89,6 +89,7 @@
   (frame-inhibit-implied-resize t)
   (save-interprogram-paste-before-kill t)
   (xterm-mouse-mode t)
+  (mouse-autoselect-window -0.1)
   ;; Scrolling
   (scroll-bar-mode 'right)
   (horizontal-scroll-bar-mode nil)
