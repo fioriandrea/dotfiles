@@ -276,8 +276,6 @@
          ("<backtab>" . nil)
          ("C-f" . nil)
          ("C-o" . nil)
-         ("C-c o" . evil-jump-backward)
-         ("C-c i" . evil-jump-forward)
          ("C-b" . nil)
          ("C-y" . nil)
          ("C-e" . nil)
