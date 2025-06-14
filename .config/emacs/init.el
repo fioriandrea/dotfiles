@@ -76,7 +76,6 @@
   (global-so-long-mode t)
   (electric-pair-mode t)
   (sentence-end-double-space t)
-  (tab-bar-show 1)
   (ring-bell-function 'ignore)
   (truncate-lines nil)
   (truncate-partial-width-windows nil)
@@ -154,6 +153,10 @@
   (isearch-lazy-highlight t)
   ;; `no-ding' makes keyboard macros never quit
   (isearch-wrap-pause 'no))
+
+(use-package tab-bar
+  :custom
+  (tab-bar-show 1))
 
 (use-package saveplace
   :custom
