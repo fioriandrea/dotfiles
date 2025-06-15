@@ -224,11 +224,6 @@
   (isearch-wrap-pause 'no))
 
 (use-package tab-bar
-  :bind (:map tab-bar-history-mode-map
-              ("C-c t <left>" . tab-bar-history-back)
-              ("C-c t <right>" . tab-bar-history-forward)
-              ("C-c <left>" . nil)
-              ("C-c <right>" . nil))
   :custom
   (tab-bar-show 1)
   (tab-bar-format '(tab-bar-format-tabs
@@ -238,7 +233,18 @@
   (tab-bar-auto-width-max '((110) 10))
   (tab-bar-new-tab-choice t)
   (tab-bar-history-mode t)
-  (tab-bar-history-limit 20))
+  (tab-bar-history-limit 30)
+  :init
+  ;; https://www.reddit.com/r/emacs/comments/1kz57i5/comment/mv4zgji/
+  (defun my-tab-bar-history-report-position ()
+    (let* ((f (selected-frame))
+	       (back (length (gethash f tab-bar-history-back)))
+	       (forward (length (gethash f tab-bar-history-forward))))
+      (message (concat (format "Window undo (%d / %d)" forward (+ back forward))
+		               (when-let ((msg (current-message))) (format " <%s>" msg))))))
+  :config
+  (advice-add 'tab-bar-history-forward :after 'my-tab-bar-history-report-position)
+  (advice-add 'tab-bar-history-back :after 'my-tab-bar-history-report-position))
 
 (use-package saveplace
   :custom
@@ -266,12 +272,6 @@
   :bind
   ("<f6>" . other-window)
   ("C-c x" . window-swap-states))
-
-(use-package winner
-  :custom
-  (winner-dont-bind-my-keys nil)
-  :init
-  (winner-mode 1))
 
 (use-package ediff
   :custom
