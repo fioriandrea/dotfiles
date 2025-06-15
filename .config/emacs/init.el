@@ -31,6 +31,77 @@
                          (lambda (fg) (set-face-foreground 'mode-line fg))
                          orig-fg)))
 
+(defun my-unpop-local-mark ()
+  "Unpop off local mark ring."
+  (interactive)
+  (or (not (null (mark t)))
+      (user-error "No mark set in this buffer"))
+  (let* ((full-mark-ring (cons
+                          (copy-marker (mark-marker))
+                          mark-ring))
+         (tl (last full-mark-ring 2))
+         (trunc-ring (nbutlast full-mark-ring 2)))
+    (setq full-mark-ring (nconc tl trunc-ring))
+    (setq mark-ring (cdr full-mark-ring))
+    (set-marker (mark-marker) (car full-mark-ring) (current-buffer))
+    (pop-to-mark-command)))
+
+(defun my-unpop-global-mark ()
+  "Unpop off global mark ring."
+  (interactive)
+  (or global-mark-ring
+      (error "No global mark set"))
+  (let* ((tl (last global-mark-ring 2))
+         (trunc-ring (nbutlast global-mark-ring 2)))
+    (setq global-mark-ring (nconc tl trunc-ring))
+    (pop-global-mark)))
+
+(defun my-set-mark-command (arg)
+  "Enhanced version of `set-mark-command' with wider support for prefix arguments."
+  (interactive "P")
+  (let ((arg-num (prefix-numeric-value arg)))
+    (cond
+     ((and
+       (null arg)
+       set-mark-command-repeat-pop
+       (eq last-command 'my-unpop-local-mark))
+      (setq this-command 'my-unpop-local-mark)
+      (my-unpop-local-mark))
+     ((and
+       (null arg)
+       set-mark-command-repeat-pop
+       (eq last-command 'my-unpop-global-mark))
+      (setq this-command 'my-unpop-global-mark)
+      (my-unpop-global-mark))
+     ((or
+       (null arg)
+       (equal arg '(4))
+       (equal arg '(16)))
+      (setq this-command 'set-mark-command)
+      (set-mark-command arg))
+     ((< arg-num 0)
+      (setq this-command 'my-unpop-local-mark)
+      (dotimes (_ (- arg-num))
+        (my-unpop-local-mark)))
+     ((>= arg-num 0)
+      (setq this-command 'pop-to-mark-command)
+      (dotimes (_ arg-num)
+        (pop-to-mark-command))))))
+
+(defun my-pop-global-mark (arg)
+  "Enhanced version of `pop-global-mark' with support for prefix arguments."
+  (interactive "P")
+  (let ((arg-num (prefix-numeric-value arg)))
+    (cond
+     ((< arg-num 0)
+      (setq this-command 'my-unpop-global-mark)
+      (dotimes (_ (- arg-num))
+        (my-unpop-global-mark)))
+     ((>= arg-num 0)
+      (setq this-command 'pop-global-mark)
+      (dotimes (_ arg-num)
+        (pop-global-mark))))))
+
 (defconst emacs-backup-dir
   (file-name-as-directory
    (abbreviate-file-name
@@ -64,6 +135,8 @@
   :bind
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
+  ([remap pop-global-mark] . my-pop-global-mark)
+  ([remap set-mark-command] . my-set-mark-command)
   :hook
   (text-mode . display-line-numbers-mode)
   (text-mode . visual-line-mode)
