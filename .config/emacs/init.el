@@ -133,6 +133,8 @@
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
   :bind
+  ("<f6>" . other-window)
+  ("C-c x" . window-swap-states)
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
   ([remap pop-global-mark] . my-pop-global-mark)
@@ -267,11 +269,6 @@
    '(kill-ring
      search-ring
      regexp-search-ring)))
-
-(use-package window
-  :bind
-  ("<f6>" . other-window)
-  ("C-c x" . window-swap-states))
 
 (use-package ediff
   :custom
