@@ -224,8 +224,19 @@
   (isearch-wrap-pause 'no))
 
 (use-package tab-bar
+  :bind (:map tab-bar-history-mode-map
+              ("C-c t <left>" . tab-bar-history-back)
+              ("C-c t <right>" . tab-bar-history-forward)
+              ("C-c <left>" . nil)
+              ("C-c <right>" . nil))
   :custom
   (tab-bar-show 1)
+  (tab-bar-format '(tab-bar-format-tabs
+                    tab-bar-separator
+                    tab-bar-format-add-tab))
+  (tab-bar-auto-width t)
+  (tab-bar-auto-width-max '((110) 10))
+  (tab-bar-new-tab-choice t)
   (tab-bar-history-mode t)
   (tab-bar-history-limit 20))
 
