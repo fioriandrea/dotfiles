@@ -494,23 +494,33 @@ KEY must be given in `kbd' notation."
 
 (use-package consult
   :if (package-installed-p 'consult)
-  :bind (("C-x b" . consult-buffer)
-         ("C-x 4 b" . consult-buffer-other-window)
-         :map icomplete-fido-mode-map
-         ("C-k" . icomplete-consult-fido-kill))
+  :bind
+  ([remap switch-to-buffer] . consult-buffer)
+  ([remap project-switch-to-buffer] . consult-project-buffer)
+  ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+  ([remap switch-to-buffer-other-tab] . consult-buffer-other-tab)
+  ([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
+  ([remap icomplete-fido-kill] . my-icomplete-consult-fido-kill)
   :config
   (consult-customize
    consult-buffer
+   consult-project-buffer
    consult-buffer-other-window
+   consult-buffer-other-tab
+   consult-buffer-other-frame
    :preview-key nil
    :annotate (lambda (x) ""))
   (dolist (source '(consult--source-bookmark
                     consult--source-buffer-register
-                    consult--source-file-register))
+                    consult--source-file-register
+                    consult--source-project-root-hidden))
     (delete source consult-buffer-sources))
+  (delete 'consult--source-project-root consult-project-buffer-sources)
   :init
-  ;; massive hack stolen from https://debbugs.gnu.org/cgi/bugreport.cgi?bug=72210
-  (defun icomplete-consult-fido-kill (&optional pcat pthing)
+  (defun my-icomplete-consult-fido-kill (&optional pcat pthing)
+    "Replaces `icomplete-fido-kill' so that C-k can work with
+fido-mode when using `consult-buffer' & co.  Massive hack stolen from
+https://debbugs.gnu.org/cgi/bugreport.cgi?bug=72210"
     (interactive)
     (if (< (point) (icomplete--field-end))
         (call-interactively 'kill-line)
