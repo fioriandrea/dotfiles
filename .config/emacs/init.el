@@ -523,12 +523,17 @@ KEY must be given in `kbd' notation."
    consult-buffer-other-frame
    :preview-key nil
    :annotate (lambda (x) ""))
-  (dolist (source '(consult--source-bookmark
-                    consult--source-buffer-register
-                    consult--source-file-register
-                    consult--source-project-root-hidden))
-    (delete source consult-buffer-sources))
-  (delete 'consult--source-project-root consult-project-buffer-sources)
+  (setq-default consult-buffer-sources
+                (cl-set-difference
+                 consult-buffer-sources
+                 '(consult--source-bookmark
+                   consult--source-buffer-register
+                   consult--source-file-register
+                   consult--source-project-root-hidden)))
+  (setq-default consult-project-buffer-sources
+                (cl-set-difference
+                 consult-project-buffer-sources
+                 '(consult--source-project-root)))
   :init
   (defun my-icomplete-consult-fido-kill (&optional pcat pthing)
     "Replaces `icomplete-fido-kill' so that C-k can work with
