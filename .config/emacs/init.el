@@ -152,7 +152,9 @@
 
 (use-package tab-bar
   :custom
-  (tab-bar-show 1))
+  (tab-bar-show 1)
+  (tab-bar-history-mode t)
+  (tab-bar-history-limit 20))
 
 (use-package saveplace
   :custom
