@@ -308,7 +308,9 @@
 (use-package icomplete
   :bind (:map icomplete-fido-mode-map
               ("C-s" . nil)
-              ("C-r" . nil))
+              ("C-r" . nil)
+              ("C-n" . icomplete-forward-completions)
+              ("C-p" . icomplete-backward-completions))
   :custom
   (fido-mode t)
   (fido-vertical-mode t)
