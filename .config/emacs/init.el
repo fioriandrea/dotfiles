@@ -423,10 +423,10 @@ KEY must be given in `kbd' notation."
 
   (defun my-evil-std-keys (state map)
     (evil-add-hjkl-bindings map state
-                            "/"   'evil-ex-search-forward
-                            "?"   'evil-ex-search-backward
-                            "0"   'evil-beginning-of-line
-                            "$"   'evil-end-of-line
+                            "/" 'evil-ex-search-forward
+                            "?" 'evil-ex-search-backward
+                            "0" 'evil-beginning-of-line
+                            "$" 'evil-end-of-line
                             (kbd "M-n") 'evil-ex-search-next
                             (kbd "M-N") 'evil-ex-search-previous))
 
