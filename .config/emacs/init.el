@@ -23,6 +23,14 @@
     (with-current-buffer buf
       (my-delete-autosave-current-buffer))))
 
+;; https://emacs.stackexchange.com/a/13433
+(defun my-simulate-key-press (key)
+  "Return a command that pretends KEY was presssed.
+KEY must be given in `kbd' notation."
+  `(lambda () (interactive)
+     (setq prefix-arg current-prefix-arg)
+     (setq unread-command-events (listify-key-sequence (read-kbd-macro ,key)))))
+
 ;; https://www.emacswiki.org/emacs/AlarmBell
 (defun my-subtly-flash-modeline-fg (&optional delay)
   (let ((orig-fg (face-foreground 'mode-line)))
@@ -371,6 +379,7 @@
          :map evil-motion-state-map
          ("TAB" . nil)
          ("RET" . nil)
+         ("SPC" . nil)
          ("<backtab>" . nil)
          ("C-f" . nil)
          ("C-o" . nil)
@@ -412,30 +421,12 @@
   (dolist (mode evil-emacs-state-modes)
     (evil-set-initial-state mode 'emacs))
 
-  ;; https://emacs.stackexchange.com/a/13433
-  (defun my-simulate-key-press (key)
-    "Return a command that pretends KEY was presssed.
-KEY must be given in `kbd' notation."
-    `(lambda () (interactive)
-       (setq prefix-arg current-prefix-arg)
-       (setq unread-command-events (listify-key-sequence (read-kbd-macro ,key)))))
-  (defvar-keymap my-space-map
-    :parent ctl-x-map
-    "c" (my-simulate-key-press "C-c")
-    "x" 'execute-extended-command
-    "SPC" 'execute-extended-command
-    "f" 'find-file
-    "j" 'dired-jump)
-  (evil-define-key '(motion normal visual) 'global
-                   (kbd "SPC") my-space-map)
-
   (defun my-evil-std-keys (state map)
     (evil-add-hjkl-bindings map state
                             "/"   'evil-ex-search-forward
                             "?"   'evil-ex-search-backward
                             "0"   'evil-beginning-of-line
                             "$"   'evil-end-of-line
-                            (kbd "SPC") my-space-map
                             (kbd "M-n") 'evil-ex-search-next
                             (kbd "M-N") 'evil-ex-search-previous))
 
