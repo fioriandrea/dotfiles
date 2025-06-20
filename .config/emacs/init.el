@@ -290,6 +290,10 @@ KEY must be given in `kbd' notation."
      search-ring
      regexp-search-ring)))
 
+(use-package compile
+  :custom
+  (compilation-scroll-output 'first-error))
+
 (use-package diff-mode
   :hook (diff-mode . whitespace-mode)
   :custom
