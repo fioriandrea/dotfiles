@@ -197,8 +197,6 @@ KEY must be given in `kbd' notation."
                             t)))
   (setq-default bidi-paragraph-direction 'left-to-right)
   (setq-default bidi-inhibit-bpa t)
-  (when (and (boundp 'scroll-bar-mode) scroll-bar-mode)
-    (set-window-scroll-bars (minibuffer-window) nil nil nil nil :persistent))
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 (use-package help
@@ -335,6 +333,28 @@ KEY must be given in `kbd' notation."
   (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors)))
 
 (use-package icomplete
+  :init
+  ;; https://github.com/minad/vertico/blob/2.3/vertico.el#L590
+  (defun my-icomplete-minibuffer-truncate-lines-hook ()
+    (setq-local truncate-lines (< (point) (* 0.8 (window-width)))))
+  (defun my-icomplete-minibuffer-setup ()
+    ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
+    ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
+    (setq-local completion-styles '(flex partial-completion))
+    ;; https://lists.nongnu.org/archive/html/bug-gnu-emacs/2024-10/msg00743.html
+    (add-hook 'post-command-hook #'my-icomplete-minibuffer-truncate-lines-hook nil 'local))
+  ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Scroll-Bars.html
+  (defun my-disable-minibuffer-scrollbar ()
+    (set-window-scroll-bars
+     (minibuffer-window) 0 nil 0 nil t))
+  :config
+  (when (boundp 'scroll-bar-mode)
+    (my-disable-minibuffer-scrollbar)
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (with-selected-frame frame
+                  (my-disable-minibuffer-scrollbar)))))
+  :hook (icomplete-minibuffer-setup . my-icomplete-minibuffer-setup)
   :bind (:map icomplete-fido-mode-map
               ("C-s" . nil)
               ("C-r" . nil)
@@ -343,17 +363,12 @@ KEY must be given in `kbd' notation."
   :custom
   (fido-mode t)
   (fido-vertical-mode t)
+  (minibuffer-default-prompt-format "")
   (tab-always-indent 'complete)
   ;; (completion-auto-select 'second-tab)
   ;; (completion-auto-help 'always)
   (suggest-key-bindings t)
-  (completions-detailed nil)
-  :config
-  ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
-  ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
-  (defun my-icomplete-styles ()
-    (setq-local completion-styles '(flex partial-completion)))
-  (add-hook 'icomplete-minibuffer-setup-hook 'my-icomplete-styles))
+  (completions-detailed nil))
 
 (use-package eldoc
   :custom
