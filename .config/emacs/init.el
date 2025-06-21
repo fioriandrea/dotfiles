@@ -365,8 +365,7 @@ KEY must be given in `kbd' notation."
   (fido-vertical-mode t)
   (minibuffer-default-prompt-format "")
   (tab-always-indent 'complete)
-  ;; (completion-auto-select 'second-tab)
-  ;; (completion-auto-help 'always)
+  (completions-max-height 15)
   (suggest-key-bindings t)
   (completions-detailed nil))
 
