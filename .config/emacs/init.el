@@ -400,6 +400,14 @@ KEY must be given in `kbd' notation."
   :demand t
   :after dired)
 
+(use-package completion-preview
+  :if (locate-library "completion-preview")
+  :hook ((prog-mode comint-mode) . completion-preview-mode)
+  :bind
+  (:map completion-preview-active-mode-map
+        ("M-n" . completion-preview-next-candidate)
+        ("M-p" . completion-preview-prev-candidate)))
+
 (use-package magit
   :if (locate-library "magit")
   :bind
