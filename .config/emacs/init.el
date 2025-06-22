@@ -116,6 +116,7 @@ Supports only :custom, :config, :init, :if, :when.
 Assumes :ensure nil, :demand nil and :defer t. Also, assumes :if
 (locate-library pack), where pack is the name of the package to
 configure."
+  (declare (indent defun))
   (let (customs configs inits condition)
     (setq condition `((or
                        (eq ',pack 'emacs)
