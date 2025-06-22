@@ -194,6 +194,10 @@ configure."
 (when (file-exists-p custom-file)
   (load custom-file))
 
+(unless (fboundp 'advice-add)
+  (message "WARNING: no advice-add found, using compatibility shim")
+  (defmacro advice-add (&rest body)))
+
 (unless (fboundp 'use-package)
   (message "WARNING: no use-package found, using compatibility shim")
   (defmacro use-package (pack &rest body)
