@@ -110,6 +110,67 @@ KEY must be given in `kbd' notation."
       (dotimes (_ arg-num)
         (pop-global-mark))))))
 
+(defmacro my-use-package (pack &rest args)
+  "Minimal `use-package` replacement with limited functionality.
+Supports only :custom, :config, :init, :if, :when.
+Assumes :ensure nil, :demand nil and :defer t. Also, assumes :if
+(locate-library pack), where pack is the name of the package to
+configure."
+  (let (customs configs inits condition)
+    (setq condition `((or
+                       (eq ',pack 'emacs)
+                       (locate-library ,(symbol-name pack)))))
+    (while args
+      (pcase (pop args)
+        ((or :if :when) (push (pop args) condition))
+        (:custom
+         (let ((v (pop args)))
+           (cond
+            ((null v) nil)
+            ((and (listp v) (listp (car v)))
+             (setq customs (append customs v)))
+            ((listp v)
+             (push v customs)
+             (push :custom args))
+            (t (push v args)))))
+        (:config
+         (let ((v (pop args)))
+           (cond
+            ((null v) nil)
+            ((not (keywordp v))
+             (push v configs)
+             (push :config args))
+            (t (push v args)))))
+        (:init
+         (let ((v (pop args)))
+           (cond
+            ((null v) nil)
+            ((not (keywordp v))
+             (push v inits)
+             (push :init args))
+            (t (push v args)))))))
+    `(when (and ,@condition)
+       ,@(nreverse inits)
+       ;; see use-package-handler/:custom
+       (let ((custom--inhibit-theme-enable nil))
+         (unless (memq 'my-use-package custom-known-themes)
+           (deftheme my-use-package) (enable-theme 'my-use-package)
+           (setq custom-enabled-themes
+                 (remq 'my-use-package custom-enabled-themes)))
+         (custom-theme-set-variables
+          'my-use-package
+          ,@(mapcar (lambda (p)
+                      (let ((variable (nth 0 p))
+                            (value (nth 1 p))
+                            (comment (or (nth 2 p)
+                                         (format
+                                          "Customized with my-use-package %s"
+                                          (symbol-name pack)))))
+                        `'(,variable ,value nil nil ,comment)))
+                    (nreverse customs))))
+       (with-eval-after-load ',pack
+         ,@(nreverse configs)))))
+
 (defconst emacs-backup-dir
   (file-name-as-directory
    (abbreviate-file-name
@@ -126,6 +187,12 @@ KEY must be given in `kbd' notation."
 (defconst custom-file (concat user-emacs-directory "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
+
+(unless (fboundp 'use-package)
+  (message "WARNING: no use-package found, using compatibility shim")
+  (defmacro use-package (pack &rest body)
+    "Compatibility shim for real use-package. See `my-use-package'"
+    `(my-use-package ,pack ,@body)))
 
 (use-package use-package
   :ensure nil
