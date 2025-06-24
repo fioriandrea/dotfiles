@@ -159,6 +159,8 @@ corresponds to a loadable library."
          `(eval-after-load ',pack
             (quote ,(cons 'progn (nreverse configs))))
          body))
+      (when inits
+        (push `(progn ,@(nreverse inits)) body))
       (when customs
         (push
          ;; see use-package-handler/:custom
@@ -179,8 +181,6 @@ corresponds to a loadable library."
                            `'(,variable ,value nil nil ,comment)))
                        (nreverse customs))))
          body))
-      (when inits
-        (push `(progn ,@(nreverse inits)) body))
       `(when (and ,@condition) ,@body))))
 
 (defconst emacs-backup-dir
@@ -206,9 +206,7 @@ corresponds to a loadable library."
 
 (unless (fboundp 'use-package)
   (message "WARNING: no use-package found, using compatibility shim")
-  (defmacro use-package (pack &rest body)
-    "Compatibility shim for real use-package. See `my-use-package'"
-    `(my-use-package ,pack ,@body)))
+  (defalias 'use-package 'my-use-package))
 
 (use-package use-package
   :ensure nil
@@ -474,7 +472,7 @@ corresponds to a loadable library."
   :custom
   (ffap-require-prefix t)
   (dired-at-point-require-prefix t)
-  :config
+  :init
   (ffap-bindings))
 
 (use-package eldoc
