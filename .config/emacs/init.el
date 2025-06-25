@@ -308,25 +308,11 @@ corresponds to a loadable library."
   (uniquify-trailing-separator-p t))
 
 (use-package isearch
-  :init
-  (defvar my-isearch-ring-bell-hook-visited nil)
-  :hook
-  (isearch-mode . (lambda ()
-                    (when (and
-                           (not my-isearch-ring-bell-hook-visited)
-                           (equal ring-bell-function 'ignore))
-                      (setq my-isearch-ring-bell-hook-visited t)
-                      (setq ring-bell-function (lambda ()
-                                                 (my-subtly-flash-modeline-fg 0.2))))))
-  (isearch-mode-end . (lambda ()
-                        (when my-isearch-ring-bell-hook-visited
-                          (setq my-isearch-ring-bell-hook-visited nil)
-                          (setq ring-bell-function 'ignore))))
   :custom
   (isearch-lazy-count t)
   (isearch-lazy-highlight t)
   ;; `no-ding' makes keyboard macros never quit
-  (isearch-wrap-pause 'no))
+  (isearch-wrap-pause t))
 
 (use-package tab-bar
   :custom
