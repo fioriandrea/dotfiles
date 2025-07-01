@@ -490,8 +490,9 @@ corresponds to a loadable library."
   (eldoc-echo-area-use-multiline-p nil))
 
 (use-package eglot
-  :config
-  (cl-callf plist-put eglot-events-buffer-config :size 0))
+  :custom
+  (eglot-events-buffer-size 0)
+  (eglot-events-buffer-config '(:size 0 :format full)))
 
 (use-package org
   :bind (("C-c l" . org-store-link)
