@@ -526,12 +526,13 @@ corresponds to a loadable library."
   :if (locate-library "completion-preview")
   :custom
   (global-completion-preview-mode t)
-  ;; see https://emacs-china.org/t/emacs-builtin-mode/11937/156?page=8
-  (completion-preview-exact-match-only t)
+  ;; Omitting eshell-mode due to weird completion behaviour
+  (global-completion-preview-modes '(prog-mode comint-mode))
   :bind
   (:map completion-preview-active-mode-map
         ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2025-03/msg00725.html
         ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2025-03/msg01431.html
+        ;; https://emacs-china.org/t/emacs-builtin-mode/11937/156?page=8
         ("C-i" . (lambda ()
                    (interactive)
                    (let ((pcomplete-termination-string ""))
@@ -540,7 +541,6 @@ corresponds to a loadable library."
                    (interactive)
                    (let ((pcomplete-termination-string ""))
                      (completion-preview-complete))))
-
         ("M-n" . completion-preview-next-candidate)
         ("M-p" . completion-preview-prev-candidate)))
 
