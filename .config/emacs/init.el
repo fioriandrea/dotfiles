@@ -473,6 +473,7 @@ corresponds to a loadable library."
   (fido-vertical-mode t)
   (minibuffer-default-prompt-format "")
   (tab-always-indent 'complete)
+  (completion-cycle-threshold nil)
   (completion-auto-select nil)
   (completions-max-height 12)
   (completion-show-help nil)
