@@ -11,6 +11,7 @@
     (string-trim output "" "[\n\r]+")))
 
 (defun my-http-fetch-url (url &optional kwargs)
+  (require 'url)
   (unless (or (string-prefix-p "http://" url)
               (string-prefix-p "https://" url))
     (error "URL must start with http:// or https://"))
