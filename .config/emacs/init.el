@@ -421,20 +421,10 @@ already provided or corresponds to a loadable library."
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (use-package autorevert
-  :config
-  (defconst my-auto-revert-use-notify (and
-                                       (boundp 'auto-revert-use-notify)
-                                       auto-revert-use-notify))
-  (defconst my-auto-revert-avoid-polling (and
-                                          (boundp 'auto-revert-avoid-polling)
-                                          auto-revert-avoid-polling))
-  ;; The first revert gets done after auto-revert-interval, even when using notifications
-  (customize-set-variable 'auto-revert-interval (if (and
-                                                     my-auto-revert-use-notify
-                                                     my-auto-revert-avoid-polling)
-                                                    10 40))
   :custom
   (global-auto-revert-mode t)
+  ;; The first revert gets done after auto-revert-interval, even when using notifications
+  (auto-revert-interval 15)
   ;; See function auto-revert--polled-buffers
   (auto-revert-avoid-polling t)
   (auto-revert-stop-on-user-input t)
