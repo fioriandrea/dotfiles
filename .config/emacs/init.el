@@ -421,10 +421,29 @@ already provided or corresponds to a loadable library."
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (use-package autorevert
+  :init
+  (defun my-auto-revert-buffer-h ()
+    "Automatically revert the current buffer if not already managed by
+auto-revert. Taken from doomemacs."
+    (unless (or auto-revert-mode
+                auto-revert-tail-mode
+                (active-minibuffer-window)
+                (and buffer-file-name
+                     (boundp 'auto-revert-remote-files)
+                     auto-revert-remote-files
+                     (file-remote-p buffer-file-name nil t)))
+      (let ((auto-revert-mode t))
+        (auto-revert-handler))))
+  (add-hook 'window-selection-change-functions (lambda (_)
+                                                 (my-auto-revert-buffer-h)))
+  (add-hook 'window-buffer-change-functions (lambda (_)
+                                              (my-auto-revert-buffer-h)))
+  ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
+  (add-hook 'server-visit-hook 'my-auto-revert-buffer-h)
   :custom
-  (global-auto-revert-mode t)
+  (global-auto-revert-mode nil)
   ;; The first revert gets done after auto-revert-interval, even when using notifications
-  (auto-revert-interval 15)
+  (auto-revert-interval 10)
   ;; See function auto-revert--polled-buffers
   (auto-revert-avoid-polling t)
   (auto-revert-stop-on-user-input t)
