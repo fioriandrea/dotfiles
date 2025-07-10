@@ -145,12 +145,12 @@ KEY must be given in `kbd' notation."
 (defmacro my-use-package (pack &rest args)
   "Minimal replacement for `use-package' with restricted
 functionality.  Supports only the keywords: :custom, :config, :init,
-:demand, :defer, :if, and :when.  Defaults are: :ensure nil, :demand
-nil, and :defer t.  Unlike standard `use-package', this macro expands
-to code that is evaluated only if the specified feature PACK is
-already provided or corresponds to a loadable library."
+:demand, :if, and :when.  Defaults are: :ensure nil, :demand nil, and
+:defer t.  Unlike standard `use-package', this macro expands to code
+that is evaluated only if the specified feature PACK is already
+provided or corresponds to a loadable library."
   (declare (indent defun))
-  (let (customs configs demand defer inits condition)
+  (let (customs configs demand inits condition)
     (setq condition `((or
                        (featurep ',pack)
                        (locate-library ,(symbol-name pack)))))
@@ -162,8 +162,6 @@ already provided or corresponds to a loadable library."
          ((or (eq key :if) (eq key :when))
           (push val condition))
          ((eq key :demand)
-          (setq demand val))
-         ((eq key :defer)
           (setq demand val))
          ((eq key :custom)
           (cond
@@ -195,9 +193,7 @@ already provided or corresponds to a loadable library."
          `(eval-after-load ',pack
             (quote ,(cons 'progn (nreverse configs))))
          body))
-      (when (and
-             demand
-             (not defer))
+      (when demand
         (push
          `(require ',pack nil nil) body))
       (when inits
