@@ -379,13 +379,6 @@ provided or corresponds to a loadable library."
   (advice-add 'tab-bar-history-forward :after 'my-tab-bar-history-position-indicator)
   (advice-add 'tab-bar-history-back :after 'my-tab-bar-history-position-indicator))
 
-(use-package tab-line
-  :custom
-  (global-tab-line-mode t)
-  (tab-line-tabs-function 'tab-line-tabs-window-buffers)
-  (tab-line-tab-name-function 'tab-line-tab-name-truncated-buffer)
-  (tab-line-tab-name-truncated-max 20))
-
 (use-package saveplace
   :custom
   (save-place-mode t)
