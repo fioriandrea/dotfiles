@@ -321,8 +321,13 @@ provided or corresponds to a loadable library."
   (help-window-select t)
   (help-window-keep-selected t))
 
-(use-package tabulated-list
-  :hook (tabulated-list-mode . hl-line-mode))
+(use-package hl-line
+  :hook
+  (dired-mode . hl-line-mode)
+  (proced-mode . hl-line-mode)
+  (ibuffer . hl-line-mode)
+  (org-agenda-mode . hl-line-mode)
+  (tabulated-list-mode . hl-line-mode))
 
 (use-package whitespace
   :bind
@@ -543,7 +548,6 @@ auto-revert. Taken from doomemacs."
   (org-html-validation-link nil))
 
 (use-package proced
-  :hook (proced-mode . hl-line-mode)
   :custom
   (proced-filter 'all)
   (proced-enable-color-flag t)
