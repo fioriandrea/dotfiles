@@ -2,7 +2,7 @@ $include /etc/inputrc
 "\C-l":clear-screen
 
 set completion-ignore-case On
-set editing-mode vi 
-set keymap vi
+set editing-mode emacs
+set keymap emacs
 
 set bell-style none
