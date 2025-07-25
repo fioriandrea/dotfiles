@@ -517,7 +517,7 @@ auto-revert. Taken from doomemacs."
   (completion-auto-select nil)
   (completions-max-height 12)
   (completion-show-help nil)
-  (completion-auto-help t)
+  (completion-auto-help 'visible)
   (suggest-key-bindings t)
   (completions-detailed nil))
 
