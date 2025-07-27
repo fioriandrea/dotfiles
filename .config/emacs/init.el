@@ -63,14 +63,6 @@ KEY must be given in `kbd' notation."
      (setq prefix-arg current-prefix-arg)
      (setq unread-command-events (listify-key-sequence (read-kbd-macro ,key)))))
 
-;; https://www.emacswiki.org/emacs/AlarmBell
-(defun my-subtly-flash-modeline-fg (&optional delay)
-  (let ((orig-fg (face-foreground 'mode-line)))
-    (set-face-foreground 'mode-line "#FF0000")
-    (run-with-idle-timer (or delay 0.1) nil
-                         (lambda (fg) (set-face-foreground 'mode-line fg))
-                         orig-fg)))
-
 (defun my-unpop-local-mark ()
   "Unpop off local mark ring."
   (interactive)
