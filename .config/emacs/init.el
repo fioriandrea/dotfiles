@@ -144,13 +144,13 @@ KEY must be given in `kbd' notation."
 
 (defmacro my-use-package (pack &rest args)
   "Minimal replacement for `use-package' with restricted
-functionality.  Supports only the keywords: :custom, :config, :init,
-:demand, :if, and :when.  Defaults are: :ensure nil, :demand nil, and
-:defer t.  Unlike standard `use-package', this macro expands to code
-that is evaluated only if the specified feature PACK is already
-provided or corresponds to a loadable library."
+functionality.  Supports only the keywords: :custom, :custom-face,
+:config, :init, :demand, :if, and :when.  Defaults are: :ensure nil,
+:demand nil, and :defer t.  Unlike standard `use-package', this macro
+expands to code that is evaluated only if the specified feature PACK
+is already provided or corresponds to a loadable library."
   (declare (indent defun))
-  (let (customs configs demand inits condition)
+  (let (customs custom-faces configs demand inits condition)
     (setq condition `((or
                        (featurep ',pack)
                        (locate-library ,(symbol-name pack)))))
@@ -163,6 +163,13 @@ provided or corresponds to a loadable library."
           (push val condition))
          ((eq key :demand)
           (setq demand val))
+         ((eq key :custom-face)
+          (cond
+           ((listp val)
+            (push val custom-faces)
+            (push :custom-face args))
+           (t
+            (push val args))))
          ((eq key :custom)
           (cond
            ((and val (listp val) (listp (car val)))
@@ -198,6 +205,11 @@ provided or corresponds to a loadable library."
          `(require ',pack nil nil) body))
       (when inits
         (push `(progn ,@(nreverse inits)) body))
+      (when custom-faces
+        (dolist (cf (nreverse custom-faces))
+          (push `(apply #'face-spec-set
+                        (backquote ,cf))
+                body)))
       (when customs
         (push
          ;; see use-package-handler/:custom
