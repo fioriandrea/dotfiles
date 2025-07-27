@@ -335,7 +335,18 @@ provided or corresponds to a loadable library."
   ("C-c s d" . (lambda ()
                  (interactive)
                  (delete-trailing-whitespace)
-                 (message "Trailing whitespace deleted"))))
+                 (message "Trailing whitespace deleted")))
+  :custom
+  (whitespace-style '(face
+                      tabs
+                      spaces
+                      trailing
+                      newline
+                      empty
+                      space-mark
+                      tab-mark
+                      newline-mark
+                      missing-newline-at-eof)))
 
 (use-package window
   :bind ("C-c x" . window-swap-states)
