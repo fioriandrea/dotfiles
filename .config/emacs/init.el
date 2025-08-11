@@ -364,7 +364,7 @@ is already provided or corresponds to a loadable library."
   (uniquify-after-kill-buffer-p t)
   ;; https://emacs.stackexchange.com/questions/68499/automatically-uniquify-certain-buffers
   (uniquify-min-dir-content 3)
-  (uniquify-buffer-name-style 'post-forward-angle-brackets)
+  (uniquify-buffer-name-style 'reverse)
   (uniquify-trailing-separator-p t))
 
 (use-package isearch
