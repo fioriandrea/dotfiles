@@ -541,7 +541,7 @@ auto-revert. Taken from doomemacs."
   :custom
   (fido-mode t)
   (fido-vertical-mode t)
-  (minibuffer-default-prompt-format "")
+  (minibuffer-default-prompt-format " [%.22s]")
   (tab-always-indent 'complete)
   (completion-cycle-threshold nil)
   (completion-auto-select nil)
