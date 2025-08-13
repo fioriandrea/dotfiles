@@ -573,7 +573,9 @@ is already provided or corresponds to a loadable library."
 
 (use-package magit
   :if (locate-library "magit")
-  :bind (:map project-prefix-map
+  :bind (:map global-map
+              ("C-c g" . magit-status)
+         :map project-prefix-map
               ("m" . magit-project-status))
   :hook
   (magit-diff-mode . (lambda () (setq truncate-lines nil)))
