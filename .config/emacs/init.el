@@ -437,41 +437,10 @@ is already provided or corresponds to a loadable library."
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (use-package autorevert
-  :init
-  (if (version< emacs-version "27.1")
-      (message "WARNING: unsupported auto-revert on window change")
-    (defun my-auto-revert-buffer-h ()
-      "Automatically revert the current buffer if not already managed by
-auto-revert. Taken from doomemacs."
-      (require 'autorevert)
-      (unless (or (active-minibuffer-window)
-                  (auto-revert-active-p)
-                  (memq major-mode global-auto-revert-ignore-modes)
-                  (and (not buffer-file-name)
-                       (or
-                        (not global-auto-revert-non-file-buffers)
-                        (string-prefix-p " " (buffer-name))
-                        (eq buffer-stale-function
-                            #'buffer-stale--default-function)))
-                  (if (functionp global-auto-revert-ignore-buffer)
-                      (not (funcall global-auto-revert-ignore-buffer
-                                    (current-buffer)))
-                    global-auto-revert-ignore-buffer)
-                  (and buffer-file-name
-                       auto-revert-remote-files
-                       (file-remote-p buffer-file-name nil t)))
-        (let ((auto-revert-mode t))
-          (auto-revert-handler))))
-    (add-hook 'window-selection-change-functions (lambda (_)
-                                                   (my-auto-revert-buffer-h)))
-    (add-hook 'window-buffer-change-functions (lambda (_)
-                                                (my-auto-revert-buffer-h)))
-    ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
-    (add-hook 'server-visit-hook 'my-auto-revert-buffer-h))
   :custom
-  (global-auto-revert-mode nil)
+  (global-auto-revert-mode t)
   ;; The first revert gets done after auto-revert-interval, even when using notifications
-  (auto-revert-interval 10)
+  (auto-revert-interval 15)
   ;; See function auto-revert--polled-buffers
   (auto-revert-avoid-polling t)
   (auto-revert-stop-on-user-input t)
