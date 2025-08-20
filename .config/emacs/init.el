@@ -233,13 +233,11 @@ is already provided or corresponds to a loadable library."
    (abbreviate-file-name
     (expand-file-name "autosave" user-emacs-directory))))
 
+(defconst custom-file (concat user-emacs-directory "custom.el"))
+
 (defconst proxy-file (concat user-emacs-directory "proxy.el"))
 (when (file-exists-p proxy-file)
   (load proxy-file))
-
-(defconst custom-file (concat user-emacs-directory "custom.el"))
-(when (file-exists-p custom-file)
-  (load custom-file))
 
 (unless (fboundp 'advice-add)
   (message "WARNING: no advice-add found, using compatibility shim")
@@ -591,6 +589,5 @@ is already provided or corresponds to a loadable library."
   (magit-diff-refine-ignore-whitespace nil)
   (magit-auto-revert-mode nil))
 
-(defconst after-file (concat user-emacs-directory "after.el"))
-(when (file-exists-p after-file)
-  (load after-file))
+(when (file-exists-p custom-file)
+  (load custom-file))
