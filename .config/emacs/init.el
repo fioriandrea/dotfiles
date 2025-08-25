@@ -6,36 +6,6 @@
   (interactive)
   (find-file user-init-file))
 
-(defun my-tick (cmd)
-  (let ((output (shell-command-to-string cmd)))
-    (string-trim output "" "[\n\r]+")))
-
-(defun my-http-fetch-url (url &optional kwargs)
-  (require 'url)
-  (unless (or (string-prefix-p "http://" url)
-              (string-prefix-p "https://" url))
-    (error "URL must start with http:// or https://"))
-  (let* ((method (cdr (assoc 'method kwargs)))
-         (data (cdr (assoc 'data kwargs)))
-         (headers (cdr (assoc 'headers kwargs)))
-         (proxy (cdr (assoc 'proxy kwargs)))
-         (url-request-method method)
-         (url-request-data data)
-         (url-request-extra-headers headers)
-         (url-proxy-services (or proxy url-proxy-services)))
-    (with-current-buffer (url-retrieve-synchronously url)
-      (let ((response-headers
-             (mapcar (lambda (line)
-                       (let ((parts (split-string line ": ")))
-                         (cons (car parts) (cadr parts))))
-                     (split-string
-                      (buffer-substring-no-properties (point-min) url-http-end-of-headers)
-                      "\n" t)))
-            (body (buffer-substring-no-properties url-http-end-of-headers (point-max))))
-        (kill-buffer)
-        `((headers . ,response-headers)
-          (body . ,(string-trim body)))))))
-
 (defun my-delete-autosave-current-buffer ()
   (interactive)
   (when buffer-file-name
@@ -54,14 +24,6 @@
   (with-current-buffer buffer
     (let (kill-buffer-hook kill-buffer-query-functions)
       (kill-buffer))))
-
-;; https://emacs.stackexchange.com/a/13433
-(defun my-simulate-key-press (key)
-  "Return a command that pretends KEY was presssed.
-KEY must be given in `kbd' notation."
-  `(lambda () (interactive)
-     (setq prefix-arg current-prefix-arg)
-     (setq unread-command-events (listify-key-sequence (read-kbd-macro ,key)))))
 
 (defun my-unpop-local-mark ()
   "Unpop off local mark ring."
