@@ -496,7 +496,8 @@ provided or corresponds to a loadable library."
          ("C-c z" . org-toggle-link-display))
   :custom
   (org-startup-truncated nil)
-  (org-html-validation-link nil))
+  (org-html-validation-link nil)
+  (org-edit-src-content-indentation 0))
 
 (use-package proced
   :custom
