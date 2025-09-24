@@ -499,6 +499,10 @@ provided or corresponds to a loadable library."
   (org-html-validation-link nil)
   (org-edit-src-content-indentation 0))
 
+(use-package outline
+  :custom
+  (outline-minor-mode-cycle t))
+
 (use-package proced
   :custom
   (proced-filter 'all)
