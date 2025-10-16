@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;; ;; https://stackoverflow.com/questions/10787087/use-elpa-emacs-behind-a-proxy-requiring-authentication
 ;; (setq url-proxy-services
 ;;       '(("no_proxy" . "127.0.0.1,*.local,otherhost...")
