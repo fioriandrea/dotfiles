@@ -189,7 +189,7 @@ provided or corresponds to a loadable library."
 
 (defconst proxy-file (concat user-emacs-directory "proxy.el"))
 (when (file-exists-p proxy-file)
-  (load proxy-file))
+  (load-file proxy-file))
 
 (unless (fboundp 'advice-add)
   (message "WARNING: no advice-add found, using compatibility shim")
@@ -549,4 +549,4 @@ provided or corresponds to a loadable library."
   (magit-auto-revert-mode nil))
 
 (when (file-exists-p custom-file)
-  (load custom-file))
+  (load-file custom-file))
