@@ -285,6 +285,12 @@ provided or corresponds to a loadable library."
   (org-agenda-mode . hl-line-mode)
   (tabulated-list-mode . hl-line-mode))
 
+(use-package mb-depth
+  :custom
+  (enable-recursive-minibuffers t)
+  (read-minibuffer-restore-windows nil)
+  (minibuffer-depth-indicate-mode t))
+
 (use-package whitespace
   :bind
   ("C-c s s" . whitespace-mode)
