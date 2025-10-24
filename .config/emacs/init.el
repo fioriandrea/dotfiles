@@ -99,13 +99,20 @@
 
 (defmacro my-use-package (pack &rest args)
   "Minimal replacement for `use-package' with restricted
-functionality.  Supports only the keywords: :custom, :config, :init,
-:demand, :if, and :when.  Defaults are: :ensure nil, :demand nil, and
-:defer t.  Unlike standard `use-package', this macro expands to code
-that is evaluated only if the specified feature PACK is already
-provided or corresponds to a loadable library."
+functionality.  Supports only the keywords: :disabled, :preface,
+:custom, :config, :init, :demand, :if, and :when.  Defaults are:
+:ensure nil, :demand nil, and :defer t.  Unlike standard
+`use-package', this macro expands to code that is evaluated only if
+the specified feature PACK is already provided or corresponds to a
+loadable library."
   (declare (indent defun))
-  (let (customs configs demand inits condition)
+  (let (customs
+        disabled
+        prefaces
+        configs
+        demand
+        inits
+        condition)
     (setq condition `((or
                        (featurep ',pack)
                        (locate-library ,(symbol-name pack)))))
@@ -114,6 +121,9 @@ provided or corresponds to a loadable library."
         (setq key (pop args))
         (setq val (pop args))
         (cond
+         ((eq key :disabled)
+          (setq disabled t)
+          (setq args nil))
          ((or (eq key :if) (eq key :when))
           (push val condition))
          ((eq key :demand)
@@ -125,6 +135,13 @@ provided or corresponds to a loadable library."
            ((and val (listp val))
             (push val customs)
             (push :custom args))
+           (t
+            (push val args))))
+         ((eq key :preface)
+          (cond
+           ((not (keywordp val))
+            (push val prefaces)
+            (push :preface args))
            (t
             (push val args))))
          ((eq key :config)
@@ -142,38 +159,42 @@ provided or corresponds to a loadable library."
            (t
             (push val args))))
          (t (push val args)))))
-    (let (body)
-      (when configs
-        (push
-         `(eval-after-load ',pack
-            (quote ,(cons 'progn (nreverse configs))))
-         body))
-      (when demand
-        (push
-         `(require ',pack nil nil) body))
-      (when inits
-        (push `(progn ,@(nreverse inits)) body))
-      (when customs
-        (push
-         ;; see use-package-handler/:custom
-         `(let ((custom--inhibit-theme-enable nil))
-            (unless (memq 'my-use-package custom-known-themes)
-              (deftheme my-use-package) (enable-theme 'my-use-package)
-              (setq custom-enabled-themes
-                    (remq 'my-use-package custom-enabled-themes)))
-            (custom-theme-set-variables
-             'my-use-package
-             ,@(mapcar (lambda (p)
-                         (let ((variable (nth 0 p))
-                               (value (nth 1 p))
-                               (comment (or (nth 2 p)
-                                            (format
-                                             "Customized with my-use-package %s"
-                                             (symbol-name pack)))))
-                           `'(,variable ,value nil nil ,comment)))
-                       (nreverse customs))))
-         body))
-      `(when (and ,@condition) ,@body))))
+    (unless disabled
+      (let (body)
+        (when configs
+          (push
+           `(eval-after-load ',pack
+              (quote ,(cons 'progn (nreverse configs))))
+           body))
+        (when demand
+          (push
+           `(require ',pack nil nil) body))
+        (when inits
+          (push `(progn ,@(nreverse inits)) body))
+        (when customs
+          (push
+           ;; see use-package-handler/:custom
+           `(let ((custom--inhibit-theme-enable nil))
+              (unless (memq 'my-use-package custom-known-themes)
+                (deftheme my-use-package) (enable-theme 'my-use-package)
+                (setq custom-enabled-themes
+                      (remq 'my-use-package custom-enabled-themes)))
+              (custom-theme-set-variables
+               'my-use-package
+               ,@(mapcar (lambda (p)
+                           (let ((variable (nth 0 p))
+                                 (value (nth 1 p))
+                                 (comment (or (nth 2 p)
+                                              (format
+                                               "Customized with my-use-package %s"
+                                               (symbol-name pack)))))
+                             `'(,variable ,value nil nil ,comment)))
+                         (nreverse customs))))
+           body))
+        `(progn
+           ,@prefaces
+           (when (and ,@condition)
+             ,@body))))))
 
 (defconst emacs-backup-dir
   (file-name-as-directory
