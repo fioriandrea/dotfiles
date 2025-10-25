@@ -556,6 +556,12 @@ loadable library."
   (dired-mouse-drag-files t)
   (dired-dwim-target t))
 
+(use-package wdired
+  :custom
+  (wdired-allow-to-change-permissions t)
+  (wdired-create-parent-directories t)
+  (wdired-allow-to-redirect-links t))
+
 (use-package dired-x
   :demand t
   :after dired)
