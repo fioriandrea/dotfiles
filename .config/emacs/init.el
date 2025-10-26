@@ -289,8 +289,6 @@ loadable library."
                (lambda () (progn
                             (my-delete-autosave-opened-files)
                             t)))
-  (setq-default bidi-paragraph-direction 'left-to-right)
-  (setq-default bidi-inhibit-bpa t)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 (use-package help
