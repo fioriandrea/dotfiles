@@ -507,9 +507,7 @@ loadable library."
 (use-package repeat
   :custom
   (repeat-mode t)
-  (repeat-exit-key "RET")
-  :config
-  (put 'other-window 'repeat-map nil))
+  (repeat-exit-key "RET"))
 
 (use-package eldoc
   :custom
