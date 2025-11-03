@@ -238,6 +238,7 @@ loadable library."
   :bind
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
+  ("C-c x" . window-swap-states)
   ([remap pop-global-mark] . my-pop-global-mark)
   ([remap set-mark-command] . my-set-mark-command)
   :hook
@@ -328,12 +329,6 @@ loadable library."
                       tab-mark
                       newline-mark
                       missing-newline-at-eof)))
-
-(use-package window
-  :bind ("C-c x" . window-swap-states)
-  :custom
-  (split-height-threshold nil)
-  (split-width-threshold nil))
 
 (use-package uniquify
   :custom
