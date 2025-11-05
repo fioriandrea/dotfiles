@@ -502,7 +502,7 @@ loadable library."
 (use-package repeat
   :custom
   (repeat-mode t)
-  (repeat-exit-key "RET"))
+  (repeat-exit-key "<escape>"))
 
 (use-package eldoc
   :custom
