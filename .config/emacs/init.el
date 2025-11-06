@@ -345,6 +345,10 @@ loadable library."
   (isearch-wrap-pause t))
 
 (use-package tab-bar
+  :bind
+  (:repeat-map repeat-tab-bar-history-map
+               ("<left>" . tab-bar-history-back)
+               ("<right>" . tab-bar-history-forward))
   :custom
   (tab-bar-show 1)
   (tab-bar-history-mode t)
