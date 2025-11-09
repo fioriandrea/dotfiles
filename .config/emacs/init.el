@@ -475,6 +475,11 @@ loadable library."
               (lambda (frame)
                 (with-selected-frame frame
                   (my-disable-minibuffer-scrollbar)))))
+  ;; don't insert icomplete completion display if there's pending input
+  (advice-add 'icomplete-exhibit
+              :before-while
+              (lambda ()
+                (sit-for 0)))
   :hook (icomplete-minibuffer-setup . my-icomplete-minibuffer-setup)
   :bind (:map icomplete-fido-mode-map
               ("C-s" . nil)
@@ -487,11 +492,6 @@ loadable library."
   :custom
   (fido-mode t)
   (fido-vertical-mode t)
-  (icomplete-compute-delay .08)
-  ;; ensure compute delay is applied for most inputs
-  (icomplete-max-delay-chars 1000)
-  ;; ensure compute delay is applied for any number of completions
-  (icomplete-delay-completions-threshold 0)
   (minibuffer-default-prompt-format " [%.22s]")
   (tab-always-indent 'complete)
   (completion-cycle-threshold nil)
