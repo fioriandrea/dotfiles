@@ -312,17 +312,9 @@ loadable library."
                  (interactive)
                  (delete-trailing-whitespace)
                  (message "Trailing whitespace deleted")))
-  :custom
-  (whitespace-style '(face
-                      tabs
-                      spaces
-                      trailing
-                      newline
-                      empty
-                      space-mark
-                      tab-mark
-                      newline-mark
-                      missing-newline-at-eof)))
+  :config
+  (customize-set-variable 'whitespace-style
+                          (delq 'lines whitespace-style)))
 
 (use-package uniquify
   :custom
