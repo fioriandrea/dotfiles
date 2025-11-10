@@ -494,13 +494,6 @@ loadable library."
   (suggest-key-bindings t)
   (completions-detailed t))
 
-(use-package ffap
-  :custom
-  (ffap-require-prefix t)
-  (dired-at-point-require-prefix t)
-  :init
-  (ffap-bindings))
-
 (use-package repeat
   :custom
   (repeat-mode t)
