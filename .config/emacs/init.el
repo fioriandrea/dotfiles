@@ -569,7 +569,9 @@ loadable library."
   (magit-branch-direct-configure nil)
   (magit-diff-refine-hunk 'all)
   (magit-diff-refine-ignore-whitespace nil)
-  (magit-auto-revert-mode nil))
+  (magit-auto-revert-mode nil)
+  :config
+  (setq magit-show-long-lines-warning nil))
 
 (when (file-exists-p custom-file)
   (load-file custom-file))
