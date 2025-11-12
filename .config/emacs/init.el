@@ -499,6 +499,16 @@ loadable library."
   (repeat-mode t)
   (repeat-exit-key "<escape>"))
 
+(use-package comint
+  :config
+  (put 'comint-previous-prompt 'repeat-map nil)
+  (put 'comint-next-prompt 'repeat-map nil))
+
+(use-package em-prompt
+  :config
+  (put 'eshell-previous-prompt 'repeat-map nil)
+  (put 'eshell-next-prompt 'repeat-map nil))
+
 (use-package eldoc
   :custom
   (eldoc-echo-area-use-multiline-p nil))
