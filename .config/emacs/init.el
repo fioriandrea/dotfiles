@@ -230,7 +230,7 @@ loadable library."
 (use-package emacs
   :bind
   ("C-x f" . nil)
-  ("C-x C-b" . buffer-menu)
+  ("C-x C-b" . ibuffer)
   ("C-c x" . window-swap-states)
   ("C-c t" . tool-bar-mode)
   ([remap pop-global-mark] . my-pop-global-mark)
