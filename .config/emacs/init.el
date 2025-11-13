@@ -270,7 +270,7 @@ loadable library."
   (scroll-conservatively 10)
   (scroll-margin 4)
   ;; Backup
-  (backup-by-copying t)
+  (backup-by-copying-when-linked t)
   (version-control t)
   (delete-old-versions t)
   (kept-new-versions 6)
