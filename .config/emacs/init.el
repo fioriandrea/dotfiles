@@ -550,6 +550,8 @@ loadable library."
 (use-package dired
   :hook
   (dired-mode . dired-hide-details-mode)
+  :bind (:map dired-jump-map
+              ("j" . nil))
   :custom
   (dired-clean-confirm-killing-deleted-buffers t)
   (dired-clean-up-buffers-too t)
