@@ -275,6 +275,8 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (tab-bar-show t)
   (tab-bar-tab-hints t)
   (tab-bar-select-tab-modifiers '(meta))
+  (tab-bar-new-tab-choice t)
+  (tab-bar-new-tab-to 'rightmost)
   (tab-bar-history-mode t)
   (tab-bar-history-limit 30)
   :config
