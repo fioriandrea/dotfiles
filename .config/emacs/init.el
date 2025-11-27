@@ -167,7 +167,6 @@ library; tries to catch any error with `condition-case-unless-debug`."
   ("C-x f" . nil)
   ("C-x C-b" . ibuffer)
   ("C-c x" . window-swap-states)
-  ("C-c t" . tool-bar-mode)
   :hook
   ((prog-mode text-mode conf-mode) . display-line-numbers-mode)
   (text-mode . visual-line-mode)
