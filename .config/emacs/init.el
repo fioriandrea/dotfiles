@@ -6,6 +6,103 @@
   (interactive)
   (find-file user-init-file))
 
+(defun my-grep-files (files regexp)
+  (let (results)
+    (dolist (file files (nreverse results))
+      (when (and (file-readable-p file)
+                 (file-regular-p file))
+        (with-temp-buffer
+          (insert-file-contents file)
+          (goto-char (point-min))
+          (while (re-search-forward regexp nil t)
+            (let* ((line-beg (line-beginning-position))
+                   (line (line-number-at-pos))
+                   (match-beg (match-beginning 0))
+                   (match-text (match-string 0)))
+              (push (list :file file
+                          :line line
+                          :col (1+ (- match-beg line-beg))
+                          :match-line-start (- match-beg line-beg)
+                          :match-len (length match-text)
+                          :text (buffer-substring-no-properties
+                                 line-beg (line-end-position)))
+                    results))))))))
+
+(defun my-grep-merge-highlight-matches (matches)
+  (require 'cl-lib)
+  (let ((grouped (make-hash-table :test 'equal)))
+    ;; group matches by file:line
+    (dolist (match matches)
+      (let ((key (cons (plist-get match :file)
+                       (plist-get match :line))))
+        (push match (gethash key grouped '()))))
+    ;; process each group
+    (cl-loop
+     for matches-being being the hash-values of grouped
+     for first-match = (car (last matches-being))
+     for text = (plist-get first-match :text)
+     do (dolist (match matches-being)
+          (let ((start (plist-get match :match-line-start))
+                (len (plist-get match :match-len)))
+            (add-face-text-property
+             start (+ start len) 'isearch nil text)))
+     collect first-match)))
+
+(defun my-grep-xref-matches-in-files (regexp files)
+  (let ((matches (my-grep-merge-highlight-matches
+                  (my-grep-files files regexp))))
+    (mapcar (lambda (match)
+              (xref-make (plist-get match :text)
+                         (xref-make-file-location
+                          (plist-get match :file)
+                          (plist-get match :line)
+                          (plist-get match :col))))
+            matches)))
+
+(defun my-grep-xref-fetcher (regexp files)
+  (unless files
+    (user-error "Empty file list"))
+  (let ((xrefs (my-grep-xref-matches-in-files regexp files)))
+    (unless xrefs
+      (user-error "No matches for: %s" regexp))
+    xrefs))
+
+(defun my-grep-show-xrefs (regexp files)
+  (require 'xref)
+  (xref-show-xrefs
+   (apply-partially
+    #'my-grep-xref-fetcher regexp files)
+   nil))
+
+(defun my-project-find-regexp (regexp)
+  (interactive (list (progn
+                       (require 'project)
+                       (project--read-regexp))))
+  (let* ((pr (project-current t))
+         (default-directory (project-root pr))
+         (project-files-relative-names t)
+         (files (project-files pr)))
+    (my-grep-show-xrefs regexp files)))
+
+(defun my-dired-do-find-regexp (regexp)
+  (interactive (list (read-regexp "Find regexp")) dired-mode)
+  (my-grep-show-xrefs regexp (dired-get-marked-files)))
+
+(defvar my-rgrep-regexp-history nil)
+(defvar my-rgrep-file-regexp-history nil)
+(defun my-rgrep (regexp file-regexp dir)
+  (interactive
+   (list
+    (read-regexp "Search for"
+                 'find-tag-default 'my-rgrep-regexp-history)
+    (read-regexp "File-name regexp (default: .): "
+                 "." 'my-rgrep-file-regexp-history)
+    (read-directory-name "Base directory: "
+			 nil default-directory t)))
+  (require 'find-lisp)
+  (my-grep-show-xrefs regexp
+                      (find-lisp-find-files dir file-regexp)))
+
 (defun my-delete-autosave-current-buffer ()
   (interactive)
   (when buffer-file-name
