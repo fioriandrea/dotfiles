@@ -658,17 +658,14 @@ tries to catch any error with `condition-case-unless-debug'."
   (dired-dwim-target t)
   :config
   (when (boundp 'dired-jump-map)
-    (define-key dired-jump-map (kbd "j") nil)))
+    (define-key dired-jump-map (kbd "j") nil))
+  (require 'dired-x))
 
 (use-package wdired
   :custom
   (wdired-allow-to-change-permissions t)
   (wdired-create-parent-directories t)
   (wdired-allow-to-redirect-links t))
-
-(use-package dired-x
-  :demand t
-  :after dired)
 
 ;;;; External Packages
 
