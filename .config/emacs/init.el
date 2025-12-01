@@ -63,11 +63,9 @@
 
 (defvar my-grep--follow-links t)
 (defun my-grep-files (files regexp)
-  "Recursively search FILES for REGEXP.  Skips directory symlinks.
-Returns plist: :results and :errors."
-  (let (results errors)
-    (dolist (file files (list :results (nreverse results)
-                              :errors  (nreverse errors)))
+  "Recursively search FILES for REGEXP.  Returns list with results."
+  (let (results)
+    (dolist (file files (nreverse results))
       (condition-case err
           (if (file-directory-p file)
               (unless (and (file-symlink-p file)
@@ -76,10 +74,7 @@ Returns plist: :results and :errors."
                        (subfiles (directory-files
                                   file t directory-files-no-dot-files-regexp))
                        (subres (my-grep-files subfiles regexp)))
-                  (setq results (nconc
-                                 (nreverse (plist-get subres :results)) results))
-                  (setq errors (nconc
-                                (nreverse (plist-get subres :errors)) errors))))
+                  (setq results (nconc (nreverse subres) results))))
             (with-temp-buffer
               (insert-file-contents file)
               (goto-char (point-min))
@@ -99,12 +94,8 @@ Returns plist: :results and :errors."
                   (when (= match-len 0)
                     (forward-char 1))))))
         (error
-         (message "Failed to grep %S because of %S"
-                  file err)
-         (push (list
-                :file file
-                :error err)
-               errors))))))
+         (message "my-grep-files: failed to grep %S because of %S"
+                  file err))))))
 
 (defun my-grep-merge-highlight-matches (matches)
   (require 'cl-lib)
@@ -127,8 +118,7 @@ Returns plist: :results and :errors."
      collect first-match)))
 
 (defun my-grep-xref-matches-in-files (regexp files)
-  (let* ((raw-matches (plist-get (my-grep-files files regexp)
-                                 :results))
+  (let* ((raw-matches (my-grep-files files regexp))
          (matches (my-grep-merge-highlight-matches
                    raw-matches)))
     (mapcar (lambda (match)
