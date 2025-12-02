@@ -664,8 +664,7 @@ tries to catch any error with `condition-case-unless-debug'."
 
 (use-package project
   :custom
-  (project-vc-extra-root-markers '(".dir-locals.el"
-                                   ".dir-locals-2.el")))
+  (project-vc-extra-root-markers '(".project.el")))
 
 (use-package dired
   :custom
