@@ -33,6 +33,50 @@
    (mapcar #'find-file-noselect (dired-get-marked-files))
    regexp nlines))
 
+;;;; Find
+
+(defun my-find-lisp-find-files-excluding-vc (directory regexp)
+  (require 'find-lisp)
+  (let ((file-predicate 'find-lisp-default-file-predicate)
+	(directory-predicate (lambda (dir parent)
+                               (and
+                                (not
+                                 (member dir vc-directory-exclusion-list))
+                                (find-lisp-default-directory-predicate dir parent))))
+	(find-lisp-regexp regexp))
+    (find-lisp-find-files-internal
+     directory
+     file-predicate
+     directory-predicate)))
+
+(defun my-project-files (project &optional dirs)
+  (condition-case err
+      (project-files project dirs)
+    (error
+     (message "project-files error: %S" err)
+     (mapcan (lambda (d)
+               (my-find-lisp-find-files-excluding-vc d "."))
+             (or dirs (list (project-root project)))))))
+
+(defun my-project-find-file (&optional include-all)
+  (interactive "P")
+  (let* ((project (project-current t))
+         (root (project-root project))
+         (all-files (if include-all
+                        (my-find-lisp-find-files-excluding-vc root ".")
+                      (my-project-files project (list root))))
+         (mb-default (or
+                      (thing-at-point 'filename)
+                      (file-name-nondirectory
+                       (buffer-file-name))))
+         (file (funcall project-read-file-name-function
+                        "Find file"
+                        all-files
+                        nil
+                        'file-name-history
+                        (and mb-default (list mb-default)))))
+    (find-file (expand-file-name file root))))
+
 ;;;; Grep
 
 (defun my-grep-files (files regexp)
@@ -138,7 +182,7 @@
   (let* ((pr (project-current t))
          (default-directory (project-root pr))
          (project-files-relative-names nil)
-         (files-all (project-files pr))
+         (files-all (my-project-files pr))
          (files (seq-filter #'file-regular-p files-all)))
     (my-grep-show-xrefs regexp files)))
 
