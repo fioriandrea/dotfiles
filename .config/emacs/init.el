@@ -227,11 +227,6 @@
 (defun my-grep-xrefs-insert-literally-backend (regexp files)
   (my-grep-xrefs-backend regexp files :literally))
 
-(defun my-grep-multi-occur-backend (regexp files)
-  (multi-occur
-   (mapcar #'find-file-noselect (my-flatten-filesystem-tree files))
-   regexp))
-
 (defvar my-grep-file-regexp-history nil)
 (defvar my-grep-backend-function #'my-grep-xrefs-backend)
 
