@@ -55,13 +55,6 @@
                'find-tag-default-as-regexp
                'grep-regexp-history))
 
-(defun my-read-file-name-from-list (files &optional prompt)
-  (completing-read (or prompt "Choose file: ")
-                   files
-                   nil t nil
-                   'file-name-history
-                   (my-file-name-from-context)))
-
 ;;;;; Find
 
 (defun my-find-lisp-find-files-excluding-vc (directory regexp)
