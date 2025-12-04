@@ -512,10 +512,6 @@ tries to catch any error with `condition-case-unless-debug'."
 (use-package recentf
   :bind
   ("C-c f" . recentf-open)
-  ("C-c 4 f" . (lambda ()
-                 (interactive)
-                 (other-window-prefix)
-                 (call-interactively 'recentf-open)))
   :custom
   (recentf-mode t)
   (recentf-max-saved-items 200))
@@ -683,10 +679,6 @@ tries to catch any error with `condition-case-unless-debug'."
    ("C-c a" . org-agenda)
    ("C-c c" . org-capture)
    ("C-c o" . org-open-at-point-global)
-   ("C-c 4 o" . (lambda ()
-                  (interactive)
-                  (other-window-prefix)
-                  (call-interactively 'org-open-at-point-global)))
    :map org-mode-map
    ("C-c z" . org-toggle-link-display))
   :custom
