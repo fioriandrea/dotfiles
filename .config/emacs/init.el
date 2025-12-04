@@ -57,24 +57,14 @@
 
 ;;;;; Find
 
-(defun my-find-lisp-find-files-excluding-vc (directory regexp)
-  (require 'find-lisp)
-  (let ((file-predicate 'find-lisp-default-file-predicate)
-	(directory-predicate (lambda (dir parent)
-                               (and
-                                (not
-                                 (member dir vc-directory-exclusion-list))
-                                (find-lisp-default-directory-predicate dir parent))))
-	(find-lisp-regexp regexp))
-    (find-lisp-find-files-internal
-     directory
-     file-predicate
-     directory-predicate)))
-
-(defun my-find-lisp-find-all-files (directory &optional include-vc)
-  (if include-vc
-      (my-find-lisp-find-files directory ".")
-    (my-find-lisp-find-files-excluding-vc directory ".")))
+(defun my-find-files-excluding-vc (directory regexp)
+  (directory-files-recursively
+   directory regexp nil
+   (lambda (subdir)
+     (let ((basename (file-name-nondirectory (directory-file-name subdir))))
+       (and
+        (not (member basename vc-directory-exclusion-list))
+        (file-readable-p subdir))))))
 
 (defun my-project-files (project &optional dirs)
   (condition-case err
@@ -82,7 +72,7 @@
     (error
      (message "project-files error: %S" err)
      (mapcan (lambda (d)
-               (my-find-lisp-find-all-files d))
+               (my-find-files-excluding-vc d "."))
              (or dirs (list (project-root project)))))))
 
 (defun my-project-find-file (&optional include-all)
@@ -90,7 +80,7 @@
   (let* ((project (project-current t))
          (root (project-root project))
          (all-files (if include-all
-                        (my-find-lisp-find-all-files root)
+                        (my-find-files-excluding-vc root ".")
                       (my-project-files project (list root))))
          (file (funcall project-read-file-name-function
                         "Find file"
@@ -211,7 +201,7 @@
     (my-grep-read-file-regexp)
     (my-read-directory-name-default)))
   (my-grep-xrefs-show regexp
-                      (my-find-lisp-find-files-excluding-vc
+                      (my-find-files-excluding-vc
                        dir file-regexp)))
 
 (defun my-project-find-regexp (regexp)
