@@ -369,9 +369,7 @@ tries to catch any error with `condition-case-unless-debug'."
   :bind
   (("C-x f" . nil)
    ("C-x C-b" . ibuffer)
-   ("C-M-/" . hippie-expand)
-   :map ctl-x-4-map
-   ("t" . window-swap-states))
+   ("C-M-/" . hippie-expand))
   :hook
   ((prog-mode text-mode conf-mode) . display-line-numbers-mode)
   (text-mode . visual-line-mode)
