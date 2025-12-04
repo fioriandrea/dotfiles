@@ -117,7 +117,7 @@
   (interactive (list (my-read-directory-name-default)))
   (find-file (my-find-file-picker-from-list (list dir))))
 
-(defun my-dired-file-picker ()
+(defun my-dired-find-file-picker ()
   (interactive nil dired-mode)
   (find-file
    (my-find-file-picker-from-list (dired-get-marked-files))))
