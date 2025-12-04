@@ -104,9 +104,9 @@
     (find-file (expand-file-name file root))))
 
 (defun my-find-file-picker-from-list (files)
-  (let ((all-files (my-flatten-filesystem-tree files))
-        (unique-files
-         (cl-delete-duplicates all-files :test #'equal)))
+  (let* ((all-files (my-flatten-filesystem-tree files))
+         (unique-files
+          (cl-delete-duplicates all-files :test #'equal)))
     (unless unique-files
       (user-error "Empty file list"))
     (if (length= unique-files 1)
@@ -115,12 +115,12 @@
 
 (defun my-find-file-picker (dir)
   (interactive (list (my-read-directory-name-default)))
-  (find-file (my-pick-file-name-from-list (list dir))))
+  (find-file (my-find-file-picker-from-list (list dir))))
 
 (defun my-dired-file-picker ()
   (interactive nil dired-mode)
   (find-file
-   (my-pick-file-name-from-list (dired-get-marked-files))))
+   (my-find-file-picker-from-list (dired-get-marked-files))))
 
 ;;;; Grep
 
