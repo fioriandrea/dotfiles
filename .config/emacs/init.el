@@ -49,15 +49,6 @@
                    'file-name-history
                    (my-file-name-from-context)))
 
-(defun my-flatten-filesystem-tree (files-and-dirs &optional include-vc)
-  (mapcan (lambda (f)
-            (cond
-             ((not (file-readable-p f)) nil)
-             ((file-directory-p f)
-              (my-find-lisp-find-all-files f include-vc))
-             (t (list f))))
-          files-and-dirs))
-
 ;;;; Find
 
 (defun my-find-lisp-find-files-excluding-vc (directory regexp)
@@ -78,6 +69,15 @@
   (if include-vc
       (my-find-lisp-find-files directory ".")
     (my-find-lisp-find-files-excluding-vc directory ".")))
+
+(defun my-flatten-filesystem-tree (files-and-dirs &optional include-vc)
+  (mapcan (lambda (f)
+            (cond
+             ((not (file-readable-p f)) nil)
+             ((file-directory-p f)
+              (my-find-lisp-find-all-files f include-vc))
+             (t (list f))))
+          files-and-dirs))
 
 (defun my-project-files (project &optional dirs)
   (condition-case err
