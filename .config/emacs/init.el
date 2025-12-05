@@ -127,7 +127,6 @@
 ;;;;; Grep
 
 (defun my-grep-files (files regexp)
-  "Recursively search FILES for REGEXP.  Returns list with results."
   (require 'cl-lib)
   (let ((results nil))
     (cl-labels
