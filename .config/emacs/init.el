@@ -61,13 +61,10 @@
   `(cl-letf
        ,(mapcar
          (lambda (spec)
-           (pcase-let ((`(,fn ,wrap) spec))
+           (pcase-let ((`(,fn ,wrapper) spec))
              `((symbol-function ',fn)
-               (let ((orig-fn (symbol-function ',fn)))
-                 (apply-partially
-                  (lambda (orig-fn &rest args)
-                    (apply ,wrap orig-fn args))
-                  orig-fn)))))
+               (let ((orig (symbol-function ',fn)))
+                 (apply-partially ,wrapper orig)))))
          specs)
      ,@body))
 
