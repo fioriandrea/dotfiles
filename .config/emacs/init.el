@@ -58,14 +58,32 @@
 
 ;;;;; Find
 
+(defun my-find-files (directory regexp &optional dir-filter)
+  (setq directory (directory-file-name directory))
+  (let ((results nil)
+        (full-files nil)
+        (files (condition-case err
+                   (directory-files
+                    directory nil
+                    directory-files-no-dot-files-regexp)
+                 (file-error (message
+                              "my-find-files: couldn't get files for dir %S because of %S"
+                              directory err)
+                             nil))))
+    (dolist (file files)
+      (let ((full-file (concat directory "/" file)))
+        (if (file-directory-p full-file)
+            (unless (or (file-symlink-p full-file)
+                        (and dir-filter (not (funcall dir-filter directory file))))
+              (setq results (nconc results (my-find-files full-file regexp dir-filter))))
+          (when (string-match regexp file)
+	    (push full-file full-files)))))
+    (nconc results (nreverse full-files))))
+
 (defun my-find-files-excluding-vc (directory regexp)
-  (directory-files-recursively
-   directory regexp nil
-   (lambda (subdir)
-     (let ((basename (file-name-nondirectory (directory-file-name subdir))))
-       (and
-        (not (member basename vc-directory-exclusion-list))
-        (file-readable-p subdir))))))
+  (my-find-files directory regexp
+                 (lambda (parent file)
+                   (not (member file vc-directory-exclusion-list)))))
 
 (defun my-project-files (project &optional dirs)
   (condition-case err
@@ -96,19 +114,13 @@
 (defun my-grep-files (files regexp)
   "Recursively search FILES for REGEXP.  Returns list with results."
   (require 'cl-lib)
-  (defvar my-grep--follow-links t)
   (let ((results nil))
     (cl-labels
         ((recursive-search (files)
            (dolist (file files)
              (condition-case err
                  (if (file-directory-p file)
-                     (unless (and (file-symlink-p file)
-                                  (not my-grep--follow-links))
-                       (let ((my-grep--follow-links nil))
-                         (recursive-search
-                          (directory-files
-                           file t directory-files-no-dot-files-regexp))))
+                     (recursive-search (my-find-files file "."))
                    (insert-file-contents file nil nil nil 'if-regular)
                    (goto-char (point-min))
                    (let ((prev-line -1)
@@ -133,7 +145,7 @@
                                results)
                          (when (= match-len 0)
                            (forward-char 1))))))
-               (error
+               (file-error
                 (message "my-grep-files: failed to grep %S because of %S"
                          file err))))))
       (with-temp-buffer
@@ -201,9 +213,8 @@
     (my-read-regexp-default)
     (my-grep-read-file-regexp)
     (my-read-directory-name-default)))
-  (my-grep-xrefs-show regexp
-                      (my-find-files-excluding-vc
-                       dir file-regexp)))
+  (my-grep-xrefs-show
+   regexp (my-find-files-excluding-vc dir file-regexp)))
 
 (defun my-project-find-regexp (regexp)
   (interactive (list (my-read-regexp-default)))
