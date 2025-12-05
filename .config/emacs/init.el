@@ -56,6 +56,21 @@
                'find-tag-default-as-regexp
                'grep-regexp-history))
 
+(defmacro my-with-temporary-fn-override (specs &rest body)
+  (declare (indent 1))
+  `(cl-letf
+       ,(mapcar
+         (lambda (spec)
+           (pcase-let ((`(,fn ,wrap) spec))
+             `((symbol-function ',fn)
+               (let ((orig-fn (symbol-function ',fn)))
+                 (apply-partially
+                  (lambda (orig-fn &rest args)
+                    (apply ,wrap orig-fn args))
+                  orig-fn)))))
+         specs)
+     ,@body))
+
 ;;;;; Find
 
 (defun my-find-files (directory regexp &optional dir-filter)
@@ -85,29 +100,29 @@
                  (lambda (parent file)
                    (not (member file vc-directory-exclusion-list)))))
 
-(defun my-project-files (project &optional dirs)
-  (condition-case err
-      (project-files project dirs)
-    (error
-     (message "project-files error: %S" err)
-     (mapcan (lambda (d)
-               (my-find-files-excluding-vc d "."))
-             (or dirs (list (project-root project)))))))
+(defmacro my-with-safe-project-files (&rest args)
+  (declare (indent 1))
+  `(my-with-temporary-fn-override
+       ((project-files
+         (lambda (orig project &optional dirs)
+           (condition-case err
+               (apply orig (list project dirs))
+             (error
+              (message "project-files error: %S" err)
+              (mapcan (lambda (d)
+                        (my-find-files-excluding-vc d "."))
+                      (or dirs (list (project-root project)))))))))
+     ,@args))
 
 (defun my-project-find-file (&optional include-all)
   (interactive "P")
-  (let* ((project (project-current t))
-         (root (project-root project))
-         (all-files (if include-all
-                        (my-find-files-excluding-vc root ".")
-                      (my-project-files project (list root))))
-         (file (funcall project-read-file-name-function
-                        "Find file"
-                        all-files
-                        nil
-                        'file-name-history
-                        (my-file-name-from-context))))
-    (find-file (expand-file-name file root))))
+  (my-with-safe-project-files
+      (project-find-file include-all)))
+
+(defun my-project-find-dir ()
+  (interactive)
+  (my-with-safe-project-files
+      (project-find-dir)))
 
 ;;;;; Grep
 
@@ -224,8 +239,8 @@
         (my-rgrep regexp file-regexp directory))
     (let* ((pr (project-current t))
            (default-directory (project-root pr))
-           (files-all (my-project-files pr))
-           (files (seq-filter #'file-regular-p files-all)))
+           (files (my-with-safe-project-files
+                      (project-files pr))))
       (my-grep-xrefs-show regexp files))))
 
 (defun my-dired-do-find-regexp (regexp)
