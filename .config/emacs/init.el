@@ -56,7 +56,7 @@
                'find-tag-default-as-regexp
                'grep-regexp-history))
 
-(defmacro my-with-temporary-fn-override (specs &rest body)
+(defmacro my-with-fn-overrides (specs &rest body)
   (declare (indent 1))
   `(cl-letf
        ,(mapcar
@@ -100,9 +100,9 @@
                  (lambda (parent file)
                    (not (member file vc-directory-exclusion-list)))))
 
-(defmacro my-with-safe-project-files (&rest args)
+(defmacro my-with-project-files-fallback (&rest args)
   (declare (indent 1))
-  `(my-with-temporary-fn-override
+  `(my-with-fn-overrides
        ((project-files
          (lambda (orig project &optional dirs)
            (condition-case err
@@ -116,12 +116,12 @@
 
 (defun my-project-find-file (&optional include-all)
   (interactive "P")
-  (my-with-safe-project-files
+  (my-with-project-files-fallback
       (project-find-file include-all)))
 
 (defun my-project-find-dir ()
   (interactive)
-  (my-with-safe-project-files
+  (my-with-project-files-fallback
       (project-find-dir)))
 
 ;;;;; Grep
@@ -238,7 +238,7 @@
         (my-rgrep regexp file-regexp directory))
     (let* ((pr (project-current t))
            (default-directory (project-root pr))
-           (files (my-with-safe-project-files
+           (files (my-with-project-files-fallback
                       (project-files pr))))
       (my-grep-xrefs-show regexp files))))
 
