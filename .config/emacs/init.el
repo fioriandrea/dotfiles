@@ -13,6 +13,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 ;;;; Functions
 
 ;;;;; Miscellanea
@@ -113,7 +115,6 @@
 ;;;;; Grep
 
 (defun my-grep-files (files regexp)
-  (require 'cl-lib)
   (let ((results nil))
     (cl-labels
         ((recursive-search (files)
@@ -153,7 +154,6 @@
     (nreverse results)))
 
 (defun my-grep-matches-to-xref (matches)
-  (require 'cl-lib)
   (let ((grouped (make-hash-table :test 'equal)))
     (dolist (match matches)
       (let ((key (cons (plist-get match :file)
