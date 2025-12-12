@@ -19,19 +19,6 @@
   (interactive)
   (find-file user-init-file))
 
-(defun my-delete-autosave-current-buffer ()
-  (interactive)
-  (when buffer-file-name
-    (let ((auto-save-file (make-auto-save-file-name)))
-      (when (file-exists-p auto-save-file)
-        (delete-file auto-save-file)))))
-
-(defun my-delete-autosave-opened-files ()
-  (interactive)
-  (dolist (buf (buffer-list))
-    (with-current-buffer buf
-      (my-delete-autosave-current-buffer))))
-
 (defun my-kill-buffer-skip-hooks (buffer)
   (interactive "bBuffer: ")
   (with-current-buffer buffer
@@ -218,12 +205,18 @@ The expanded code catches any error during package setup."
   (auto-save-file-name-transforms `((".*" ,my-emacs-autosave-dir t)))
   (backup-directory-alist `(("." . ,my-emacs-backup-dir)))
   :init
+  (defun my-delete-autosave-current-buffer ()
+    (interactive)
+    (when buffer-file-name
+      (let ((auto-save-file (make-auto-save-file-name)))
+        (when (file-exists-p auto-save-file)
+          (delete-file auto-save-file)))))
   (add-hook 'kill-buffer-hook 'my-delete-autosave-current-buffer)
   ;; hack to delete auto-save files on C-x C-c
   (add-to-list 'kill-emacs-query-functions
-               (lambda () (progn
-                            (my-delete-autosave-opened-files)
-                            t)))
+               (lambda () (dolist (buf (buffer-list) t)
+                            (with-current-buffer buf
+                              (my-delete-autosave-current-buffer)))))
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 (use-package help
