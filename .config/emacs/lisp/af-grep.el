@@ -78,13 +78,13 @@
 (defun af-grep-project-find-file (&optional include-all)
   (interactive "P")
   (af-grep-with-project-files-fallback
-   (project-find-file include-all)))
+    (project-find-file include-all)))
 
 ;;;###autoload
 (defun af-grep-project-find-dir ()
   (interactive)
   (af-grep-with-project-files-fallback
-   (project-find-dir)))
+    (project-find-dir)))
 
 ;;;; Grep
 
@@ -217,7 +217,7 @@
     (let* ((pr (project-current t))
            (default-directory (project-root pr))
            (files (af-grep-with-project-files-fallback
-                   (project-files pr))))
+                    (project-files pr))))
       (af-grep-xrefs-show regexp files))))
 
 ;;;###autoload
