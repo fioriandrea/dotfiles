@@ -467,6 +467,20 @@ The expanded code catches any error during package setup."
   :custom
   (eglot-events-buffer-config '(:size 0 :format full)))
 
+(use-package calendar
+  :custom
+  (calendar-date-style 'european)
+  (calendar-mark-holidays-flag t)
+  (calendar-week-start-day 1)
+  (calendar-christian-all-holidays-flag t))
+
+(use-package holidays
+  :custom
+  (holiday-bahai-holidays nil)
+  (holiday-oriental-holidays nil)
+  (holiday-islamic-holidays nil)
+  (holiday-hebrew-holidays nil))
+
 (use-package org
   :bind
   (("C-c l" . org-store-link)
