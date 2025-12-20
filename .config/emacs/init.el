@@ -457,9 +457,16 @@ The expanded code catches any error during package setup."
     (define-key eshell-prompt-repeat-map (kbd "C-n") nil)
     (define-key eshell-prompt-repeat-map (kbd "C-p") nil)))
 
-(use-package eldoc
+(use-package python
   :hook
-  ((emacs-lisp-mode ielm-mode) . eldoc-mode)
+  ;; Disable eldoc for remote python buffers, as it calls
+  ;; `python-shell-get-process-name', which can be expensive,
+  ;; due to project root lookup.
+  (python-mode . (lambda ()
+                   (when (file-remote-p default-directory)
+                     (eldoc-mode -1)))))
+
+(use-package eldoc
   :config
   (advice-add 'eldoc-display-in-echo-area :around
               (lambda (orig &rest args)
@@ -471,7 +478,6 @@ The expanded code catches any error during package setup."
                          eldoc-echo-area-use-multiline-p)))
                   (apply orig args))))
   :custom
-  (global-eldoc-mode nil)
   (eldoc-echo-area-use-multiline-p nil)
   (eldoc-echo-area-display-truncation-message nil))
 
