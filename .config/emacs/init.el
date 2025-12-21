@@ -388,13 +388,20 @@ The expanded code catches any error during package setup."
   :config
   ;; https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./
   ;; https://www.gnu.org/software/tramp/#Improving-performance-of-asynchronous-remote-processes-1
-  (unless (version< emacs-version "30.1")
-    (connection-local-set-profile-variables
-     'remote-direct-async-process
-     '((tramp-direct-async-process . t)))
+  (connection-local-set-profile-variables
+   'remote-direct-async-process
+   '((tramp-direct-async-process . t)))
+  (connection-local-set-profiles
+   '(:application tramp :protocol "scp")
+   'remote-direct-async-process)
+  ;; Disable autosave for some methods
+  (connection-local-set-profile-variables
+   'no-remote-auto-save-profile
+   '((buffer-auto-save-file-name . nil)))
+  (dolist (protocol '("sudo" "doas" "su" "sudoedit" "sg" "ksu" "run0"))
     (connection-local-set-profiles
-     '(:application tramp :protocol "scp")
-     'remote-direct-async-process))
+     `(:application tramp :protocol ,protocol)
+     'no-remote-auto-save-profile))
   :custom
   (tramp-show-ad-hoc-proxies t)
   (tramp-use-scp-direct-remote-copying t)
