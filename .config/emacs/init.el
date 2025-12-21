@@ -458,12 +458,12 @@ The expanded code catches any error during package setup."
     (define-key eshell-prompt-repeat-map (kbd "C-p") nil)))
 
 (use-package python
-  :config
-  ;; Stop project shell discovery from scanning directories (helps eldoc/TRAMP)
-  (advice-add 'python-shell-get-process-name :around
-              (lambda (orig-fun dedicated)
-                (funcall orig-fun (if (equal dedicated 'project) nil
-                                    dedicated)))))
+  :hook
+  ;; Disable eldoc mode in Python buffers to avoid performance issues,
+  ;; as it invokes `python-shell-get-process-name', which can be
+  ;; slow due to project root lookups, particularly in remote buffers.
+  ;; See Bug#80045.
+  (python-mode . (lambda () (eldoc-mode -1))))
 
 (use-package eldoc
   :custom
