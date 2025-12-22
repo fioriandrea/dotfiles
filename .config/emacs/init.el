@@ -171,11 +171,6 @@ The expanded code catches any error during package setup."
    (expand-file-name "autosaves" user-emacs-directory)))
 (make-directory my-emacs-autosave-dir 'parents)
 
-(defconst my-emacs-lockfile-dir
-  (file-name-as-directory
-   (expand-file-name "lockfiles" user-emacs-directory)))
-(make-directory my-emacs-lockfile-dir 'parents)
-
 (defconst my-before-file (concat user-emacs-directory "before.el"))
 (when (file-exists-p my-before-file)
   (load-file my-before-file))
@@ -240,8 +235,8 @@ The expanded code catches any error during package setup."
   (kept-new-versions 10)
   (kept-old-versions 5)
   (auto-save-file-name-transforms `((".*" ,my-emacs-autosave-dir t)))
-  (lock-file-name-transforms `((".*" ,my-emacs-lockfile-dir t)))
   (backup-directory-alist `(("." . ,my-emacs-backup-dir)))
+  (lock-file-name-transforms `((".*" ,temporary-file-directory t)))
   :init
   (defun my-delete-autosave-current-buffer ()
     (interactive)
