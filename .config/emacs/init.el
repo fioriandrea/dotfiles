@@ -165,11 +165,18 @@ The expanded code catches any error during package setup."
   (file-name-as-directory
    (abbreviate-file-name
     (expand-file-name "backups" user-emacs-directory))))
+
 (defconst my-emacs-autosave-dir
   (file-name-as-directory
    (expand-file-name "autosave" user-emacs-directory)))
 (unless (file-directory-p my-emacs-autosave-dir)
   (make-directory my-emacs-autosave-dir 'parents))
+
+(defconst my-emacs-lockfile-dir
+  (file-name-as-directory
+   (expand-file-name "lockfiles" user-emacs-directory)))
+(unless (file-directory-p my-emacs-lockfile-dir)
+  (make-directory my-emacs-lockfile-dir 'parents))
 
 (defconst my-before-file (concat user-emacs-directory "before.el"))
 (when (file-exists-p my-before-file)
@@ -235,6 +242,7 @@ The expanded code catches any error during package setup."
   (kept-new-versions 10)
   (kept-old-versions 5)
   (auto-save-file-name-transforms `((".*" ,my-emacs-autosave-dir t)))
+  (lock-file-name-transforms `((".*" ,my-emacs-lockfile-dir t)))
   (backup-directory-alist `(("." . ,my-emacs-backup-dir)))
   :init
   (defun my-delete-autosave-current-buffer ()
@@ -412,7 +420,6 @@ The expanded code catches any error during package setup."
   ;; https://stackoverflow.com/a/47021266
   (tramp-backup-directory-alist backup-directory-alist)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
-  (remote-file-name-inhibit-locks t)
   (vc-handled-backends '(Git))
   (debug-ignored-errors
    (cons 'remote-file-error debug-ignored-errors)))
