@@ -169,14 +169,12 @@ The expanded code catches any error during package setup."
 (defconst my-emacs-autosave-dir
   (file-name-as-directory
    (expand-file-name "autosaves" user-emacs-directory)))
-(unless (file-directory-p my-emacs-autosave-dir)
-  (make-directory my-emacs-autosave-dir 'parents))
+(make-directory my-emacs-autosave-dir 'parents)
 
 (defconst my-emacs-lockfile-dir
   (file-name-as-directory
    (expand-file-name "lockfiles" user-emacs-directory)))
-(unless (file-directory-p my-emacs-lockfile-dir)
-  (make-directory my-emacs-lockfile-dir 'parents))
+(make-directory my-emacs-lockfile-dir 'parents)
 
 (defconst my-before-file (concat user-emacs-directory "before.el"))
 (when (file-exists-p my-before-file)
