@@ -236,7 +236,7 @@ The expanded code catches any error during package setup."
   (kept-old-versions 5)
   (auto-save-file-name-transforms `((".*" ,my-emacs-autosave-dir t)))
   (backup-directory-alist `(("." . ,my-emacs-backup-dir)))
-  (lock-file-name-transforms `((".*" ,temporary-file-directory t)))
+  (lock-file-name-transforms `((".*" ,temporary-file-directory sha1)))
   :init
   (defun my-delete-autosave-current-buffer ()
     (interactive)
