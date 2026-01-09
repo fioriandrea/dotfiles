@@ -270,11 +270,13 @@ The expanded code catches any error during package setup."
 
 (use-package whitespace
   :bind
-  ("C-c s s" . whitespace-mode)
-  ("C-c s d" . (lambda ()
-                 (interactive)
-                 (delete-trailing-whitespace)
-                 (message "Trailing whitespace deleted")))
+  (:prefix-map my-whitespace-map
+               :prefix "C-c s"
+               ("s" . whitespace-mode)
+               ("d" . (lambda ()
+                        (interactive)
+                        (delete-trailing-whitespace)
+                        (message "Trailing whitespace deleted"))))
   :config
   (customize-set-variable 'whitespace-style
                           (delq 'lines whitespace-style)))
