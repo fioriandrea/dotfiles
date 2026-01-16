@@ -40,9 +40,12 @@
 ;;;; my-use-package
 
 (defmacro my-use-package (pack &rest args)
-  "Minimal `use-package' variant supporting a limited set of options.
-Expands only if PACK names a provided feature or loadable library.
-The expanded code catches any error during package setup."
+  "Fallback replacement for `use-package' on older Emacs versions.
+Implements a minimal subset to ensure basic functionality when the real
+use-package isn't available.
+
+ Expands only if PACK names a provided feature or loadable library.  The
+expanded code catches any error during package setup."
   (declare (indent defun))
   (let ((customs nil)
         (configs nil)
