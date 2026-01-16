@@ -551,16 +551,6 @@ expanded code catches any error during package setup."
   (setq magit-bind-magit-project-status nil)
   (setq magit-show-long-lines-warning nil))
 
-(use-package dired-subtree
-  :if (locate-library "dired-subtree")
-  :after dired
-  :bind
-  (:map dired-mode-map
-        ("TAB" . dired-subtree-toggle))
-  :custom
-  (dired-subtree-line-prefix "    ")
-  (dired-subtree-use-backgrounds nil))
-
 ;;;;; custom-file
 
 (defconst custom-file
