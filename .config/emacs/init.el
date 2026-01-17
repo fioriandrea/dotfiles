@@ -228,10 +228,7 @@ expanded code catches any error during package setup."
   (:prefix-map my-whitespace-map
                :prefix "C-c s"
                ("s" . whitespace-mode)
-               ("d" . (lambda ()
-                        (interactive)
-                        (delete-trailing-whitespace)
-                        (message "Trailing whitespace deleted"))))
+               ("d" . delete-trailing-whitespace))
   :config
   (customize-set-variable 'whitespace-style
                           (delq 'lines whitespace-style)))
