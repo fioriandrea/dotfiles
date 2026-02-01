@@ -433,11 +433,12 @@ expanded code catches any error during package setup."
 
 (use-package python
   :hook
-  ;; Disable eldoc mode in Python buffers to avoid performance issues,
-  ;; as it invokes `python-shell-get-process-name', which can be
-  ;; slow due to project root lookups, particularly in remote buffers.
-  ;; See Bug#80045.
-  (python-mode . (lambda () (eldoc-mode -1))))
+  ;; Disable eldoc mode in remote Python buffers to avoid performance
+  ;; issues, as it invokes `python-shell-get-process-name', which can
+  ;; be slow due to project root lookups, particularly in remote
+  ;; buffers.  See Bug#80045.
+  (python-mode . (lambda () (when (file-remote-p default-directory)
+                              (eldoc-mode -1)))))
 
 (use-package eldoc
   :custom
