@@ -475,6 +475,7 @@ expanded code catches any error during package setup."
 (use-package org
   :bind
   (("C-c l" . org-store-link)
+   ("C-c L" . org-insert-link-global)
    ("C-c a" . org-agenda)
    ("C-c c" . org-capture)
    ("C-c o" . org-open-at-point-global)
