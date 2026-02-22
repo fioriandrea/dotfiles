@@ -50,7 +50,6 @@ expanded code catches any error during package setup."
   (let ((customs nil)
         (configs nil)
         (inits nil)
-        (disabled nil)
         (condition
          `((or (featurep ',pack)
                (locate-library ,(symbol-name pack))))))
@@ -65,7 +64,6 @@ expanded code catches any error during package setup."
               (setq body (nreverse body))
               ;; Match keyword
               (pcase key
-                (:disabled (setq disabled t))
                 ((or :if :when) (setq condition (append condition body)))
                 (:custom
                  (dolist (item body)
@@ -80,37 +78,36 @@ expanded code catches any error during package setup."
                  (setq configs (append configs body)))))
           nil)))
     ;; Expansion
-    (unless disabled
-      (let ((warn-fn (gensym "my-use-package--warn")))
-        `(progn
-           (defvar ,warn-fn (lambda (keyword error)
-                              (let ((msg (format "%s/%s: %s" ',pack keyword
-                                                 (error-message-string error))))
-                                (display-warning 'my-use-package msg :error))))
-           (when (condition-case-unless-debug err
-                     (and ,@condition)
-                   (funcall ,warn-fn :if err))
-             ;; :custom
-             ,(when customs
-                `(progn
-                   ,@(mapcar
-                      (lambda (x)
-                        `(condition-case-unless-debug err
-                             (customize-set-variable ',(car x) ,@(cdr x))
-                           (error (funcall ,warn-fn :custom err))))
-                      customs)))
-             ;; :init
-             ,(when inits
-                `(condition-case-unless-debug err
-                     (progn ,@inits)
-                   (error (funcall ,warn-fn :init err))))
-             ;; :config
-             ,(when configs
-                `(eval-after-load ',pack
-                   (quote
-                    ,`(condition-case-unless-debug err
-                          (progn ,@configs)
-                        (error (funcall ,warn-fn :config err))))))))))))
+    (let ((warn-fn (gensym "my-use-package--warn")))
+      `(progn
+         (defvar ,warn-fn (lambda (keyword error)
+                            (let ((msg (format "%s/%s: %s" ',pack keyword
+                                               (error-message-string error))))
+                              (display-warning 'my-use-package msg :error))))
+         (when (condition-case-unless-debug err
+                   (and ,@condition)
+                 (funcall ,warn-fn :if err))
+           ;; :custom
+           ,(when customs
+              `(progn
+                 ,@(mapcar
+                    (lambda (x)
+                      `(condition-case-unless-debug err
+                           (customize-set-variable ',(car x) ,@(cdr x))
+                         (error (funcall ,warn-fn :custom err))))
+                    customs)))
+           ;; :init
+           ,(when inits
+              `(condition-case-unless-debug err
+                   (progn ,@inits)
+                 (error (funcall ,warn-fn :init err))))
+           ;; :config
+           ,(when configs
+              `(eval-after-load ',pack
+                 (quote
+                  ,`(condition-case-unless-debug err
+                        (progn ,@configs)
+                      (error (funcall ,warn-fn :config err)))))))))))
 
 (unless (fboundp 'use-package)
   (message "No use-package found, using compatibility shim")
