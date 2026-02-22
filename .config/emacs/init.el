@@ -49,49 +49,35 @@ Expands only when PACK is loadable, and reports setup errors."
         (conds (list `(or (featurep ',pack)
                           (locate-library ,(symbol-name pack)))))
         customs inits configs)
-    ;; Parse keyword args in one pass
     (while args
       (let ((x (pop args)))
         (if (keywordp x)
             (setq cur x)
-          (cond
-           ((memq cur '(:if :when)) (push x conds))
-           ((eq cur :custom) (push x customs))
-           ((eq cur :init) (push x inits))
-           ((eq cur :config) (push x configs))))))
-    ;; Normalize :custom to a flat list of (var val...) forms
+          (cond ((memq cur '(:if :when)) (push x conds))
+                ((eq cur :custom) (push x customs))
+                ((eq cur :init) (push x inits))
+                ((eq cur :config) (push x configs))))))
     (let (flat)
       (dolist (it (nreverse customs))
-        (if (and (consp it) (consp (car it)))
-            (setq flat (nconc flat it)) ; ((a 1) (b 2)) -> (a 1) (b 2)
-          (push it flat)))              ; (a 1) stays as-is
-      (setq customs (nreverse flat)))
-    (let ((warn (lambda (kw)
-                  `(display-warning 'my-use-package
-                                    (format "%s/%s: %s" ',pack ,kw
-                                            (error-message-string err))
-                                    :error))))
-      `(when (condition-case-unless-debug err
-                 (and ,@(nreverse conds))
-               (error ,(funcall warn :if) nil))
-         ;; :custom
+        (setq flat (append flat (if (and (consp it) (consp (car it))) it (list it)))))
+      (setq customs flat))
+    (let* ((try (lambda (kw &rest body)
+                  `(condition-case-unless-debug err
+                       (progn ,@body)
+                     (error
+                      (display-warning 'my-use-package
+                                       (format "%s/%s: %s" ',pack ,kw
+                                               (error-message-string err))
+                                       :error)
+                      nil)))))
+      `(when ,(funcall try :if `(and ,@(nreverse conds)))
          ,@(mapcar (lambda (x)
-                     `(condition-case-unless-debug err
-                          (customize-set-variable ',(car x) ,@(cdr x))
-                        (error ,(funcall warn :custom))))
+                     (funcall try :custom
+                              `(customize-set-variable ',(car x) ,@(cdr x))))
                    customs)
-         ;; :init
-         ,@(when inits
-             `((condition-case-unless-debug err
-                   (progn ,@(nreverse inits))
-                 (error ,(funcall warn :init)))))
-         ;; :config
-         ,@(when configs
-             `((eval-after-load ',pack
-                 (quote
-                  (condition-case-unless-debug err
-                      (progn ,@(nreverse configs))
-                    (error ,(funcall warn :config)))))))))))
+         ,@(when inits (list (apply try :init (nreverse inits))))
+         ,@(when configs `((eval-after-load ',pack
+                             ',(apply try :config (nreverse configs)))))))))
 
 (unless (fboundp 'use-package)
   (message "No use-package found, using compatibility shim")
