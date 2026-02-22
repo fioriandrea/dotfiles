@@ -425,15 +425,13 @@ expanded code catches any error during package setup."
 
 (use-package comint
   :config
-  (when (boundp 'comint-repeat-map)
-    (define-key comint-repeat-map (kbd "C-n") nil)
-    (define-key comint-repeat-map (kbd "C-p") nil)))
+  (define-key comint-repeat-map (kbd "C-n") nil)
+  (define-key comint-repeat-map (kbd "C-p") nil))
 
 (use-package em-prompt
   :config
-  (when (boundp 'eshell-prompt-repeat-map)
-    (define-key eshell-prompt-repeat-map (kbd "C-n") nil)
-    (define-key eshell-prompt-repeat-map (kbd "C-p") nil)))
+  (define-key eshell-prompt-repeat-map (kbd "C-n") nil)
+  (define-key eshell-prompt-repeat-map (kbd "C-p") nil))
 
 (use-package python
   :hook
@@ -520,9 +518,8 @@ expanded code catches any error during package setup."
   (dired-free-space 'separate)
   (dired-dwim-target t)
   :config
-  (when (boundp 'dired-jump-map)
-    (define-key dired-jump-map (kbd "j") nil))
-  (require 'dired-x))
+  (require 'dired-x)
+  (define-key dired-jump-map (kbd "j") nil))
 
 (use-package wdired
   :custom
