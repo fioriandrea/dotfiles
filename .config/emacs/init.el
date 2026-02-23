@@ -83,6 +83,12 @@ Expands only when PACK is loadable, and reports setup errors."
   (message "No use-package found, using compatibility shim")
   (defalias 'use-package 'my-use-package))
 
+;;;; before-file
+
+(defconst my-before-file (concat user-emacs-directory "before.el"))
+(when (file-exists-p my-before-file)
+  (load-file my-before-file))
+
 ;;;; Built-in Packages
 
 (defconst my-emacs-auxiliary-files-dir
@@ -90,10 +96,6 @@ Expands only when PACK is loadable, and reports setup errors."
    (abbreviate-file-name
     (expand-file-name "auxiliary-files" user-emacs-directory))))
 (make-directory my-emacs-auxiliary-files-dir 'parents)
-
-(defconst my-before-file (concat user-emacs-directory "before.el"))
-(when (file-exists-p my-before-file)
-  (load-file my-before-file))
 
 (use-package use-package
   :ensure nil
