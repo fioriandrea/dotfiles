@@ -457,7 +457,7 @@ Expands only when PACK is loadable, and reports setup errors."
   (org-html-validation-link nil)
   (org-edit-src-content-indentation 0)
   :config
-  (add-to-list 'org-link-frame-setup '(file . find-file)))
+  (setf (alist-get 'file org-link-frame-setup) 'find-file))
 
 (use-package outline
   :custom
