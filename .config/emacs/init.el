@@ -219,6 +219,10 @@ Expands only when PACK is loadable, and reports setup errors."
   ;; `no-ding' makes keyboard macros never quit
   (isearch-wrap-pause t))
 
+(use-package frame
+  :custom
+  (undelete-frame-mode t))
+
 (use-package tab-bar
   :bind
   (:repeat-map my-repeat-tab-bar-history-map
