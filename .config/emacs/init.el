@@ -280,7 +280,8 @@ Expands only when PACK is loadable, and reports setup errors."
 (use-package compile
   :custom
   (next-error-message-highlight t)
-  (compilation-scroll-output 'first-error))
+  (compilation-scroll-output 'first-error)
+  (compilation-skip-threshold 0))
 
 (use-package diff-mode
   :hook
