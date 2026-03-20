@@ -157,12 +157,13 @@ Expands only when PACK is loadable, and reports setup errors."
       (let ((auto-save-file (make-auto-save-file-name)))
         (when (file-exists-p auto-save-file)
           (delete-file auto-save-file)))))
+  (defun my-delete-autosave-all-buffers ()
+    (dolist (buf (buffer-list) t)
+      (with-current-buffer buf
+        (my-delete-autosave-current-buffer))))
   (add-hook 'kill-buffer-hook 'my-delete-autosave-current-buffer)
   ;; hack to delete auto-save files on C-x C-c
-  (add-to-list 'kill-emacs-query-functions
-               (lambda () (dolist (buf (buffer-list) t)
-                            (with-current-buffer buf
-                              (my-delete-autosave-current-buffer)))))
+  (add-to-list 'kill-emacs-query-functions 'my-delete-autosave-all-buffers)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 (use-package mouse
@@ -344,26 +345,29 @@ Expands only when PACK is loadable, and reports setup errors."
     (setq-local completion-styles
                 '(flex partial-completion))
     ;; https://lists.nongnu.org/archive/html/bug-gnu-emacs/2024-10/msg00743.html
-    (add-hook 'post-command-hook
-              (lambda ()
-                ;; https://github.com/minad/vertico/blob/2.6/vertico.el#L627
-                ;; https://github.com/minad/vertico/blob/2.6/vertico.el#L597
-                (setq-local truncate-lines
-                            (< (point) (* 0.85 (window-width)))))
-              nil 'local))
+    (add-hook 'post-command-hook 'my-icomplete-update-truncate-lines nil 'local))
+  (defun my-icomplete-update-truncate-lines ()
+    ;; https://github.com/minad/vertico/blob/2.6/vertico.el#L627
+    ;; https://github.com/minad/vertico/blob/2.6/vertico.el#L597
+    (setq-local truncate-lines
+                (< (point) (* 0.85 (window-width)))))
   :config
   (when (boundp 'scroll-bar-mode)
     ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Scroll-Bars.html
     (defun my-disable-minibuffer-scrollbar ()
       (set-window-scroll-bars
        (minibuffer-window) 0 nil 0 nil t))
+    (defun my-disable-minibuffer-scrollbar-on-frame (frame)
+      (with-selected-frame frame
+        (my-disable-minibuffer-scrollbar)))
     (my-disable-minibuffer-scrollbar)
     (add-hook 'after-make-frame-functions
-              (lambda (frame)
-                (with-selected-frame frame
-                  (my-disable-minibuffer-scrollbar)))))
+              'my-disable-minibuffer-scrollbar-on-frame))
+  (defun my-icomplete-no-pending-input-p ()
+    (sit-for 0))
   ;; don't insert icomplete completion display if there's pending input
-  (advice-add 'icomplete-exhibit :before-while (lambda () (sit-for 0)))
+  (advice-add 'icomplete-exhibit :before-while
+              'my-icomplete-no-pending-input-p)
   :hook
   (icomplete-minibuffer-setup . my-icomplete-minibuffer-setup)
   :bind
@@ -404,28 +408,33 @@ Expands only when PACK is loadable, and reports setup errors."
   (define-key eshell-prompt-repeat-map (kbd "C-p") nil))
 
 (use-package python
+  :init
+  (defun my-python-disable-eldoc-in-remote-buffers ()
+    (when (file-remote-p default-directory)
+      (eldoc-mode -1)))
   :hook
   ;; Disable eldoc mode in remote Python buffers to avoid performance
   ;; issues, as it invokes `python-shell-get-process-name', which can
   ;; be slow due to project root lookups, particularly in remote
   ;; buffers.  See Bug#80045.
-  (python-mode . (lambda () (when (file-remote-p default-directory)
-                              (eldoc-mode -1)))))
+  (python-mode . my-python-disable-eldoc-in-remote-buffers))
 
 (use-package eldoc
   :custom
   (eldoc-echo-area-use-multiline-p 'truncate-sym-name-if-fit)
   (eldoc-echo-area-display-truncation-message nil)
+  :init
+  (defun my-eldoc-display-in-echo-area (orig &rest args)
+    ;; allow multiline just for emacs lisp
+    (let ((eldoc-echo-area-use-multiline-p
+           (if (derived-mode-p '(emacs-lisp-mode
+                                 inferior-emacs-lisp-mode))
+               eldoc-echo-area-use-multiline-p
+             nil)))
+      (apply orig args)))
   :config
   (advice-add 'eldoc-display-in-echo-area :around
-              (lambda (orig &rest args)
-                ;; allow multiline just for emacs lisp
-                (let ((eldoc-echo-area-use-multiline-p
-                       (if (derived-mode-p '(emacs-lisp-mode
-                                             inferior-emacs-lisp-mode))
-                           eldoc-echo-area-use-multiline-p
-                         nil)))
-                  (apply orig args)))))
+              'my-eldoc-display-in-echo-area))
 
 (use-package eglot
   :custom
@@ -503,9 +512,12 @@ Expands only when PACK is loadable, and reports setup errors."
   :if (locate-library "magit")
   :bind (:map project-prefix-map
               ("m" . magit-project-status))
+  :init
+  (defun my-magit-disable-truncate-lines ()
+    (setq truncate-lines nil))
   :hook
-  (magit-diff-mode . (lambda () (setq truncate-lines nil)))
-  (magit-status-mode . (lambda () (setq truncate-lines nil)))
+  (magit-diff-mode . my-magit-disable-truncate-lines)
+  (magit-status-mode . my-magit-disable-truncate-lines)
   :custom
   (magit-section-initial-visibility-alist '((stashes . hide)
                                             (tags . hide)))
