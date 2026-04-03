@@ -140,9 +140,9 @@ library; tries to catch any error with `condition-case-unless-debug`."
 
 (defconst custom-file (concat user-emacs-directory "custom.el"))
 
-(defconst proxy-file (concat user-emacs-directory "proxy.el"))
-(when (file-exists-p proxy-file)
-  (load-file proxy-file))
+(defconst before-file (concat user-emacs-directory "before.el"))
+(when (file-exists-p before-file)
+  (load-file before-file))
 
 (unless (fboundp 'use-package)
   (message "No use-package found, using compatibility shim")
