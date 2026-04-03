@@ -221,8 +221,6 @@ configure."
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
   :bind
-  ("<f5>" . (lambda () (interactive)
-              (revert-buffer t t)))
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
   ([remap pop-global-mark] . my-pop-global-mark)
@@ -392,14 +390,13 @@ configure."
 (use-package autorevert
   :custom
   (global-auto-revert-mode t)
+  (auto-revert-remote-files nil)
   (auto-revert-verbose nil)
-  (auto-revert-use-notify t)
+  (auto-revert-check-vc-info nil)
   ;; see function auto-revert--polled-buffers
   (auto-revert-avoid-polling t)
-  ;; https://lists.gnu.org/archive/html/emacs-devel/2014-10/msg00743.html
-  ;; https://emacs.stackexchange.com/a/50134 (read comments)
   ;; The first revert gets done after auto-revert-interval, even when using notifications
-  (auto-revert-interval 5)
+  (auto-revert-interval 15)
   (global-auto-revert-non-file-buffers t)
   (global-auto-revert-ignore-modes '(Buffer-menu-mode electric-buffer-menu-mode)))
 
@@ -411,7 +408,6 @@ configure."
                  (message "Tramp cleaned up all connections")))
   ("C-c t c" . tramp-cleanup-connection)
   :custom
-  (auto-revert-remote-files nil)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
   ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
