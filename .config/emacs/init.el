@@ -558,6 +558,7 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (:map dired-mode-map
         ("TAB" . dired-subtree-toggle))
   :custom
+  (dired-subtree-line-prefix "    ")
   (dired-subtree-use-backgrounds nil))
 
 (when (file-exists-p custom-file)
