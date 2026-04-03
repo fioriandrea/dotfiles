@@ -595,6 +595,7 @@ auto-revert. Taken from doomemacs."
   (magit-status-mode . (lambda () (setq truncate-lines nil)))
   :custom
   (magit-define-global-key-bindings nil)
+  (magit-commit-show-diff nil)
   (magit-diff-refine-hunk 'all)
   (magit-diff-refine-ignore-whitespace nil)
   (magit-auto-revert-mode nil))
