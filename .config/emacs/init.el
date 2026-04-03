@@ -438,6 +438,7 @@ loadable library."
   ;; https://stackoverflow.com/a/47021266
   (tramp-backup-directory-alist backup-directory-alist)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
+  (vc-handled-backends '(Git))
   (debug-ignored-errors
    (cons 'remote-file-error debug-ignored-errors)))
 
