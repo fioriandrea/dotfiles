@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly default_sink="@DEFAULT_AUDIO_SINK@"
+readonly default_source="@DEFAULT_AUDIO_SOURCE@"
+readonly default_step="2%"
+
+usage() {
+    cat <<'EOF'
+usage: myvolume [up|down|mute|status|mic-up|mic-down|mic-mute|mic-status] [STEP]
+EOF
+}
+
+volume_percent() {
+    local target="$1"
+    wpctl get-volume "$target" | awk '/Volume:/ { printf "%d", ($2 * 100) + 0.5 }'
+}
+
+volume_muted() {
+    local target="$1"
+    wpctl get-volume "$target" | grep -q '\[MUTED\]'
+}
+
+print_status() {
+    local label="$1"
+    local target="$2"
+    local percent
+
+    percent="$(volume_percent "$target")"
+    if volume_muted "$target"; then
+        printf '%s: %s%% [muted]\n' "$label" "$percent"
+    else
+        printf '%s: %s%%\n' "$label" "$percent"
+    fi
+}
+
+step="${2:-$default_step}"
+
+case "${1:-status}" in
+    up)
+        wpctl set-volume "$default_sink" "${step}+"
+        print_status "Volume" "$default_sink"
+        ;;
+    down)
+        wpctl set-volume "$default_sink" "${step}-"
+        print_status "Volume" "$default_sink"
+        ;;
+    mute)
+        wpctl set-mute "$default_sink" toggle
+        print_status "Volume" "$default_sink"
+        ;;
+    status)
+        print_status "Volume" "$default_sink"
+        ;;
+    mic-up)
+        wpctl set-volume "$default_source" "${step}+"
+        print_status "Microphone" "$default_source"
+        ;;
+    mic-down)
+        wpctl set-volume "$default_source" "${step}-"
+        print_status "Microphone" "$default_source"
+        ;;
+    mic-mute)
+        wpctl set-mute "$default_source" toggle
+        print_status "Microphone" "$default_source"
+        ;;
+    mic-status)
+        print_status "Microphone" "$default_source"
+        ;;
+    -h|--help|help)
+        usage
+        ;;
+    *)
+        usage >&2
+        exit 1
+        ;;
+esac

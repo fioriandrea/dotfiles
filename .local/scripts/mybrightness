@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly default_step="1%"
+
+usage() {
+    cat <<'EOF'
+usage: mybrightness [up|down|status] [STEP]
+EOF
+}
+
+print_status() {
+    printf 'Brightness: %s\n' "$(brightnessctl -m | cut -d, -f4)"
+}
+
+step="${2:-$default_step}"
+
+case "${1:-status}" in
+    up)
+        brightnessctl set "+${step}" >/dev/null
+        print_status
+        ;;
+    down)
+        brightnessctl set "${step}-" >/dev/null
+        print_status
+        ;;
+    status)
+        print_status
+        ;;
+    -h|--help|help)
+        usage
+        ;;
+    *)
+        usage >&2
+        exit 1
+        ;;
+esac
