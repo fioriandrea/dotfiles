@@ -583,7 +583,7 @@ auto-revert. Taken from doomemacs."
   (proced-filter 'all)
   (proced-enable-color-flag t)
   (proced-show-remote-processes t)
-  (proced-format 'medium))
+  (proced-format 'short))
 
 (use-package dired
   :hook
