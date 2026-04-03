@@ -482,7 +482,22 @@ auto-revert. Taken from doomemacs."
   (global-auto-revert-ignore-modes '(Buffer-menu-mode electric-buffer-menu-mode)))
 
 (use-package tramp
+  :config
+  ;; https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./
+  ;; https://www.gnu.org/software/tramp/#Improving-performance-of-asynchronous-remote-processes-1
+  (when (version<= "28.1" emacs-version)
+    (if (version< emacs-version "30.1")
+        (add-to-list 'tramp-connection-properties
+                     (list "/scp:" "direct-async-process" t))
+      (connection-local-set-profile-variables
+       'remote-direct-async-process
+       '((tramp-direct-async-process . t)))
+      (connection-local-set-profiles
+       '(:application tramp :protocol "scp")
+       'remote-direct-async-process)))
   :custom
+  (tramp-use-scp-direct-remote-copying t)
+  (remote-file-name-inhibit-auto-save-visited nil)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
   ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
