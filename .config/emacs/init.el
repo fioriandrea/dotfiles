@@ -97,13 +97,10 @@
         (pop-global-mark))))))
 
 (defmacro my-use-package (pack &rest args)
-  "Minimal replacement for `use-package' with restricted
-functionality.  Supports only the keywords: :disabled, :preface,
-:custom, :config, :init, :demand, :if, and :when.  Defaults are:
-:ensure nil, :demand nil, and :defer t.  Unlike standard
-`use-package', this macro expands to code that is evaluated only if
-the specified feature PACK is already provided or corresponds to a
-loadable library."
+  "Minimal `use-package` variant supporting :disabled :preface :custom
+:init :config :demand :if :when; defaults: :ensure nil, :demand nil,
+:defer t.  Expands only if PACK names a provided feature or loadable
+library; tries to catch any error with `condition-case-unless-debug`."
   (declare (indent defun))
   (let (customs
         disabled
@@ -112,9 +109,10 @@ loadable library."
         demand
         inits
         condition)
-    (setq condition `((or
-                       (featurep ',pack)
-                       (locate-library ,(symbol-name pack)))))
+    (setq condition
+          `((or
+             (featurep ',pack)
+             (locate-library ,(symbol-name pack)))))
     (while (and args (cdr args))
       (let (key val)
         (setq key (pop args))
@@ -163,7 +161,11 @@ loadable library."
         (when configs
           (push
            `(eval-after-load ',pack
-              (quote ,(cons 'progn (nreverse configs))))
+              (quote
+               ,`(condition-case-unless-debug err
+                     (progn ,@(nreverse configs))
+                   (error "Failed to :config for package `%S' because of `%S'"
+                          ',pack err))))
            body))
         (when demand
           (push
@@ -187,10 +189,15 @@ loadable library."
                        ,comment)))
                  customs))
            body))
-        `(progn
-           ,@prefaces
-           (when (and ,@condition)
-             ,@body))))))
+        `(condition-case-unless-debug err
+             (progn
+               ,@prefaces
+               (when (and ,@condition)
+                 ,@body))
+           (error
+            (warn "Failed to configure package `%S' because of `%S'"
+                  ',pack err)
+            nil))))))
 
 (defconst emacs-backup-dir
   (file-name-as-directory
@@ -208,12 +215,8 @@ loadable library."
 (when (file-exists-p proxy-file)
   (load-file proxy-file))
 
-(unless (fboundp 'advice-add)
-  (message "WARNING: no advice-add found, using compatibility shim")
-  (defmacro advice-add (&rest _body)))
-
 (unless (fboundp 'use-package)
-  (message "WARNING: no use-package found, using compatibility shim")
+  (message "No use-package found, using compatibility shim")
   (defalias 'use-package 'my-use-package))
 
 (use-package use-package
@@ -222,7 +225,7 @@ loadable library."
   (use-package-always-ensure nil)
   (use-package-always-demand nil)
   (use-package-always-defer t)
-  (use-package-expand-minimally t)
+  (use-package-expand-minimally nil)
   (use-package-use-theme t))
 
 (use-package package
