@@ -97,38 +97,34 @@
          (message "my-grep-files: failed to grep %S because of %S"
                   file err))))))
 
-(defun my-grep-merge-highlight-matches (matches)
+(defun my-grep-xref-matches-in-files (regexp files)
   (require 'cl-lib)
-  (let ((grouped (make-hash-table :test 'equal)))
-    ;; group matches by file:line
+  (let ((matches (my-grep-files files regexp))
+        (grouped (make-hash-table :test 'equal)))
     (dolist (match matches)
       (let ((key (cons (plist-get match :file)
                        (plist-get match :line))))
         (push match (gethash key grouped '()))))
-    ;; process each group
-    (cl-loop
-     for matches-being being the hash-values of grouped
-     for first-match = (car (last matches-being))
-     for text = (plist-get first-match :text)
-     do (dolist (match matches-being)
-          (let ((start (plist-get match :match-line-start))
-                (len (plist-get match :match-len)))
-            (add-face-text-property
-             start (+ start len) 'isearch nil text)))
-     collect first-match)))
-
-(defun my-grep-xref-matches-in-files (regexp files)
-  (let* ((raw-matches (my-grep-files files regexp))
-         (matches (my-grep-merge-highlight-matches
-                   raw-matches)))
-    (mapcar (lambda (match)
-              (xref-make-match (plist-get match :text)
-                               (xref-make-file-location
-                                (plist-get match :file)
-                                (plist-get match :line)
-                                (plist-get match :match-line-start))
-                               (plist-get match :match-len)))
-            matches)))
+    (cl-loop for matches-being being the hash-values of grouped
+             for first-match = (car (last matches-being))
+             for text = (plist-get first-match :text)
+             nconc (cl-loop with prev-end = 0
+                            for match in (nreverse matches-being)
+                            for start = (plist-get match :match-line-start)
+                            for len = (plist-get match :match-len)
+                            for end = (+ start len)
+                            for summary = (substring text prev-end end)
+                            do (add-face-text-property
+                                (- start prev-end) (- end prev-end)
+                                'isearch t summary)
+                            (setq prev-end end)
+                            collect (xref-make-match
+                                     summary
+                                     (xref-make-file-location
+                                      (plist-get match :file)
+                                      (plist-get match :line)
+                                      start)
+                                     (length summary))))))
 
 (defun my-grep-xref-fetcher (regexp files)
   (unless files
