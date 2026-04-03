@@ -33,6 +33,28 @@
    (mapcar #'find-file-noselect (dired-get-marked-files))
    regexp nlines))
 
+(defun my-read-directory-name-default (&optional prompt)
+  (read-directory-name (or prompt "Base directory: ")
+		       default-directory nil t))
+
+(defun my-file-name-from-context ()
+  (or
+   (thing-at-point 'filename)
+   (file-name-nondirectory
+    (buffer-file-name))))
+
+(defun my-read-regexp-default (&optional prompt)
+  (read-regexp (or prompt "Search for")
+               'find-tag-default-as-regexp
+               'grep-regexp-history))
+
+(defun my-pick-file-name-from-list (files &optional prompt)
+  (completing-read (or prompt "Pick file: ")
+                   files
+                   nil t nil
+                   'file-name-history
+                   (my-file-name-from-context)))
+
 ;;;; Find
 
 (defun my-find-lisp-find-files-excluding-vc (directory regexp)
@@ -48,6 +70,9 @@
      directory
      file-predicate
      directory-predicate)))
+
+(defun my-find-lisp-find-all-files-excluding-vc (directory)
+  (my-find-lisp-find-files-excluding-vc directory "."))
 
 (defun my-project-files (project &optional dirs)
   (condition-case err
@@ -76,6 +101,32 @@
                         'file-name-history
                         (and mb-default (list mb-default)))))
     (find-file (expand-file-name file root))))
+
+(defun my-find-file-picker-from-list (files)
+  (let ((all-files
+         (mapcan (lambda (f)
+                   (cond
+                    ((not (file-readable-p f)) nil)
+                    ((file-directory-p f)
+                     (my-find-lisp-find-all-files-excluding-vc f))
+                    (t (list f))))
+                 files))
+        (unique-files
+         (cl-delete-duplicates all-files :test #'equal)))
+    (unless unique-files
+      (user-error "Empty file list"))
+    (if (length= unique-files 1)
+        (car unique-files)
+      (my-pick-file-name-from-list unique-files))))
+
+(defun my-find-file-picker (dir)
+  (interactive (list (my-read-directory-name-default)))
+  (find-file (my-pick-file-name-from-list (list dir))))
+
+(defun my-dired-file-picker ()
+  (interactive nil dired-mode)
+  (find-file
+   (my-pick-file-name-from-list (dired-get-marked-files))))
 
 ;;;; Grep
 
