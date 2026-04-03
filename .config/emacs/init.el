@@ -309,18 +309,19 @@ corresponds to a loadable library."
 
 (use-package isearch
   :init
-  (defvar my-isearch-prev-ring-bell-function nil)
+  (defvar my-isearch-ring-bell-hook-visited nil)
   :hook
   (isearch-mode . (lambda ()
-                    (when (not my-isearch-prev-ring-bell-function)
-                      (setq my-isearch-prev-ring-bell-function ring-bell-function)
-                      (when (equal ring-bell-function 'ignore)
-                        (setq ring-bell-function (lambda ()
-                                                   (my-subtly-flash-modeline-fg 0.2)))))))
+                    (when (and
+                           (not my-isearch-ring-bell-hook-visited)
+                           (equal ring-bell-function 'ignore))
+                      (setq my-isearch-ring-bell-hook-visited t)
+                      (setq ring-bell-function (lambda ()
+                                                 (my-subtly-flash-modeline-fg 0.2))))))
   (isearch-mode-end . (lambda ()
-                        (when my-isearch-prev-ring-bell-function
-                          (setq ring-bell-function my-isearch-prev-ring-bell-function)
-                          (setq my-isearch-prev-ring-bell-function nil))))
+                        (when my-isearch-ring-bell-hook-visited
+                          (setq my-isearch-ring-bell-hook-visited nil)
+                          (setq ring-bell-function 'ignore))))
   :custom
   (isearch-lazy-count t)
   (isearch-lazy-highlight t)
