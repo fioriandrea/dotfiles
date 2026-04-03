@@ -61,35 +61,50 @@
 
 ;;;; Grep
 
+(defvar my-grep--follow-links t)
 (defun my-grep-files (files regexp)
+  "Recursively search FILES for REGEXP.  Skips directory symlinks.
+Returns plist: :results and :errors."
   (let (results errors)
-    (dolist (file files (list
-                         :results (nreverse results)
-                         :errors (nreverse errors)))
-      (with-temp-buffer
-        (when (condition-case err
-                  (insert-file-contents file)
-                (error
-                 (message "Failed to grep %S because of %S"
-                          file err)
-                 (push (list
-                        :file file
-                        :error err)
-                       errors)
-                 nil))
-          (goto-char (point-min))
-          (while (re-search-forward regexp nil t)
-            (let* ((line-beg (line-beginning-position))
-                   (line (line-number-at-pos))
-                   (match-beg (match-beginning 0))
-                   (match-text (match-string 0)))
-              (push (list :file file
-                          :line line
-                          :match-line-start (- match-beg line-beg)
-                          :match-len (length match-text)
-                          :text (buffer-substring-no-properties
-                                 line-beg (line-end-position)))
-                    results))))))))
+    (dolist (file files (list :results (nreverse results)
+                              :errors  (nreverse errors)))
+      (condition-case err
+          (if (file-directory-p file)
+              (unless (and (file-symlink-p file)
+                           (not my-grep--follow-links))
+                (let* ((my-grep--follow-links nil)
+                       (subfiles (directory-files
+                                  file t directory-files-no-dot-files-regexp))
+                       (subres (my-grep-files subfiles regexp)))
+                  (setq results (nconc
+                                 (nreverse (plist-get subres :results)) results))
+                  (setq errors (nconc
+                                (nreverse (plist-get subres :errors)) errors))))
+            (with-temp-buffer
+              (insert-file-contents file)
+              (goto-char (point-min))
+              (while (and (not (eobp))
+                          (re-search-forward regexp nil t))
+                (let* ((line-beg (line-beginning-position))
+                       (line (line-number-at-pos))
+                       (match-beg (match-beginning 0))
+                       (match-len (- (match-end 0) match-beg)))
+                  (push (list :file file
+                              :line line
+                              :match-line-start (- match-beg line-beg)
+                              :match-len match-len
+                              :text (buffer-substring-no-properties
+                                     line-beg (line-end-position)))
+                        results)
+                  (when (= match-len 0)
+                    (forward-char 1))))))
+        (error
+         (message "Failed to grep %S because of %S"
+                  file err)
+         (push (list
+                :file file
+                :error err)
+               errors))))))
 
 (defun my-grep-merge-highlight-matches (matches)
   (require 'cl-lib)
@@ -141,35 +156,35 @@
    nil))
 
 (defun my-project-find-regexp (regexp)
-  (interactive (list (progn
-                       (require 'project)
-                       (project--read-regexp))))
+  (interactive (list (read-regexp "Search for"
+                                  'find-tag-default-as-regexp
+                                  'grep-regexp-history)))
   (let* ((pr (project-current t))
          (default-directory (project-root pr))
-         (project-files-relative-names t)
+         (project-files-relative-names nil)
          (files-all (project-files pr))
          (files (seq-filter #'file-regular-p files-all)))
     (my-grep-show-xrefs regexp files)))
 
 (defun my-dired-do-find-regexp (regexp)
-  (interactive (list (read-regexp "Find regexp")) dired-mode)
-  (my-grep-show-xrefs regexp (dired-get-marked-files
-                              nil nil #'file-regular-p)))
+  (interactive (list (read-regexp "Find regexp"
+                                  nil 'dired-regexp-history))
+               dired-mode)
+  (my-grep-show-xrefs regexp (dired-get-marked-files)))
 
-(defvar my-rgrep-regexp-history nil)
 (defvar my-rgrep-file-regexp-history nil)
 (defun my-rgrep (regexp file-regexp dir)
   (interactive
    (list
     (read-regexp "Search for"
-                 'find-tag-default 'my-rgrep-regexp-history)
+                 'find-tag-default-as-regexp
+                 'grep-regexp-history)
     (read-regexp "File-name regexp (default: .): "
                  "." 'my-rgrep-file-regexp-history)
     (read-directory-name "Base directory: "
 			 nil default-directory t)))
-  (require 'find-lisp)
-  (my-grep-show-xrefs regexp
-                      (find-lisp-find-files dir file-regexp)))
+  (my-grep-show-xrefs regexp (directory-files-recursively
+                              dir file-regexp nil t nil)))
 
 ;;;; my-use-package
 
