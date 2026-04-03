@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 usage() {
     printf "Usage: %s -u <video_url> [-s <start_time>] [-e <end_time>] [-f <output_format>]\n" "${0##*/}"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 manargs() {
     awk '{gsub(/\(|\)/, "", $2); print $2, $1}' | xargs -r man 2>/dev/null
