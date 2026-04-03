@@ -260,8 +260,8 @@
 
 (defmacro my-use-package (pack &rest args)
   "Minimal `use-package' variant supporting a limited set of options.
-Expands only if PACK names a provided feature or loadable library;
-tries to catch any error with `condition-case-unless-debug'."
+Expands only if PACK names a provided feature or loadable library.
+The expanded code catches any error during package setup."
   (declare (indent defun))
   (let (customs
         disabled
