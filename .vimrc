@@ -35,9 +35,6 @@ set guicursor=
 " show current line number
 set number
 
-" use relative line numbers
-set relativenumber
-
 " enable mouse support
 set mouse=nicr
 
@@ -80,8 +77,14 @@ set fileformat=unix
 syntax on
 " set t_Co=0
 
+" highlight trailing spaces
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+
 " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
 filetype plugin indent on
+
+set omnifunc=syntaxcomplete#Complete
 
 " options for code completion in insert mode
 set completeopt=longest,menuone,menu
