@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=EXWM
-Comment=Emacs X Window Manager
-Exec=/usr/bin/env sh -lc 'exec "$HOME/.config/emacs/exwm-session.sh"'
-TryExec=/usr/bin/emacs
-Type=Application
-DesktopNames=EXWM
