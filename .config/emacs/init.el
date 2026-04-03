@@ -527,8 +527,6 @@ library; tries to catch any error with `condition-case-unless-debug`."
 
 (use-package magit
   :if (locate-library "magit")
-  :bind (:map project-prefix-map
-              ("m" . magit-project-status))
   :hook
   (magit-diff-mode . (lambda () (setq truncate-lines nil)))
   (magit-status-mode . (lambda () (setq truncate-lines nil)))
@@ -537,6 +535,7 @@ library; tries to catch any error with `condition-case-unless-debug`."
                                             (tags . hide)))
   (magit-buffer-name-format "*%M%v*:%t")
   (magit-uniquify-buffer-names t)
+  (magit-bind-magit-project-status nil)
   (magit-define-global-key-bindings 'default)
   (magit-refresh-status-buffer nil)
   (magit-branch-direct-configure nil)
