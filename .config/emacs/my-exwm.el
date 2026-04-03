@@ -57,13 +57,6 @@
 (defun my-exwm-brightness-percent ()
   (my-trimmed-shell-command-to-string "brightnessctl -m | cut -d, -f4"))
 
-(defvar my-workspace-indicator "")
-
-(defun my-exwm-update-workspace-indicator ()
-  (setq my-workspace-indicator
-        (format " WS:%d " (1+ exwm-workspace-current-index)))
-  (force-mode-line-update t))
-
 (defun my-exwm-format-audio-status (label target)
   (let ((percent (my-exwm-wpctl-percent target))
         (muted (my-exwm-wpctl-muted-p target)))
@@ -140,11 +133,8 @@
 
 (add-hook 'exwm-init-hook #'my-exwm-fix-initial-workspace-glitch)
 ;; (add-hook 'exwm-init-hook #'my-exwm-start-systemtray)
-(add-hook 'exwm-init-hook #'my-exwm-update-workspace-indicator)
-(add-hook 'exwm-workspace-switch-hook #'my-exwm-update-workspace-indicator)
 
 (add-to-list 'exwm-input-prefix-keys ?\C-g)
-(add-to-list 'global-mode-string '(:eval my-workspace-indicator) t)
 
 (setopt exwm-input-global-keys
         `(([?\s-r] . exwm-reset)
