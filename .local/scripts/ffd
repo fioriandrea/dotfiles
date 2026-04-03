@@ -1,11 +1,11 @@
 #!/bin/bash
 
 findall() {
-    fd -uu --color always --print0 "$@"
+    fd --hidden --print0 "$@"
 }
 
 findall "$@" | fzf --ansi \
     --prompt="$PWD/" \
     --multi \
     --read0 \
-    --preview=$'fpreviewer -f {}' | xargs printf '%s\n'
+    --preview=$'fpreviewer -f {}' | xargs printf '%s:1:0\n'
