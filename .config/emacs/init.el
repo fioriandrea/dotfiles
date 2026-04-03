@@ -6,6 +6,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 ;;;; Functions
 
 ;;;;; Miscellanea
@@ -108,7 +110,6 @@
 (require 'xref)
 
 (defun my-grep-files (files regexp)
-  (require 'cl-lib)
   (let ((results nil))
     (cl-labels
         ((recursive-search (files)
