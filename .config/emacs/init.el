@@ -92,7 +92,7 @@
                        (text (if (= prev-line line)
                                  prev-text
                                (setq prev-text
-                                     (buffer-substring
+                                     (buffer-substring-no-properties
                                       line-beg (line-end-position))))))
                   (setq prev-line line)
                   (push (list :file file
