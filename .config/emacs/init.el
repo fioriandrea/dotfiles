@@ -550,7 +550,7 @@ auto-revert. Taken from doomemacs."
   (dired-clean-up-buffers-too t)
   (dired-recursive-deletes 'top)
   (dired-recursive-copies 'always)
-  (dired-auto-revert-buffer t)
+  (dired-auto-revert-buffer 'dired-directory-changed-p)
   (dired-listing-switches "-alh")
   (dired-mouse-drag-files t)
   (dired-dwim-target t))
