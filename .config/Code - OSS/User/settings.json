@@ -21,6 +21,6 @@
   },
   "window.zoomLevel": 2,
   "telemetry.telemetryLevel": "off",
-  "workbench.colorTheme": "Visual Studio Light",
+  "workbench.colorTheme": "Solarized Light",
   "files.trimTrailingWhitespace": true
 }
