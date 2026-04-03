@@ -280,7 +280,7 @@ is already provided or corresponds to a loadable library."
   (confirm-kill-emacs nil)
   (native-comp-async-report-warnings-errors 'silent)
   (set-mark-command-repeat-pop t)
-  (view-read-only t)
+  (view-read-only nil)
   (global-so-long-mode t)
   (electric-pair-mode t)
   (sentence-end-double-space t)
