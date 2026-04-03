@@ -471,6 +471,13 @@ corresponds to a loadable library."
   (suggest-key-bindings t)
   (completions-detailed nil))
 
+(use-package ffap
+  :custom
+  (ffap-require-prefix t)
+  (dired-at-point-require-prefix t)
+  :config
+  (ffap-bindings))
+
 (use-package eldoc
   :custom
   (eldoc-echo-area-use-multiline-p nil))
