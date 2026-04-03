@@ -226,7 +226,7 @@ provided or corresponds to a loadable library."
   (menu-bar-mode t)
   (next-error-message-highlight t)
   (debugger-stack-frame-as-list t)
-  (confirm-kill-emacs nil)
+  (confirm-kill-emacs 'y-or-n-p)
   (native-comp-async-report-warnings-errors 'silent)
   (set-mark-command-repeat-pop t)
   (view-read-only nil)
