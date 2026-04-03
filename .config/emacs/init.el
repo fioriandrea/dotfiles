@@ -128,21 +128,21 @@ library; tries to catch any error with `condition-case-unless-debug`."
                   ',pack err)
             nil))))))
 
-(defconst emacs-backup-dir
+(defconst my-emacs-backup-dir
   (file-name-as-directory
    (abbreviate-file-name
     (expand-file-name "backups" user-emacs-directory))))
-(defconst emacs-autosave-dir
+(defconst my-emacs-autosave-dir
   (file-name-as-directory
    (expand-file-name "autosave" user-emacs-directory)))
-(unless (file-directory-p emacs-autosave-dir)
-  (make-directory emacs-autosave-dir 'parents))
+(unless (file-directory-p my-emacs-autosave-dir)
+  (make-directory my-emacs-autosave-dir 'parents))
 
 (defconst custom-file (concat user-emacs-directory "custom.el"))
 
-(defconst before-file (concat user-emacs-directory "before.el"))
-(when (file-exists-p before-file)
-  (load-file before-file))
+(defconst my-before-file (concat user-emacs-directory "before.el"))
+(when (file-exists-p my-before-file)
+  (load-file my-before-file))
 
 (unless (fboundp 'use-package)
   (message "No use-package found, using compatibility shim")
@@ -207,8 +207,8 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (delete-old-versions t)
   (kept-new-versions 6)
   (kept-old-versions 2)
-  (auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t)))
-  (backup-directory-alist `(("." . ,emacs-backup-dir)))
+  (auto-save-file-name-transforms `((".*" ,my-emacs-autosave-dir t)))
+  (backup-directory-alist `(("." . ,my-emacs-backup-dir)))
   :init
   (add-hook 'kill-buffer-hook 'my-delete-autosave-current-buffer)
   ;; hack to delete auto-save files on C-x C-c
@@ -372,7 +372,7 @@ library; tries to catch any error with `condition-case-unless-debug`."
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
   ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
-  (tramp-auto-save-directory emacs-autosave-dir)
+  (tramp-auto-save-directory my-emacs-autosave-dir)
   ;; https://stackoverflow.com/a/47021266
   (tramp-backup-directory-alist backup-directory-alist)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
