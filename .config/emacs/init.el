@@ -124,11 +124,14 @@
 
 ;;;; Grep
 
-(defun my-grep-files (files regexp)
+(defun my-grep-files (files regexp &optional insert-literally)
   "Recursively search FILES for REGEXP.  Returns list with results."
   (require 'cl-lib)
   (defvar my-grep--follow-links t)
-  (let ((results nil))
+  (let ((results nil)
+        (insert-file-contents-fn (if insert-literally
+                                     #'insert-file-contents-literally
+                                   #'insert-file-contents)))
     (cl-labels
         ((recursive-search (files)
            (dolist (file files)
@@ -140,7 +143,8 @@
                          (recursive-search
                           (directory-files
                            file t directory-files-no-dot-files-regexp))))
-                   (insert-file-contents file nil nil nil 'if-regular)
+                   (funcall insert-file-contents-fn
+                            file nil nil nil 'if-regular)
                    (goto-char (point-min))
                    (let ((prev-line -1)
                          (prev-text nil))
@@ -204,21 +208,24 @@
                                        start)
                                       len))))))
 
-(defun my-grep-xref-fetcher (regexp files)
+(defun my-grep-xref-fetcher (regexp files &optional insert-literally)
   (unless files
     (user-error "Empty file list"))
-  (let* ((matches (my-grep-files files regexp))
+  (let* ((matches (my-grep-files files regexp insert-literally))
          (xrefs (my-grep-matches-to-xref matches)))
     (unless xrefs
       (user-error "No matches for: %s" regexp))
     xrefs))
 
-(defun my-grep-show-xrefs-backend (regexp files)
+(defun my-grep-xrefs-backend (regexp files &optional insert-literally)
   (require 'xref)
   (xref-show-xrefs
    (apply-partially
-    #'my-grep-xref-fetcher regexp files)
+    #'my-grep-xref-fetcher regexp files insert-literally)
    nil))
+
+(defun my-grep-xrefs-insert-literally-backend (regexp files)
+  (my-grep-xrefs-backend regexp files :literally))
 
 (defun my-grep-multi-occur-backend (regexp files)
   (multi-occur
@@ -226,7 +233,7 @@
    regexp))
 
 (defvar my-grep-file-regexp-history nil)
-(defvar my-grep-backend-function #'my-grep-show-xrefs-backend)
+(defvar my-grep-backend-function #'my-grep-xrefs-backend)
 
 (defun my-grep-read-file-regexp ()
   (read-regexp "File name regexp"
