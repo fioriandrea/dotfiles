@@ -52,10 +52,10 @@
                       "\n" t)))
             (body (buffer-substring-no-properties
                    url-http-end-of-headers (point-max))))
-        (setq result `((:headers . ,response-headers)
-                       (:response-version . ,url-http-response-version)
-                       (:response-status . ,url-http-response-status)
-                       (:body . ,(string-trim body))))
+        (setq result (list :headers response-headers
+                           :response-version url-http-response-version
+                           :response-status url-http-response-status
+                           :body (string-trim body)))
         (kill-buffer)))
     result))
 
