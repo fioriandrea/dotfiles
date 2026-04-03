@@ -86,7 +86,7 @@
                    (not (member file vc-directory-exclusion-list)))))
 
 (defmacro my-with-project-files-fallback (&rest body)
-  (declare (indent 1))
+  (declare (indent 0))
   (let ((orig (make-symbol "orig")))
     `(cl-letf* ((,orig (symbol-function 'project-files))
                 ((symbol-function 'project-files)
@@ -103,12 +103,12 @@
 (defun my-project-find-file (&optional include-all)
   (interactive "P")
   (my-with-project-files-fallback
-      (project-find-file include-all)))
+    (project-find-file include-all)))
 
 (defun my-project-find-dir ()
   (interactive)
   (my-with-project-files-fallback
-      (project-find-dir)))
+    (project-find-dir)))
 
 ;;;;; Grep
 
@@ -225,7 +225,7 @@
     (let* ((pr (project-current t))
            (default-directory (project-root pr))
            (files (my-with-project-files-fallback
-                      (project-files pr))))
+                    (project-files pr))))
       (my-grep-xrefs-show regexp files))))
 
 (defun my-dired-do-find-regexp (regexp)
