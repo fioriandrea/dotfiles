@@ -18,10 +18,7 @@
 (display-time-mode 1)
 (display-battery-mode 1)
 
-(defun my-exwm-run-sync (cmd)
-  (call-process-shell-command cmd))
-
-(defun my-exwm-command-output (cmd)
+(defun my-trimmed-shell-command-to-string (cmd)
   (string-trim (shell-command-to-string cmd)))
 
 (defun my-exwm-path-executables ()
@@ -47,18 +44,18 @@
   (start-process command nil command))
 
 (defun my-exwm-wpctl-percent (target)
-  (let ((output (my-exwm-command-output
+  (let ((output (my-trimmed-shell-command-to-string
                  (format "wpctl get-volume %s" target))))
     (when (string-match "Volume: +\\([0-9.]+\\)" output)
       (round (* 100 (string-to-number (match-string 1 output)))))))
 
 (defun my-exwm-wpctl-muted-p (target)
   (string-match-p "\\[MUTED\\]"
-                  (my-exwm-command-output
+                  (my-trimmed-shell-command-to-string
                    (format "wpctl get-volume %s" target))))
 
 (defun my-exwm-brightness-percent ()
-  (my-exwm-command-output "brightnessctl -m | cut -d, -f4"))
+  (my-trimmed-shell-command-to-string "brightnessctl -m | cut -d, -f4"))
 
 (defvar my-workspace-indicator "")
 
@@ -66,19 +63,6 @@
   (setq my-workspace-indicator
         (format " WS:%d " (1+ exwm-workspace-current-index)))
   (force-mode-line-update t))
-
-(defun my-exwm-workspace-switch ()
-  (interactive)
-  (call-interactively #'exwm-workspace-switch))
-
-(defun my-exwm-workspace-switch-create (index)
-  (interactive "nWorkspace: ")
-  (exwm-workspace-switch-create index))
-
-(defun my-exwm-workspace-move-window (index)
-  (interactive "nMove window to workspace: ")
-  (exwm-workspace-move-window index)
-  (message "Moved window to workspace: %d" (1+ index)))
 
 (defun my-exwm-format-audio-status (label target)
   (let ((percent (my-exwm-wpctl-percent target))
@@ -108,46 +92,46 @@
 
 (defun my-exwm-brightness-up ()
   (interactive)
-  (my-exwm-run-sync (format "brightnessctl set +%s" my-brightness-step))
+  (call-process-shell-command (format "brightnessctl set +%s" my-brightness-step))
   (message "Brightness: %s" (my-exwm-brightness-percent)))
 
 (defun my-exwm-brightness-down ()
   (interactive)
-  (my-exwm-run-sync (format "brightnessctl set %s-" my-brightness-step))
+  (call-process-shell-command (format "brightnessctl set %s-" my-brightness-step))
   (message "Brightness: %s" (my-exwm-brightness-percent)))
 
 (defun my-exwm-volume-up ()
   (interactive)
-  (my-exwm-run-sync (format "wpctl set-volume @DEFAULT_AUDIO_SINK@ %s+"
-                            my-volume-step))
+  (call-process-shell-command (format "wpctl set-volume @DEFAULT_AUDIO_SINK@ %s+"
+                                      my-volume-step))
   (message "%s" (my-exwm-volume-status)))
 
 (defun my-exwm-volume-down ()
   (interactive)
-  (my-exwm-run-sync (format "wpctl set-volume @DEFAULT_AUDIO_SINK@ %s-"
-                            my-volume-step))
+  (call-process-shell-command (format "wpctl set-volume @DEFAULT_AUDIO_SINK@ %s-"
+                                      my-volume-step))
   (message "%s" (my-exwm-volume-status)))
 
 (defun my-exwm-mic-volume-up ()
   (interactive)
-  (my-exwm-run-sync (format "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ %s+"
-                            my-volume-step))
+  (call-process-shell-command (format "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ %s+"
+                                      my-volume-step))
   (message "%s" (my-exwm-mic-status)))
 
 (defun my-exwm-mic-volume-down ()
   (interactive)
-  (my-exwm-run-sync (format "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ %s-"
-                            my-volume-step))
+  (call-process-shell-command (format "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ %s-"
+                                      my-volume-step))
   (message "%s" (my-exwm-mic-status)))
 
 (defun my-exwm-volume-mute ()
   (interactive)
-  (my-exwm-run-sync "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
+  (call-process-shell-command "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
   (message "%s" (my-exwm-volume-status)))
 
 (defun my-exwm-mic-mute ()
   (interactive)
-  (my-exwm-run-sync "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
+  (call-process-shell-command "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
   (message "%s" (my-exwm-mic-status)))
 
 (add-hook 'exwm-update-class-hook
@@ -163,23 +147,22 @@
 (add-to-list 'global-mode-string '(:eval my-workspace-indicator) t)
 
 (setopt exwm-input-global-keys
-      `(
-        ([?\s-r] . exwm-reset)
-        ([?\s-s] . my-exwm-workspace-switch)
-        ([?\s-&] . (lambda (command)
-                     (interactive (list (read-shell-command "$ ")))
-                     (start-process-shell-command command nil command)))
-        ([?\s-m] . my-exwm-run-from-path)
+        `(([?\s-r] . exwm-reset)
+          ([?\s-s] . exwm-workspace-switch)
+          ([?\s-&] . (lambda (command)
+                       (interactive (list (read-shell-command "$ ")))
+                       (start-process-shell-command command nil command)))
+          ([?\s-m] . my-exwm-run-from-path)
 
-        ([XF86MonBrightnessUp] . my-exwm-brightness-up)
-        ([XF86MonBrightnessDown] . my-exwm-brightness-down)
+          ([XF86MonBrightnessUp] . my-exwm-brightness-up)
+          ([XF86MonBrightnessDown] . my-exwm-brightness-down)
 
-        ([XF86AudioRaiseVolume] . my-exwm-volume-up)
-        ([XF86AudioLowerVolume] . my-exwm-volume-down)
-        ([s-XF86AudioRaiseVolume] . my-exwm-mic-volume-up)
-        ([s-XF86AudioLowerVolume] . my-exwm-mic-volume-down)
-        ([XF86AudioMute] . my-exwm-volume-mute)
-        ([XF86AudioMicMute] . my-exwm-mic-mute)))
+          ([XF86AudioRaiseVolume] . my-exwm-volume-up)
+          ([XF86AudioLowerVolume] . my-exwm-volume-down)
+          ([s-XF86AudioRaiseVolume] . my-exwm-mic-volume-up)
+          ([s-XF86AudioLowerVolume] . my-exwm-mic-volume-down)
+          ([XF86AudioMute] . my-exwm-volume-mute)
+          ([XF86AudioMicMute] . my-exwm-mic-mute)))
 
 (exwm-wm-mode)
 
