@@ -245,8 +245,8 @@ KEY must be given in `kbd' notation."
   :custom
   (tab-bar-show 1)
   (tab-bar-format '(tab-bar-format-tabs
-                    tab-bar-separator
-                    tab-bar-format-add-tab))
+                    tab-bar-separator))
+  (tab-bar-close-button-show nil)
   (tab-bar-auto-width t)
   (tab-bar-new-tab-choice t)
   (tab-bar-history-mode t)
