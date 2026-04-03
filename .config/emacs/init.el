@@ -155,36 +155,7 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (use-package-always-demand nil)
   (use-package-always-defer t)
   (use-package-expand-minimally nil)
-  (use-package-use-theme t)
-  :config
-  ;; Compatibility: gracefully ignore void-variable/autoload issues
-  ;; during init so missing keymaps or hook targets on older Emacs
-  ;; versions don’t break use-package bindings or startup.
-  (advice-add
-   'bind-key :around
-   (lambda (orig-fun &rest args)
-     (let ((err (gensym)))
-       `(condition-case-unless-debug ,err
-            (progn ,(apply orig-fun args))
-          (void-variable
-           (warn "Failed to bind key: %S" ,err)
-           nil)))))
-  (advice-add
-   'run-hooks :around
-   (lambda (orig-fun &rest hooks)
-     (condition-case-unless-debug err
-         (apply orig-fun hooks)
-       (file-missing
-        (warn "File missing for hook(s) (%S) target: %S" hooks err)
-        nil)
-       (error
-        (let ((msg (error-message-string err)))
-          (cond
-           ((string-match-p ".*\\b[Aa]utoload.*" msg)
-            (warn "Hook(s) %S failed due to autoloading issue: %S" hooks msg)
-            nil)
-           (t
-            (signal (car err) (cdr err))))))))))
+  (use-package-use-theme t))
 
 (use-package package
   :config
@@ -468,14 +439,16 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (repeat-exit-key "<escape>"))
 
 (use-package comint
-  :bind (:map comint-repeat-map
-              ("C-n" . nil)
-              ("C-p" . nil)))
+  :config
+  (when (boundp 'comint-repeat-map)
+    (define-key comint-repeat-map (kbd "C-n") nil)
+    (define-key comint-repeat-map (kbd "C-p") nil)))
 
 (use-package em-prompt
-  :bind (:map eshell-prompt-repeat-map
-              ("C-n" . nil)
-              ("C-p" . nil)))
+  :config
+  (when (boundp 'eshell-prompt-repeat-map)
+    (define-key eshell-prompt-repeat-map (kbd "C-n") nil)
+    (define-key eshell-prompt-repeat-map (kbd "C-p") nil)))
 
 (use-package eldoc
   :custom
@@ -517,8 +490,6 @@ library; tries to catch any error with `condition-case-unless-debug`."
 (use-package dired
   :hook
   (dired-mode . dired-hide-details-mode)
-  :bind (:map dired-jump-map
-              ("j" . nil))
   :custom
   (dired-clean-confirm-killing-deleted-buffers t)
   (dired-clean-up-buffers-too t)
@@ -528,7 +499,10 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (dired-listing-switches "-alh")
   (dired-mouse-drag-files t)
   (dired-free-space 'separate)
-  (dired-dwim-target t))
+  (dired-dwim-target t)
+  :config
+  (when (boundp 'dired-jump-map)
+    (define-key dired-jump-map (kbd "j") nil)))
 
 (use-package wdired
   :custom
