@@ -356,16 +356,13 @@ library; tries to catch any error with `condition-case-unless-debug`."
   :config
   ;; https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./
   ;; https://www.gnu.org/software/tramp/#Improving-performance-of-asynchronous-remote-processes-1
-  (when (version<= "28.1" emacs-version)
-    (if (version< emacs-version "30.1")
-        (add-to-list 'tramp-connection-properties
-                     (list "/scp:" "direct-async-process" t))
-      (connection-local-set-profile-variables
-       'remote-direct-async-process
-       '((tramp-direct-async-process . t)))
-      (connection-local-set-profiles
-       '(:application tramp :protocol "scp")
-       'remote-direct-async-process)))
+  (unless (version< emacs-version "30.1")
+    (connection-local-set-profile-variables
+     'remote-direct-async-process
+     '((tramp-direct-async-process . t)))
+    (connection-local-set-profiles
+     '(:application tramp :protocol "scp")
+     'remote-direct-async-process))
   :custom
   (tramp-show-ad-hoc-proxies t)
   (tramp-use-scp-direct-remote-copying t)
