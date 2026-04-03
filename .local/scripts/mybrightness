@@ -6,7 +6,7 @@ readonly default_fraction=0.01
 
 usage() {
     cat <<'EOF'
-usage: mybrightness [up|down|status] [STEP_FRACTION]
+usage: mybrightness [up|down|set|status] [STEP_FRACTION]
 EOF
 }
 
@@ -30,6 +30,10 @@ case "$cmd" in
         ;;
     down)
         brightnessctl set "${step}-" >/dev/null
+        print_status
+        ;;
+    set)
+        brightnessctl set "${step}" >/dev/null
         print_status
         ;;
     status)
