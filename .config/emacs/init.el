@@ -111,72 +111,77 @@ KEY must be given in `kbd' notation."
         (pop-global-mark))))))
 
 (defmacro my-use-package (pack &rest args)
-  "Minimal `use-package` replacement with limited functionality.
-Supports only :custom, :config, :init, :if, :when.
-Assumes :ensure nil, :demand nil and :defer t. Also, assumes :if
-(locate-library pack), where pack is the name of the package to
-configure."
+  "Minimal replacement for `use-package' with restricted functionality.
+Supports only the keywords: :custom, :config, :init, :if, and :when.
+Defaults are: :ensure nil, :demand nil, and :defer t.
+Unlike standard `use-package', this macro expands to code that is
+evaluated only if the specified feature PACK is already provided or
+corresponds to a loadable library."
   (declare (indent defun))
   (let (customs configs inits condition)
     (setq condition `((or
-                       (eq ',pack 'emacs)
+                       (featurep ',pack)
                        (locate-library ,(symbol-name pack)))))
-    (while args
-      (let ((key (pop args)))
+    (while (and args (cdr args))
+      (let (key val)
+        (setq key (pop args))
+        (setq val (pop args))
         (cond
          ((or (eq key :if) (eq key :when))
-          (push (pop args) condition))
+          (push val condition))
          ((eq key :custom)
-          (let ((v (pop args)))
-            (cond
-             ((null v) nil)
-             ((and (listp v) (listp (car v)))
-              (setq customs (append customs v)))
-             ((listp v)
-              (push v customs)
-              (push :custom args))
-             (t
-              (push v args)))))
+          (cond
+           ((and val (listp val) (listp (car val)))
+            (setq customs (append customs val)))
+           ((and val (listp val))
+            (push val customs)
+            (push :custom args))
+           (t
+            (push val args))))
          ((eq key :config)
-          (let ((v (pop args)))
-            (cond
-             ((null v) nil)
-             ((not (keywordp v))
-              (push v configs)
-              (push :config args))
-             (t
-              (push v args)))))
+          (cond
+           ((not (keywordp val))
+            (push val configs)
+            (push :config args))
+           (t
+            (push val args))))
          ((eq key :init)
-          (let ((v (pop args)))
-            (cond
-             ((null v) nil)
-             ((not (keywordp v))
-              (push v inits)
-              (push :init args))
-             (t
-              (push v args)))))
-         (t nil))))
-    `(when (and ,@condition)
-       ,@(nreverse inits)
-       ;; see use-package-handler/:custom
-       (let ((custom--inhibit-theme-enable nil))
-         (unless (memq 'my-use-package custom-known-themes)
-           (deftheme my-use-package) (enable-theme 'my-use-package)
-           (setq custom-enabled-themes
-                 (remq 'my-use-package custom-enabled-themes)))
-         (custom-theme-set-variables
-          'my-use-package
-          ,@(mapcar (lambda (p)
-                      (let ((variable (nth 0 p))
-                            (value (nth 1 p))
-                            (comment (or (nth 2 p)
-                                         (format
-                                          "Customized with my-use-package %s"
-                                          (symbol-name pack)))))
-                        `'(,variable ,value nil nil ,comment)))
-                    (nreverse customs))))
-       (eval-after-load ',pack
-         (quote ,(cons 'progn (nreverse configs)))))))
+          (cond
+           ((not (keywordp val))
+            (push val inits)
+            (push :init args))
+           (t
+            (push val args))))
+         (t (push val args)))))
+    (let (body)
+      (when configs
+        (push
+         `(eval-after-load ',pack
+            (quote ,(cons 'progn (nreverse configs))))
+         body))
+      (when customs
+        (push
+         ;; see use-package-handler/:custom
+         `(let ((custom--inhibit-theme-enable nil))
+            (unless (memq 'my-use-package custom-known-themes)
+              (deftheme my-use-package) (enable-theme 'my-use-package)
+              (setq custom-enabled-themes
+                    (remq 'my-use-package custom-enabled-themes)))
+            (custom-theme-set-variables
+             'my-use-package
+             ,@(mapcar (lambda (p)
+                         (let ((variable (nth 0 p))
+                               (value (nth 1 p))
+                               (comment (or (nth 2 p)
+                                            (format
+                                             "Customized with my-use-package %s"
+                                             (symbol-name pack)))))
+                           `'(,variable ,value nil nil ,comment)))
+                       (nreverse customs))))
+         body))
+      (when inits
+        (push `(progn ,@(nreverse inits)) body))
+      `(when (and ,@condition) ,@body))))
 
 (defconst emacs-backup-dir
   (file-name-as-directory
