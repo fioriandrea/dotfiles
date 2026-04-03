@@ -390,7 +390,7 @@ provided or corresponds to a loadable library."
   :custom
   (global-auto-revert-mode t)
   ;; The first revert gets done after auto-revert-interval, even when using notifications
-  (auto-revert-interval 15)
+  (auto-revert-interval 10)
   ;; See function auto-revert--polled-buffers
   (auto-revert-avoid-polling t)
   (auto-revert-stop-on-user-input t)
