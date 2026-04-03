@@ -9,8 +9,7 @@ Install dotfiles found in a git repo.
 -h    Show this help
 -r    Specify the repo. Default is $repo
 -d    Specify the destination folder. Default is $destination
--c    Specify separate-git-dir. Default is $confdir
--b    Specify a backup directory. By default, a temporary one will be created
+-b    Specify a backup directory. By default, a temporary directory will be created
 EOF
 }
 
@@ -31,7 +30,6 @@ Summary:
 
 Backup directory: $backup
 Destination directory: $destination
-Git directory: $confdir
 EOF
     } >&"$outfd"
 }
@@ -39,19 +37,6 @@ EOF
 clean_exit() {
     print_summary "$?"
     rm -rf "$tmpdir" 2>/dev/null
-}
-
-git_bare() {
-    # $1 -> destination
-    # $2 -> confdir
-    git --git-dir="$1/$2" --work-tree="$1" "${@:3}"
-}
-
-clone_dotfiles() {
-    # $1 -> path to repo
-    # $2 -> directory to copy to
-    # $3 -> separate-git-dir (.myconf)
-    git clone --bare "$1" "$2/$3"
 }
 
 die() {
@@ -65,7 +50,6 @@ cmdexists() {
 
 repo=https://github.com/fioriandrea/dotfiles
 destination=$HOME
-confdir=.myconf
 backup=
 
 while getopts ':hr:d:c:b:' o; do
@@ -73,7 +57,6 @@ while getopts ':hr:d:c:b:' o; do
         h) print_help ; exit 0 ;;
         r) repo=$OPTARG ;;
         d) destination=$OPTARG ;;
-        c) confdir=$OPTARG ;;
         b) backup=$OPTARG ;;
         :) die "must supply argument to '$OPTARG'" ;;
         ?) die "unknown option '$OPTARG'" ;;
@@ -104,13 +87,15 @@ backup=${backup%%+(/)}
 tmpdir=${tmpdir%%+(/)}
 destination=${destination%%+(/)}
 
-confdirpath=$destination/$confdir
+confdirpath=$destination/.git
 [[ -d $confdirpath ]] && {
-    cp -r "$confdirpath" "$backup/$confdir" || exit 1
+    cp -r "$confdirpath" "$backup/.git" || exit 1
     rm -rf "$confdirpath" || exit 1
 }
 
-clone_dotfiles "$repo" "$tmpdir" "$confdir" || exit 1
-git_bare "$tmpdir" "$confdir" checkout || exit 1
-git_bare "$tmpdir" "$confdir" config --local status.showUntrackedFiles no || exit 1
+pushd "$tmpdir" || exit 1
+git clone "$repo" . || exit 1
+git config --local status.showUntrackedFiles no || exit 1
+popd || exit 1
+
 rsync --archive --progress --backup-dir "$backup" "$tmpdir"/ "$destination" || exit 1
