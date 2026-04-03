@@ -1,6 +1,6 @@
 # dotfiles
 
-My Arch Linux Dotfiles and Scripts.
+My Linux Dotfiles and Scripts.
 
 # Installation
 
