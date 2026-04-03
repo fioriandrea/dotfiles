@@ -15,6 +15,9 @@ export HISTFILE="$XDG_DATA_HOME/history"
 export GOPATH="$HOME/.local/go"
 export npm_config_prefix="$HOME/.local"
 
+api_keys_file="$XDG_CONFIG_HOME/api_keys"
+[ -f "$api_keys_file" ] && source "$api_keys_file"
+
 pathappend() {
     PATH=$(
         for arg in "$@"; do

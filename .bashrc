@@ -21,7 +21,7 @@ xdg_config_home=${XDG_CONFIG_HOME:-$HOME/.config}
 CDPATH=.:~:$xdg_config_home:$HOME/.local
 
 # additional files to be sourced
-bashconfdir=$xdg_config_home/bash/startup
+bashconfdir=$xdg_config_home/bash/sourced
 [[ -r $bashconfdir ]] || return
 for conffile in "$bashconfdir"/*; do
     [[ -f $conffile ]] || continue
@@ -29,7 +29,7 @@ for conffile in "$bashconfdir"/*; do
 done
 
 # additional files to be executed
-bashstartupexecdir=$XDG_DATA_HOME/bash/startup
+bashstartupexecdir=$XDG_DATA_HOME/bash/executed
 [[ -r $bashstartupexecdir ]] || return
 for file in "$bashstartupexecdir"/*; do
     [[ -x $file ]] || continue
