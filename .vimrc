@@ -1,8 +1,6 @@
 " don't bother trying to be compatible with vi
 set nocompatible
 
-" load Plugins.vim, searching it in "all vim places"
-runtime PlugPlugins.vim
 " disable bells
 set visualbell t_vb=
 " no sound when at end of line
@@ -99,22 +97,3 @@ nnoremap <silent> <C-Right> :vertical resize +2<CR>
 
 " make new splits position more intuitive
 set splitbelow splitright
-
-" move to the previous buffer
-nnoremap gp :bp<CR>
-" move to the next buffer
-nnoremap gn :bn<CR>
-" list all possible buffers
-nnoremap gl :ls<CR>
-" list all possible buffers and accept a new buffer argument
-nnoremap gb :ls<CR>:b 
-" close current buffer
-nnoremap gc :bd<CR>
-
-" move lines
-nnoremap <silent> <C-j> :m .+1<CR>==
-nnoremap <silent> <C-k> :m .-2<CR>==
-inoremap <silent> <C-j> <Esc>:m .+1<CR>==gi
-inoremap <silent> <C-k> <Esc>:m .-2<CR>==gi
-vnoremap <silent> <C-j> :m '>+1<CR>gv=gv
-vnoremap <silent> <C-k> :m '<-2<CR>gv=gv
