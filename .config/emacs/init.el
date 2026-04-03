@@ -175,36 +175,45 @@
     #'my-grep-xref-fetcher regexp files)
    nil))
 
-(defun my-project-find-regexp (regexp)
-  (interactive (list (read-regexp "Search for"
-                                  'find-tag-default-as-regexp
-                                  'grep-regexp-history)))
-  (let* ((pr (project-current t))
-         (default-directory (project-root pr))
-         (project-files-relative-names nil)
-         (files-all (my-project-files pr))
-         (files (seq-filter #'file-regular-p files-all)))
-    (my-grep-show-xrefs regexp files)))
+(defvar my-grep-file-regexp-history nil)
 
-(defun my-dired-do-find-regexp (regexp)
-  (interactive (list (read-regexp "Find regexp"
-                                  nil 'dired-regexp-history))
-               dired-mode)
-  (my-grep-show-xrefs regexp (dired-get-marked-files)))
-
-(defvar my-rgrep-file-regexp-history nil)
 (defun my-rgrep (regexp file-regexp dir)
   (interactive
    (list
     (read-regexp "Search for"
                  'find-tag-default-as-regexp
                  'grep-regexp-history)
-    (read-regexp "File-name regexp (default: .): "
-                 "." 'my-rgrep-file-regexp-history)
+    (read-regexp "File name regexp"
+                 "." 'my-grep-file-regexp-history)
     (read-directory-name "Base directory: "
-			 nil default-directory t)))
-  (my-grep-show-xrefs regexp (directory-files-recursively
-                              dir file-regexp nil t nil)))
+			 default-directory nil t)))
+  (my-grep-show-xrefs regexp (my-find-lisp-find-files-excluding-vc
+                              dir file-regexp)))
+
+(defun my-project-find-regexp (regexp)
+  (interactive (list (read-regexp "Search for"
+                                  'find-tag-default-as-regexp
+                                  'grep-regexp-history)))
+  (if current-prefix-arg
+      (let ((directory
+             (read-directory-name "Base directory: "
+			          default-directory nil t))
+            (file-regexp
+             (read-regexp "File name regexp"
+                          "." 'my-grep-file-regexp-history)))
+        (my-rgrep regexp file-regexp directory))
+    (let* ((pr (project-current t))
+           (default-directory (project-root pr))
+           (project-files-relative-names nil)
+           (files-all (my-project-files pr))
+           (files (seq-filter #'file-regular-p files-all)))
+      (my-grep-show-xrefs regexp files))))
+
+(defun my-dired-do-find-regexp (regexp)
+  (interactive (list (read-regexp "Find regexp"
+                                  nil 'dired-regexp-history))
+               dired-mode)
+  (my-grep-show-xrefs regexp (dired-get-marked-files)))
 
 ;;;; my-http-fetch-url
 
