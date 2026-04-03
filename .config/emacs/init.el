@@ -41,8 +41,9 @@
       (kill-buffer))))
 
 (defun my-read-directory-name-default (&optional prompt)
-  (read-directory-name (or prompt "Base directory: ")
-		       default-directory nil t))
+  (expand-file-name
+   (read-directory-name (or prompt "Base directory: ")
+		        default-directory nil t)))
 
 (defun my-file-name-from-context ()
   (or
