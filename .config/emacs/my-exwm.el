@@ -40,6 +40,11 @@
                      nil t nil 'my-exwm-path-command-history)))
   (start-process command nil command))
 
+(defun my-exwm-shell-fn (cmd)
+  (lambda ()
+    (interactive)
+    (message "%s" (my-trimmed-shell-command-to-string cmd))))
+
 (defun my-exwm-start-systemtray ()
   (exwm-systemtray-mode 1))
 
@@ -50,38 +55,6 @@
      (when (> exwm-workspace-number 1)
        (exwm-workspace-switch-create 1)
        (exwm-workspace-switch-create 0)))))
-
-(defun my-exwm-brightness-up ()
-  (interactive)
-  (message "%s" (my-trimmed-shell-command-to-string "mybrightness up")))
-
-(defun my-exwm-brightness-down ()
-  (interactive)
-  (message "%s" (my-trimmed-shell-command-to-string "mybrightness down")))
-
-(defun my-exwm-volume-up ()
-  (interactive)
-  (message "%s" (my-trimmed-shell-command-to-string "myvolume up")))
-
-(defun my-exwm-volume-down ()
-  (interactive)
-  (message "%s" (my-trimmed-shell-command-to-string "myvolume down")))
-
-(defun my-exwm-mic-volume-up ()
-  (interactive)
-  (message "%s" (my-trimmed-shell-command-to-string "myvolume mic-up")))
-
-(defun my-exwm-mic-volume-down ()
-  (interactive)
-  (message "%s" (my-trimmed-shell-command-to-string "myvolume mic-down")))
-
-(defun my-exwm-volume-mute ()
-  (interactive)
-  (message "%s" (my-trimmed-shell-command-to-string "myvolume mute")))
-
-(defun my-exwm-mic-mute ()
-  (interactive)
-  (message "%s" (my-trimmed-shell-command-to-string "myvolume mic-mute")))
 
 (add-hook 'exwm-update-class-hook
           (lambda ()
@@ -100,15 +73,15 @@
                        (start-process-shell-command command nil command)))
           ([?\s-x] . my-exwm-run-from-path)
 
-          ([XF86MonBrightnessUp] . my-exwm-brightness-up)
-          ([XF86MonBrightnessDown] . my-exwm-brightness-down)
+          ([XF86MonBrightnessUp] . ,(my-exwm-shell-fn "mybrightness up"))
+          ([XF86MonBrightnessDown] . ,(my-exwm-shell-fn "mybrightness down"))
 
-          ([XF86AudioRaiseVolume] . my-exwm-volume-up)
-          ([XF86AudioLowerVolume] . my-exwm-volume-down)
-          ([s-XF86AudioRaiseVolume] . my-exwm-mic-volume-up)
-          ([s-XF86AudioLowerVolume] . my-exwm-mic-volume-down)
-          ([XF86AudioMute] . my-exwm-volume-mute)
-          ([XF86AudioMicMute] . my-exwm-mic-mute)))
+          ([XF86AudioRaiseVolume] . ,(my-exwm-shell-fn "myvolume up"))
+          ([XF86AudioLowerVolume] . ,(my-exwm-shell-fn "myvolume down"))
+          ([s-XF86AudioRaiseVolume] . ,(my-exwm-shell-fn "myvolume mic-up"))
+          ([s-XF86AudioLowerVolume] . ,(my-exwm-shell-fn "myvolume mic-down"))
+          ([XF86AudioMute] . ,(my-exwm-shell-fn "myvolume mute"))
+          ([XF86AudioMicMute] . ,(my-exwm-shell-fn "myvolume mic-mute"))))
 
 (exwm-wm-mode)
 
