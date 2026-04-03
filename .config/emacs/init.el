@@ -525,6 +525,7 @@ corresponds to a loadable library."
 (use-package completion-preview
   :if (locate-library "completion-preview")
   :custom
+  (completion-preview-minimum-symbol-length 3)
   (global-completion-preview-mode t)
   ;; Omitting eshell-mode due to weird completion behaviour
   (global-completion-preview-modes '(prog-mode comint-mode))
