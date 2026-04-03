@@ -219,6 +219,17 @@ Expands only when PACK is loadable, and reports setup errors."
   (isearch-wrap-pause t))
 
 (use-package frame
+  :init
+  (defun my-other-frame-backward (&optional n)
+    "Select the Nth previous visible frame."
+    (interactive "p")
+    (other-frame (- (or n 1))))
+  :bind
+  (:map ctl-x-5-map
+        ("O" . my-other-frame-backward)
+        :repeat-map my-repeat-other-frame-map
+        ("o" . other-frame)
+        ("O" . my-other-frame-backward))
   :custom
   (undelete-frame-mode t))
 
