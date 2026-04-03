@@ -8,9 +8,6 @@ set noerrorbells
 " https://vi.stackexchange.com/questions/24925/usage-of-timeoutlen-and-ttimeoutlen
 set timeoutlen=1000 ttimeoutlen=0
 
-" search recursively
-set path+=**
-
 " show possible matches in command-line completion
 set wildmenu
 
@@ -75,13 +72,13 @@ let g:netrw_liststyle=3
 " faster scrolling
 set ttyfast
 
-"set every files as Unix (LF) as Windows might set CRLF wich is not working for unix
+" set every files as Unix (LF) as Windows might set CRLF wich is not working for unix
 set fileformat=unix
 
 " syntax highlighting
 try
     syntax on
-    colorscheme elfmono
+    colorscheme elflord
 catch
     syntax off
     set t_Co=0
