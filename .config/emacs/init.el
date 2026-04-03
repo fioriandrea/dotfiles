@@ -472,12 +472,17 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (eglot-events-buffer-config '(:size 0 :format full)))
 
 (use-package org
-  :bind (("C-c l" . org-store-link)
-         ("C-c a" . org-agenda)
-         ("C-c c" . org-capture)
-         ("C-c o" . org-open-at-point-global)
-         :map org-mode-map
-         ("C-c z" . org-toggle-link-display))
+  :bind
+  (("C-c l" . org-store-link)
+   ("C-c a" . org-agenda)
+   ("C-c c" . org-capture)
+   ("C-c o" . org-open-at-point-global)
+   ("C-c 4 o" . (lambda ()
+                  (interactive)
+                  (other-window-prefix)
+                  (call-interactively 'org-open-at-point-global)))
+   :map org-mode-map
+   ("C-c z" . org-toggle-link-display))
   :custom
   (org-startup-truncated nil)
   (org-html-validation-link nil)
