@@ -102,7 +102,7 @@
 
 ;;;; Hooks
 
-(defun my-exwm-workspace-rename-buffer-hook ()
+(defun my-exwm-rename-buffer-by-class ()
   (exwm-workspace-rename-buffer exwm-class-name))
 
 (defun my-exwm-fix-initial-workspace-glitch ()
@@ -114,7 +114,7 @@
        (exwm-workspace-switch-create 0)))))
 
 (add-hook 'exwm-update-class-hook
-          'my-exwm-workspace-rename-buffer-hook)
+          'my-exwm-rename-buffer-by-class)
 (add-hook 'exwm-init-hook
           'my-exwm-fix-initial-workspace-glitch)
 
