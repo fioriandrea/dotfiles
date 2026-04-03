@@ -2,7 +2,6 @@
 
 (require 'exwm)
 (require 'exwm-input)
-(require 'exwm-systemtray)
 (require 'exwm-workspace)
 
 (require 'xdg)
@@ -71,12 +70,8 @@
 
 ;;; Config
 
-(setopt display-time-mode t
-        display-battery-mode t)
-
 (setopt exwm-workspace-number 4
         exwm-workspace-index-map (lambda (i) (number-to-string (1+ i)))
-        exwm-systemtray-mode t
         exwm-layout-show-all-buffers t
         exwm-workspace-show-all-buffers t)
 
