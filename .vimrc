@@ -79,8 +79,8 @@ set ttyfast
 set fileformat=unix
 
 " syntax highlighting
-syntax off
-set t_Co=0
+syntax on
+" set t_Co=0
 
 " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
 filetype plugin indent on
