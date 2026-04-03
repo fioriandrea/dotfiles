@@ -8,7 +8,32 @@
 
 (defun my-tick (cmd)
   (let ((output (shell-command-to-string cmd)))
-    (string-trim output)))
+    (string-trim output "" "[\n\r]+")))
+
+(defun my-http-fetch-url (url &optional kwargs)
+  (unless (or (string-prefix-p "http://" url)
+              (string-prefix-p "https://" url))
+    (error "URL must start with http:// or https://"))
+  (let* ((method (cdr (assoc 'method kwargs)))
+         (data (cdr (assoc 'data kwargs)))
+         (headers (cdr (assoc 'headers kwargs)))
+         (proxy (cdr (assoc 'proxy kwargs)))
+         (url-request-method method)
+         (url-request-data data)
+         (url-request-extra-headers headers)
+         (url-proxy-services (or proxy url-proxy-services)))
+    (with-current-buffer (url-retrieve-synchronously url)
+      (let ((response-headers
+             (mapcar (lambda (line)
+                       (let ((parts (split-string line ": ")))
+                         (cons (car parts) (cadr parts))))
+                     (split-string
+                      (buffer-substring-no-properties (point-min) url-http-end-of-headers)
+                      "\n" t)))
+            (body (buffer-substring-no-properties url-http-end-of-headers (point-max))))
+        (kill-buffer)
+        `((headers . ,response-headers)
+          (body . ,(string-trim body)))))))
 
 (defun my-delete-autosave-current-buffer ()
   (interactive)
