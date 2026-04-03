@@ -214,7 +214,7 @@ loadable library."
 
 (unless (fboundp 'advice-add)
   (message "WARNING: no advice-add found, using compatibility shim")
-  (defmacro advice-add (&rest body)))
+  (defmacro advice-add (&rest _body)))
 
 (unless (fboundp 'use-package)
   (message "WARNING: no use-package found, using compatibility shim")
