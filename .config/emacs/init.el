@@ -509,6 +509,13 @@ loadable library."
   :init
   (ffap-bindings))
 
+(use-package repeat
+  :custom
+  (repeat-mode t)
+  (repeat-exit-key "RET")
+  :config
+  (put 'other-window 'repeat-map nil))
+
 (use-package eldoc
   :custom
   (eldoc-echo-area-use-multiline-p nil))
