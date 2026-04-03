@@ -6,6 +6,12 @@
   (interactive)
   (find-file user-init-file))
 
+(defun my-dired-do-occur (regexp &optional nlines)
+  (interactive (occur-read-primary-args) dired-mode)
+  (multi-occur
+   (mapcar #'find-file-noselect (dired-get-marked-files))
+   regexp nlines))
+
 (defun my-grep-files (files regexp)
   (let (results)
     (dolist (file files (nreverse results))
