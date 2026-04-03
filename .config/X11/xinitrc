@@ -7,7 +7,7 @@ config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
 user_dir="$config_home/X11"
 user_xinitrc_d="$user_dir"/xinitrc.d
 user_resources="$user_dir/xresources"
-user_resources2="$user_dir/xresources-2"
+user_resources_local="$user_dir/xresources-local"
 user_modmap="$user_dir/.Xmodmap"
 
 sys_dir="/etc/X11"
@@ -39,7 +39,7 @@ merge_resources "$sys_resources"
 apply_xmodmap "$sys_modmap"
 
 merge_resources "$user_resources"
-merge_resources "$user_resources2"
+merge_resources "$user_resources_local"
 apply_xmodmap "$user_modmap"
 
 # start some nice programs
