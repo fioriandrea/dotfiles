@@ -219,6 +219,7 @@ provided or corresponds to a loadable library."
   ([remap pop-global-mark] . my-pop-global-mark)
   ([remap set-mark-command] . my-set-mark-command)
   :hook
+  (prog-mode . display-line-numbers-mode)
   (text-mode . visual-line-mode)
   :custom
   (inhibit-startup-screen t)
