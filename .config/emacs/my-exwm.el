@@ -86,13 +86,6 @@
 
 ;;;; Hooks
 
-(defconst my-exwm-after-file
-  (concat user-emacs-directory "my-exwm-after.el"))
-
-(defun my-exwm-source-after-file ()
-  (when (file-exists-p my-exwm-after-file)
-    (load-file my-exwm-after-file)))
-
 (defun my-exwm-workspace-rename-buffer-hook ()
   (exwm-workspace-rename-buffer exwm-class-name))
 
@@ -108,8 +101,22 @@
           'my-exwm-workspace-rename-buffer-hook)
 (add-hook 'exwm-init-hook
           'my-exwm-fix-initial-workspace-glitch)
-(add-hook 'exwm-init-hook
-          'my-exwm-source-after-file)
+
+;;;; Hook for after init file
+
+(defconst my-exwm-after-init-file
+  (concat user-emacs-directory "my-exwm-after-init.el"))
+(defun my-exwm-source-after-init-file ()
+  (when (file-exists-p my-exwm-after-init-file)
+    (load-file my-exwm-after-init-file)))
+(add-hook 'exwm-init-hook 'my-exwm-source-after-init-file)
+
+;;;; Load before init file
+
+(defconst my-exwm-before-init-file
+  (concat user-emacs-directory "my-exwm-before-init.el"))
+(when (file-exists-p my-exwm-before-init-file)
+  (load-file my-exwm-before-init-file))
 
 ;;;; Enable ewxm
 
