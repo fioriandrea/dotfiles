@@ -401,7 +401,7 @@ KEY must be given in `kbd' notation."
   :after dired)
 
 (use-package magit
-  :if (package-installed-p 'magit)
+  :if (locate-library "magit")
   :bind
   ("C-x g" . magit-status)
   ("C-x p m" . magit-project-status)
@@ -414,7 +414,7 @@ KEY must be given in `kbd' notation."
   (magit-auto-revert-mode nil))
 
 (use-package dired-subtree
-  :if (package-installed-p 'dired-subtree)
+  :if (locate-library "dired-subtree")
   :after dired
   :bind
   (:map dired-mode-map
