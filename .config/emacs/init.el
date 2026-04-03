@@ -318,7 +318,8 @@ KEY must be given in `kbd' notation."
 
 (use-package tramp
   :bind
-  ("<f9>" . tramp-cleanup-connection)
+  ("C-c t a" . tramp-cleanup-all-connections)
+  ("C-c t c" . tramp-cleanup-connection)
   :custom
   (auto-revert-remote-files nil)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
