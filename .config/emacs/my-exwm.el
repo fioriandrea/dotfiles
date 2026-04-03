@@ -5,11 +5,13 @@
 (require 'exwm-systemtray)
 (require 'exwm-workspace)
 
+(require 'xdg)
+(require 'cl-lib)
+(require 'seq)
+
 (defvar my-exwm-brightness-step 0.01)
 (defvar my-exwm-volume-step 0.02)
 (defvar my-exwm-mic-step 0.02)
-
-(defvar my-exwm-path-command-history nil)
 
 (setopt exwm-workspace-number 4
         exwm-workspace-index-map (lambda (i) (number-to-string (1+ i))))
@@ -17,28 +19,40 @@
 (display-time-mode 1)
 (display-battery-mode 1)
 
+(defvar my-exwm-xdg-apps-dirs
+  (cl-loop for dir in (cons (xdg-data-home) (xdg-data-dirs))
+           collect (expand-file-name "applications" dir)))
 
-(defun my-exwm-path-executables ()
-  (let ((seen (make-hash-table :test #'equal))
-        executables)
-    (dolist (dir (parse-colon-path (or (getenv "PATH") "")))
+(defvar my-exwm-desktop-app-history nil)
+(defvar my-exwm-desktop-terminal-command '("xterm" "-e"))
+
+(defun my-exwm-desktop-apps ()
+  (let (apps)
+    (dolist (dir my-exwm-xdg-apps-dirs)
       (when (file-directory-p dir)
-        (dolist (entry (directory-files dir nil directory-files-no-dot-files-regexp))
-          (let ((path (expand-file-name entry dir)))
-            (when (and (not (file-directory-p path))
-                       (file-executable-p path)
-                       (not (gethash entry seen)))
-              (puthash entry t seen)
-              (push entry executables))))))
-    (sort executables #'string-lessp)))
+        (dolist (file (directory-files-recursively dir "\\.desktop$"))
+          (let* ((data (xdg-desktop-read-file file))
+                 (name (gethash "Name" data))
+                 (exec (gethash "Exec" data)))
+            (when (and name exec
+                       (not (string= (gethash "Hidden" data) "true"))
+                       (not (string= (gethash "NoDisplay" data) "true")))
+              (push (cons name data) apps))))))
+    apps))
 
-(defun my-exwm-run-from-path (command)
-  (interactive
-   (list
-    (completing-read "Run: "
-                     (my-exwm-path-executables)
-                     nil t nil 'my-exwm-path-command-history)))
-  (start-process command nil command))
+(defun my-exwm-run-desktop-app ()
+  (interactive)
+  (let* ((apps (my-exwm-desktop-apps))
+         (choice (completing-read "App: " (mapcar #'car apps)
+                                  nil t nil 'my-exwm-desktop-app-history))
+         (data (cdr (assoc choice apps)))
+         (exec (gethash "Exec" data))
+         (terminal (string= (gethash "Terminal" data) "true"))
+         (argv (seq-remove (lambda (arg) (string-prefix-p "%" arg))
+                           (split-string-and-unquote exec))))
+    (when argv
+      (apply #'start-process choice nil
+             (if terminal (append my-exwm-desktop-terminal-command argv) argv)))))
 
 (defun my-exwm-shell-run (cmd &rest args)
   (let* ((args (mapcar (lambda (x)
@@ -81,7 +95,7 @@
           ([?\s-&] . (lambda (command)
                        (interactive (list (read-shell-command "$ ")))
                        (start-process-shell-command command nil command)))
-          ([?\s-x] . my-exwm-run-from-path)
+          ([?\s-x] . my-exwm-run-desktop-app)
 
           ([XF86MonBrightnessUp] . (lambda (arg)
                                      (interactive "p")
