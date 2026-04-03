@@ -226,7 +226,36 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (use-package-always-demand nil)
   (use-package-always-defer t)
   (use-package-expand-minimally nil)
-  (use-package-use-theme t))
+  (use-package-use-theme t)
+  :config
+  ;; Compatibility: gracefully ignore void-variable/autoload issues
+  ;; during init so missing keymaps or hook targets on older Emacs
+  ;; versions don’t break use-package bindings or startup.
+  (advice-add
+   'bind-key :around
+   (lambda (orig-fun &rest args)
+     (let ((err (gensym)))
+       `(condition-case-unless-debug ,err
+            (progn ,(apply orig-fun args))
+          (void-variable
+           (warn "Failed to bind key: %S" ,err)
+           nil)))))
+  (advice-add
+   'run-hooks :around
+   (lambda (orig-fun &rest hooks)
+     (condition-case-unless-debug err
+         (apply orig-fun hooks)
+       (file-missing
+        (warn "File missing for hook(s) (%S) target: %S" hooks err)
+        nil)
+       (error
+        (let ((msg (error-message-string err)))
+          (cond
+           ((string-match-p ".*\\b[Aa]utoload.*" msg)
+            (warn "Hook(s) %S failed due to autoloading issue: %S" hooks msg)
+            nil)
+           (t
+            (signal (car err) (cdr err))))))))))
 
 (use-package package
   :config
