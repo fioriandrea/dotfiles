@@ -59,28 +59,28 @@
 ;;;; Keys
 
 (setopt exwm-input-prefix-keys
-        '([?\C-x]
-          [?\C-u]
-          [?\C-h]
-          [?\M-x]
-          [?\M-`]
-          [?\M-&]
-          [?\M-:]
-          [?\M-!]
-          [?\C-g]))
+        (list (kbd "C-x")
+              (kbd "C-u")
+              (kbd "C-h")
+              (kbd "M-x")
+              (kbd "M-`")
+              (kbd "M-&")
+              (kbd "M-:")
+              (kbd "M-!")
+              (kbd "C-g")
+              (kbd "C-[")))
 
-(define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+(keymap-set exwm-mode-map "C-q" 'exwm-input-send-next-key)
 
 (setopt exwm-input-global-keys
-        `(([?\s-r] . exwm-reset)
-          ([?\s-i] . exwm-input-toggle-keyboard)
-          ([?\s-b] . exwm-workspace-switch-to-buffer)
-          ([?\s-s] . exwm-workspace-switch)
-          ([?\s-&] . (lambda (command)
-                       (interactive (list (read-shell-command "$ ")))
-                       (start-process-shell-command command nil command)))
-          ([?\s-x] . my-exwm-run-desktop-app)))
-
+        `((,(kbd "s-r") . exwm-reset)
+          (,(kbd "s-i") . exwm-input-toggle-keyboard)
+          (,(kbd "s-b") . exwm-workspace-switch-to-buffer)
+          (,(kbd "s-s") . exwm-workspace-switch)
+          (,(kbd "s-&") . (lambda (command)
+                            (interactive (list (read-shell-command "$ ")))
+                            (start-process-shell-command command nil command)))
+          (,(kbd "s-x") . my-exwm-run-desktop-app)))
 
 ;;;; Hooks
 
@@ -95,12 +95,12 @@
   (exwm-workspace-rename-buffer exwm-class-name))
 
 (defun my-exwm-fix-initial-workspace-glitch ()
-    (run-at-time
-     0.3 nil
-     (lambda ()
-       (when (> exwm-workspace-number 1)
-         (exwm-workspace-switch-create 1)
-         (exwm-workspace-switch-create 0)))))
+  (run-at-time
+   0.3 nil
+   (lambda ()
+     (when (> exwm-workspace-number 1)
+       (exwm-workspace-switch-create 1)
+       (exwm-workspace-switch-create 0)))))
 
 (add-hook 'exwm-update-class-hook
           'my-exwm-workspace-rename-buffer-hook)
