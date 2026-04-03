@@ -1,5 +1,0 @@
-#!/bin/bash
-
-pid=$(xdotool getactivewindow getwindowpid)
-cmd=$(ps --no-headers -o cmd --pid "$pid")
-jumpapp "$@" "$cmd"
