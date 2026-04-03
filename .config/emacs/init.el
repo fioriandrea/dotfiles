@@ -271,7 +271,10 @@ library; tries to catch any error with `condition-case-unless-debug`."
                ("<left>" . tab-bar-history-back)
                ("<right>" . tab-bar-history-forward))
   :custom
-  (tab-bar-show 1)
+  (tab-bar-mode t)
+  (tab-bar-show t)
+  (tab-bar-tab-hints t)
+  (tab-bar-select-tab-modifiers '(meta))
   (tab-bar-history-mode t)
   (tab-bar-history-limit 30)
   :config
