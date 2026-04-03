@@ -557,6 +557,7 @@ loadable library."
   (dired-auto-revert-buffer 'dired-directory-changed-p)
   (dired-listing-switches "-alh")
   (dired-mouse-drag-files t)
+  (dired-free-space 'separate)
   (dired-dwim-target t))
 
 (use-package wdired
