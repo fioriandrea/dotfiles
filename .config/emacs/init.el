@@ -56,23 +56,6 @@
                'find-tag-default-as-regexp
                'grep-regexp-history))
 
-(defmacro my-with-fn-overrides (specs &rest body)
-  (declare (indent 1))
-  `(cl-letf*
-       ,(mapcan
-         (lambda (spec)
-           (pcase-let ((`(,fndef ,wrapperdef) spec)
-                       (orig (make-symbol "orig"))
-                       (fn (make-symbol "fn"))
-                       (wrapper (make-symbol "wrapper")))
-             `((,fn ,fndef)
-               (,wrapper ,wrapperdef)
-               (,orig (symbol-function ,fn))
-               ((symbol-function ,fn)
-                (apply-partially ,wrapper ,orig)))))
-         specs)
-     ,@body))
-
 ;;;;; Find
 
 (defun my-find-files (directory regexp &optional dir-filter)
@@ -102,19 +85,20 @@
                  (lambda (parent file)
                    (not (member file vc-directory-exclusion-list)))))
 
-(defmacro my-with-project-files-fallback (&rest args)
+(defmacro my-with-project-files-fallback (&rest body)
   (declare (indent 1))
-  `(my-with-fn-overrides
-       (('project-files
-         (lambda (orig project &optional dirs)
-           (condition-case err
-               (apply orig (list project dirs))
-             (error
-              (message "project-files error: %S" err)
-              (mapcan (lambda (d)
-                        (my-find-files-excluding-vc d "."))
-                      (or dirs (list (project-root project)))))))))
-     ,@args))
+  (let ((orig (make-symbol "orig")))
+    `(cl-letf* ((,orig (symbol-function 'project-files))
+                ((symbol-function 'project-files)
+                 (lambda (project &optional dirs)
+                   (condition-case err
+                       (apply ,orig (list project dirs))
+                     (error
+                      (message "project-files error: %S" err)
+                      (mapcan (lambda (d)
+                                (my-find-files-excluding-vc d "."))
+                              (or dirs (list (project-root project)))))))))
+       ,@body)))
 
 (defun my-project-find-file (&optional include-all)
   (interactive "P")
