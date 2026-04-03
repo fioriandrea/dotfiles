@@ -582,6 +582,8 @@ is already provided or corresponds to a loadable library."
   (magit-diff-mode . (lambda () (setq truncate-lines nil)))
   (magit-status-mode . (lambda () (setq truncate-lines nil)))
   :custom
+  (magit-section-initial-visibility-alist '((stashes . hide)
+                                            (tags . hide)))
   (magit-buffer-name-format "*%M%v*:%t")
   (magit-uniquify-buffer-names t)
   (magit-define-global-key-bindings nil)
