@@ -230,6 +230,7 @@ provided or corresponds to a loadable library."
   (native-comp-async-report-warnings-errors 'silent)
   (set-mark-command-repeat-pop t)
   (view-read-only nil)
+  (global-subword-mode t)
   (global-so-long-mode t)
   (electric-pair-mode t)
   (sentence-end-double-space t)
