@@ -124,14 +124,11 @@
 
 ;;;; Grep
 
-(defun my-grep-files (files regexp &optional insert-literally)
+(defun my-grep-files (files regexp)
   "Recursively search FILES for REGEXP.  Returns list with results."
   (require 'cl-lib)
   (defvar my-grep--follow-links t)
-  (let ((results nil)
-        (insert-file-contents-fn (if insert-literally
-                                     #'insert-file-contents-literally
-                                   #'insert-file-contents)))
+  (let ((results nil))
     (cl-labels
         ((recursive-search (files)
            (dolist (file files)
@@ -143,8 +140,7 @@
                          (recursive-search
                           (directory-files
                            file t directory-files-no-dot-files-regexp))))
-                   (funcall insert-file-contents-fn
-                            file nil nil nil 'if-regular)
+                   (insert-file-contents file nil nil nil 'if-regular)
                    (goto-char (point-min))
                    (let ((prev-line -1)
                          (prev-text nil))
@@ -208,27 +204,23 @@
                                        start)
                                       len))))))
 
-(defun my-grep-xref-fetcher (regexp files &optional insert-literally)
+(defun my-grep-xref-fetcher (regexp files)
   (unless files
     (user-error "Empty file list"))
-  (let* ((matches (my-grep-files files regexp insert-literally))
+  (let* ((matches (my-grep-files files regexp))
          (xrefs (my-grep-matches-to-xref matches)))
     (unless xrefs
       (user-error "No matches for: %s" regexp))
     xrefs))
 
-(defun my-grep-xrefs-backend (regexp files &optional insert-literally)
+(defun my-grep-xrefs-show (regexp files)
   (require 'xref)
   (xref-show-xrefs
    (apply-partially
-    #'my-grep-xref-fetcher regexp files insert-literally)
+    #'my-grep-xref-fetcher regexp files)
    nil))
 
-(defun my-grep-xrefs-insert-literally-backend (regexp files)
-  (my-grep-xrefs-backend regexp files :literally))
-
 (defvar my-grep-file-regexp-history nil)
-(defvar my-grep-backend-function #'my-grep-xrefs-backend)
 
 (defun my-grep-read-file-regexp ()
   (read-regexp "File name regexp"
@@ -240,9 +232,9 @@
     (my-read-regexp-default)
     (my-grep-read-file-regexp)
     (my-read-directory-name-default)))
-  (funcall my-grep-backend-function
-           regexp (my-find-lisp-find-files-excluding-vc
-                   dir file-regexp)))
+  (my-grep-xrefs-show regexp
+                      (my-find-lisp-find-files-excluding-vc
+                       dir file-regexp)))
 
 (defun my-project-find-regexp (regexp)
   (interactive (list (my-read-regexp-default)))
@@ -254,14 +246,13 @@
            (default-directory (project-root pr))
            (files-all (my-project-files pr))
            (files (seq-filter #'file-regular-p files-all)))
-      (funcall my-grep-backend-function regexp files))))
+      (my-grep-xrefs-show regexp files))))
 
 (defun my-dired-do-find-regexp (regexp)
   (interactive (list (read-regexp "Find regexp"
                                   nil 'dired-regexp-history))
                dired-mode)
-  (funcall my-grep-backend-function
-           regexp (dired-get-marked-files)))
+  (my-grep-xrefs-show regexp (dired-get-marked-files)))
 
 (defun my-dired-do-occur (regexp &optional nlines)
   (interactive (occur-read-primary-args) dired-mode)
