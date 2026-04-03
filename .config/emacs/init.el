@@ -488,8 +488,6 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (project-vc-extra-root-markers '(".dir-locals.el")))
 
 (use-package dired
-  :hook
-  (dired-mode . dired-hide-details-mode)
   :custom
   (dired-clean-confirm-killing-deleted-buffers t)
   (dired-clean-up-buffers-too t)
