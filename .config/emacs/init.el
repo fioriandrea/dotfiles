@@ -183,6 +183,7 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (view-read-only nil)
   (global-subword-mode t)
   (global-so-long-mode t)
+  (electric-pair-mode t)
   (sentence-end-double-space t)
   (ring-bell-function 'ignore)
   (truncate-lines nil)
@@ -217,12 +218,6 @@ library; tries to catch any error with `condition-case-unless-debug`."
                             (my-delete-autosave-opened-files)
                             t)))
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
-
-(use-package elec-pair
-  :custom
-  (electric-pair-mode t)
-  (electric-pair-inhibit-predicate
-   'electric-pair-conservative-inhibit))
 
 (use-package help
   :custom
