@@ -315,6 +315,9 @@ corresponds to a loadable library."
   (help-window-select t)
   (help-window-keep-selected t))
 
+(use-package tabulated-list
+  :hook (tabulated-list-mode . hl-line-mode))
+
 (use-package whitespace
   :bind
   ("C-c s m" . whitespace-mode)
