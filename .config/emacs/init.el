@@ -310,6 +310,10 @@ library; tries to catch any error with `condition-case-unless-debug`."
 (use-package recentf
   :bind
   ("C-c f" . recentf-open)
+  ("C-c 4 f" . (lambda ()
+                 (interactive)
+                 (other-window-prefix)
+                 (call-interactively 'recentf-open)))
   :custom
   (recentf-mode t)
   (recentf-max-saved-items 200))
