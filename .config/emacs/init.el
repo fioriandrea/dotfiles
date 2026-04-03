@@ -411,6 +411,10 @@ corresponds to a loadable library."
                  (interactive)
                  (tramp-cleanup-all-connections)
                  (message "Tramp cleaned up all connections")))
+  ("C-c t b" . (lambda ()
+                 (interactive)
+                 (tramp-cleanup-all-buffers)
+                 (message "Tramp cleaned up all buffers")))
   ("C-c t c" . tramp-cleanup-connection)
   :custom
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
