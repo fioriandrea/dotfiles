@@ -383,7 +383,6 @@ tries to catch any error with `condition-case-unless-debug'."
   (debugger-stack-frame-as-list t)
   (confirm-kill-emacs 'y-or-n-p)
   (native-comp-async-report-warnings-errors 'silent)
-  (set-mark-command-repeat-pop t)
   (view-read-only nil)
   (global-subword-mode t)
   (global-so-long-mode t)
@@ -641,6 +640,7 @@ tries to catch any error with `condition-case-unless-debug'."
 (use-package repeat
   :custom
   (repeat-mode t)
+  (set-mark-command-repeat-pop t)
   (repeat-exit-key "<escape>"))
 
 (use-package comint
