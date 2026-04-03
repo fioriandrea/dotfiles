@@ -22,7 +22,7 @@ xdg_config_home=${XDG_CONFIG_HOME:-$HOME/.config}
 # additional files to be sourced
 bashconfdir=$xdg_config_home/bash/
 [[ -r $bashconfdir ]] || return
-for conffile in "$bashconfdir"/?*.bash; do
+for conffile in "$bashconfdir"/*; do
     if [[ -f $conffile ]] && [[ -x $conffile ]]; then
         source "$conffile"
     fi
