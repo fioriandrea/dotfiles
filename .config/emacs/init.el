@@ -117,66 +117,77 @@
 (require 'xref)
 
 (defun my-grep-files (files regexp)
-  (let ((results nil))
-    (cl-labels
-        ((recursive-search (files)
-           (dolist (file files)
-             (condition-case err
-                 (if (file-directory-p file)
-                     (recursive-search (my-find-files file "."))
-                   (insert-file-contents file nil nil nil 'if-regular)
-                   (goto-char (point-min))
-                   (let ((filematches nil)
-                         (prev-line -1))
-                     (while (and (not (eobp))
-                                 (re-search-forward regexp nil t))
-                       (let* ((line (line-number-at-pos))
-                              (line-beg (line-beginning-position))
-                              (match-beg (match-beginning 0))
-                              (match-line-start (- match-beg line-beg))
-                              (match-len (- (match-end 0) match-beg)))
-                         (when (/= prev-line line)
-                           (push (list :text (buffer-substring-no-properties
-                                              line-beg (line-end-position))
-                                       :line line
-                                       :matches nil)
-                                 filematches)
-                           (setq prev-line line))
-                         (push (list :match-line-start match-line-start
-                                     :match-len match-len)
-                               (plist-get (car filematches) :matches))
-                         (when (= match-len 0)
-                           (forward-char 1))))
-                     (when filematches
-                       (setq filematches (nreverse filematches))
-                       (cl-loop for m in filematches do
-                                (plist-put m :matches
-                                           (nreverse (plist-get m :matches))))
-                       (push (cons file filematches) results))))
-               (file-error
-                (message "my-grep-files: failed to grep %S because of %S"
-                         file err))))))
-      (with-temp-buffer
-        (recursive-search files)))
-    (nreverse results)))
+  (with-temp-buffer
+    (my-grep--files-1 files regexp)))
+
+(defun my-grep--files-1 (files regexp)
+  (cl-loop for file in files nconc
+           (condition-case err
+               (if (file-directory-p file)
+                   (my-grep--files-1 (my-find-files file ".")
+                                     regexp)
+                 (let ((res (my-grep--one-file file regexp)))
+                   (when res
+                     (list (cons file res)))))
+             (file-error
+              (message "my-grep-files: failed to grep %S because of %S"
+                       file err)
+              nil))))
+
+(defun my-grep--one-file (file regexp)
+  (insert-file-contents file nil nil nil 'if-regular)
+  (goto-char (point-min))
+  (let ((lines (list (cons -1 "")))
+        (matches nil))
+    ;; Find matches
+    (while (and (not (eobp))
+                (re-search-forward regexp nil t))
+      (let* ((line (line-number-at-pos))
+             (line-beg (line-beginning-position))
+             (match-beg (match-beginning 0))
+             (match-line-start (- match-beg line-beg))
+             (match-len (- (match-end 0) match-beg)))
+        (when (/= (caar lines) line)
+          (push (cons line (buffer-substring-no-properties
+                            line-beg (line-end-position)))
+                lines))
+        (push (cons line (list (cons :match-line-start match-line-start)
+                               (cons :match-len match-len)))
+              matches)
+        (when (= match-len 0)
+          (forward-char 1))))
+    ;; Group matches
+    (let ((grouped (make-hash-table)))
+      (cl-loop for (linenr . match) in matches do
+               (push match
+                     (gethash linenr grouped '())))
+      (cl-loop with matches-by-line = ()
+               for (linenr . linetext) in lines
+               unless (= linenr -1)
+               do (push (list
+                         (cons :line linenr)
+                         (cons :text linetext)
+                         (cons :matches (gethash linenr grouped)))
+                        matches-by-line)
+               finally return matches-by-line))))
 
 (defun my-grep-matches-to-xref (matches)
   (cl-loop
    for (file . file-matches) in matches
    nconc (cl-loop
           for file-match in file-matches
-          for line = (plist-get file-match :line)
-          for text = (plist-get file-match :text)
+          for line = (alist-get :line file-match)
+          for text = (alist-get :text file-match)
           for textlen = (length text)
-          for line-matches = (plist-get file-match :matches)
+          for line-matches = (alist-get :matches file-match)
           nconc (nreverse
                  (cl-loop
                   with prev-start = textlen
                   with first-match = (car line-matches)
-                  with first-start = (plist-get first-match :match-line-start)
+                  with first-start = (alist-get :match-line-start first-match)
                   for line-match in (nreverse line-matches)
-                  for start = (plist-get line-match :match-line-start)
-                  for len = (plist-get line-match :match-len)
+                  for start = (alist-get :match-line-start line-match)
+                  for len = (alist-get :match-len line-match)
                   for end = (+ start len)
                   for sumstart = (if (= start first-start)
                                      0 start)
