@@ -472,6 +472,7 @@ corresponds to a loadable library."
   (fido-vertical-mode t)
   (minibuffer-default-prompt-format "")
   (tab-always-indent 'complete)
+  (completion-auto-select nil)
   (completions-max-height 12)
   (completion-show-help nil)
   (completion-auto-help 'visible)
@@ -525,20 +526,21 @@ corresponds to a loadable library."
   :if (locate-library "completion-preview")
   :custom
   (global-completion-preview-mode t)
-  (global-completion-preview-modes '(prog-mode comint-mode))
+  ;; see https://emacs-china.org/t/emacs-builtin-mode/11937/156?page=8
+  (completion-preview-exact-match-only t)
   :bind
   (:map completion-preview-active-mode-map
         ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2025-03/msg00725.html
         ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2025-03/msg01431.html
-        ;; Swapped M-i and C-i for behaviour similar to default completion bindings
-        ("M-i" . (lambda ()
-                   (interactive)
-                   (let ((pcomplete-termination-string ""))
-                     (completion-preview-insert))))
         ("C-i" . (lambda ()
                    (interactive)
                    (let ((pcomplete-termination-string ""))
+                     (completion-preview-insert))))
+        ("M-i" . (lambda ()
+                   (interactive)
+                   (let ((pcomplete-termination-string ""))
                      (completion-preview-complete))))
+
         ("M-n" . completion-preview-next-candidate)
         ("M-p" . completion-preview-prev-candidate)))
 
