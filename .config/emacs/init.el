@@ -585,6 +585,7 @@ is already provided or corresponds to a loadable library."
   (magit-buffer-name-format "*%M%v*:%t")
   (magit-uniquify-buffer-names t)
   (magit-define-global-key-bindings nil)
+  (magit-refresh-status-buffer nil)
   (magit-branch-direct-configure nil)
   (magit-commit-show-diff nil)
   (magit-diff-refine-hunk t)
