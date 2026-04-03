@@ -92,7 +92,7 @@
 (keymap-set exwm-mode-map "C-q" 'exwm-input-send-next-key)
 
 (setopt exwm-input-global-keys
-        `((,(kbd "s-r") . exwm-reset)
+        `((,(kbd "s-j") . exwm-reset)
           (,(kbd "s-i") . exwm-input-toggle-keyboard)
           (,(kbd "s-w") . exwm-workspace-switch)
           (,(kbd "s-<left>") . my-exwm-workspace-prev)
