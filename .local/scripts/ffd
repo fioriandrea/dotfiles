@@ -6,6 +6,7 @@ findall() {
 
 findall "$@" | fzf --ansi \
     --prompt="$PWD/" \
-    --multi \
+    --no-multi \
     --read0 \
-    --preview=$'fpreviewer -f {}' | xargs printf '%s:1:0\n'
+    --print0 \
+    --preview=$'fpreviewer -f {}' | xargs -0 printf '%s:1:0\0'

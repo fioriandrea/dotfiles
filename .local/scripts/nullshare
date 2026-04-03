@@ -45,7 +45,7 @@ delete_tmp() {
     [ -d "$tmpDir" ] && rm -rf "$tmpDir"
 }
 
-[ "$#" -eq 0 ] && print_help && exit 0
+[ "$#" -eq 0 ] && print_help && exit 1
 
 tflag=
 xflag=
