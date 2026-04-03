@@ -456,22 +456,26 @@ loadable library."
    (cons 'remote-file-error debug-ignored-errors)))
 
 (use-package icomplete
-  :init
-  ;; https://github.com/minad/vertico/blob/2.3/vertico.el#L590
-  (defun my-icomplete-minibuffer-truncate-lines-hook ()
-    (setq-local truncate-lines (< (point) (* 0.85 (window-width)))))
+  :preface
   (defun my-icomplete-minibuffer-setup ()
     ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
     ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
-    (setq-local completion-styles '(flex partial-completion))
+    (setq-local completion-styles
+                '(flex partial-completion))
     ;; https://lists.nongnu.org/archive/html/bug-gnu-emacs/2024-10/msg00743.html
-    (add-hook 'post-command-hook #'my-icomplete-minibuffer-truncate-lines-hook nil 'local))
-  ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Scroll-Bars.html
-  (defun my-disable-minibuffer-scrollbar ()
-    (set-window-scroll-bars
-     (minibuffer-window) 0 nil 0 nil t))
+    (add-hook 'post-command-hook
+              (lambda ()
+                ;; https://github.com/minad/vertico/blob/2.3/vertico.el#L590
+                (setq-local truncate-lines
+                            (< (point) (* 0.85 (window-width)))))
+              nil
+              'local))
   :config
   (when (boundp 'scroll-bar-mode)
+    ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Scroll-Bars.html
+    (defun my-disable-minibuffer-scrollbar ()
+      (set-window-scroll-bars
+       (minibuffer-window) 0 nil 0 nil t))
     (my-disable-minibuffer-scrollbar)
     (add-hook 'after-make-frame-functions
               (lambda (frame)
