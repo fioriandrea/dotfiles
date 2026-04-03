@@ -153,10 +153,9 @@
       (kill-buffer))))
 
 (defmacro my-use-package (pack &rest args)
-  "Minimal `use-package` variant supporting :disabled :preface :custom
-:init :config :demand :if :when; defaults: :ensure nil, :demand nil,
-:defer t.  Expands only if PACK names a provided feature or loadable
-library; tries to catch any error with `condition-case-unless-debug`."
+  "Minimal `use-package' variant supporting a limited set of options.
+Expands only if PACK names a provided feature or loadable library;
+tries to catch any error with `condition-case-unless-debug'."
   (declare (indent defun))
   (let (customs
         disabled
