@@ -93,7 +93,7 @@
   :type 'boolean
   :group 'af-grep)
 
-(defun af-grep-files (files regexp)
+(defun af-grep-match-files (files regexp)
   (let ((insert-file-contents-function (if af-grep-insert-files-literally
                                            #'insert-file-contents-literally
                                          #'insert-file-contents)))
@@ -107,7 +107,7 @@
                             (when res
                               (list (cons file res)))))
                       (file-error
-                       (message "af-grep-files: failed to grep %S because of %S"
+                       (message "af-grep-match-files: failed to grep %S because of %S"
                                 file err)
                        nil))))
          (process-one-file (file)
@@ -184,7 +184,7 @@
   (let ((fetcher (lambda (regexp files)
                    (unless files
                      (user-error "Empty file list"))
-                   (let* ((matches (af-grep-files files regexp))
+                   (let* ((matches (af-grep-match-files files regexp))
                           (xrefs (af-grep-matches-to-xref matches)))
                      (unless xrefs
                        (user-error "No matches for: %s" regexp))
