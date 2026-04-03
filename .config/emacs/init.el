@@ -39,89 +39,50 @@
 
 ;;;; my-use-package
 
-(defun my-use-package--collect-lists (key val acc rest)
-  (cond
-   ((and val (listp val) (listp (car val)))
-    (list (append acc val) rest))
-   ((and val (listp val))
-    (list (cons val acc) (cons key rest)))
-   (t
-    (list acc (cons val rest)))))
-
-(defun my-use-package--collect-sexprs (key val acc rest)
-  (if (keywordp val)
-      (list acc (cons val rest))
-    (list (cons val acc) (cons key rest))))
-
 (defmacro my-use-package (pack &rest args)
   "Minimal `use-package' variant supporting a limited set of options.
 Expands only if PACK names a provided feature or loadable library.
 The expanded code catches any error during package setup."
   (declare (indent defun))
-  (require 'cl-lib)
   (let ((customs nil)
-        (custom-faces nil)
         (configs nil)
         (inits nil)
         (disabled nil)
         (demand nil)
-        (rest args)
         (condition
          `((or (featurep ',pack)
                (locate-library ,(symbol-name pack))))))
     ;; Parse arguments
-    (cl-loop
-     while (and rest (cdr rest))
-     for key = (pop rest)
-     for val = (pop rest)
-     do
-     (pcase key
-       (:disabled
-        (setq disabled t
-              rest nil)
-        (cl-return))
-       ((or :if :when)
-        (push val condition))
-       (:demand
-        (setq demand val))
-       (:custom-face
-        (cl-destructuring-bind (new new-rest)
-            (my-use-package--collect-lists key val custom-faces rest)
-          (setq custom-faces new
-                rest new-rest)))
-       (:custom
-        (cl-destructuring-bind (new new-rest)
-            (my-use-package--collect-lists key val customs rest)
-          (setq customs new
-                rest new-rest)))
-       (:init
-        (cl-destructuring-bind (new new-rest)
-            (my-use-package--collect-sexprs key val inits rest)
-          (setq inits new
-                rest new-rest)))
-       (:config
-        (cl-destructuring-bind (new new-rest)
-            (my-use-package--collect-sexprs key val configs rest)
-          (setq configs new
-                rest new-rest)))
-       (_
-        (push val rest))))
+    (while args
+      (let ((key (pop args)))
+        (if (keywordp key)
+            (let ((body nil))
+              ;; Collect all arguments until the next keyword
+              (while (and args (not (keywordp (car args))))
+                (push (pop args) body))
+              (setq body (nreverse body))
+              ;; Match keyword
+              (pcase key
+                (:disabled (setq disabled t))
+                ((or :if :when) (setq condition (append condition body)))
+                (:demand (setq demand (car body)))
+                (:custom
+                 (dolist (item body)
+                   (if (and (listp item) (listp (car item)))
+                       ;; List of lists: ((a 1) (b 2))
+                       (setq customs (append customs item))
+                     ;; Single setting: (a 1)
+                     (setq customs (append customs (list item))))))
+                (:init
+                 (setq inits (append inits body)))
+                (:config
+                 (setq configs (append configs body)))))
+          nil)))
     ;; Expansion
     (unless disabled
       `(when (condition-case-unless-debug nil
                  (and ,@condition)
                (error nil))
-         ;; :custom-face
-         ,(when custom-faces
-            `(progn
-               ,@(mapcar
-                  (lambda (x)
-                    `(condition-case-unless-debug err
-                         (apply #'face-spec-set (backquote ,x))
-                       (error
-                        (warn "Failed to customize face %S because of %S"
-                              ',x err))))
-                  (nreverse custom-faces))))
          ;; :custom
          ,(when customs
             `(progn
@@ -132,11 +93,11 @@ The expanded code catches any error during package setup."
                        (error
                         (warn "Failed to customize %S because of %S"
                               ',x err))))
-                  (nreverse customs))))
+                  customs)))
          ;; :init
          ,(when inits
             `(condition-case-unless-debug err
-                 (progn ,@(nreverse inits))
+                 (progn ,@inits)
                (error
                 (warn "Failed to :init for package %S because of %S"
                       ',pack err))))
@@ -148,7 +109,7 @@ The expanded code catches any error during package setup."
             `(eval-after-load ',pack
                (quote
                 ,`(condition-case-unless-debug err
-                      (progn ,@(nreverse configs))
+                      (progn ,@configs)
                     (error
                      (warn "Failed to :config for package %S because of %S"
                            ',pack err))))))))))
