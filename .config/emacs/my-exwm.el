@@ -59,16 +59,18 @@
 ;;;; Keys
 
 (setopt exwm-input-prefix-keys
-        (list (kbd "C-x")
-              (kbd "C-u")
-              (kbd "C-h")
-              (kbd "M-x")
-              (kbd "M-`")
-              (kbd "M-&")
-              (kbd "M-:")
-              (kbd "M-!")
-              (kbd "C-g")
-              (kbd "C-[")))
+        `(,(kbd "C-x")
+          ,(kbd "C-u")
+          ,(kbd "C-h")
+          ,(kbd "M-x")
+          ,(kbd "M-`")
+          ,(kbd "M-&")
+          ,(kbd "M-:")
+          ,(kbd "M-!")
+          ,(kbd "C-g")
+          ,(kbd "C-[")
+          ,@(cl-loop for i from 0 upto 9
+                     collect (kbd (format "M-%d" i)))))
 
 (setopt exwm-input-simulation-keys
         `((,(kbd "C-c C-c") . ,(kbd "C-c"))))
