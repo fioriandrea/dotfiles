@@ -470,8 +470,6 @@ auto-revert. Taken from doomemacs."
   ;; https://stackoverflow.com/a/47021266
   (tramp-backup-directory-alist backup-directory-alist)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
-  ;; https://robbmann.io/emacsd/
-  ;; https://git.sr.ht/~cfeeley/doom-emacs-config/commit/1cb3f6704f38f9dbc64ff434866b5e2537d8c2ba
   (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors)))
 
 (use-package icomplete
