@@ -104,23 +104,25 @@
          (message "my-grep-files: failed to grep %S because of %S"
                   file err))))))
 
-(defun my-grep-xref-matches-in-files (regexp files)
+(defun my-grep-matches-to-xref (matches)
   (require 'cl-lib)
-  (let ((matches (my-grep-files files regexp))
-        (grouped (make-hash-table :test 'equal)))
+  (let ((grouped (make-hash-table :test 'equal)))
     (dolist (match matches)
       (let ((key (cons (plist-get match :file)
                        (plist-get match :line))))
         (push match (gethash key grouped '()))))
     (cl-loop for matches-being being the hash-values of grouped
-             for first-match = (car (last matches-being))
-             for text = (plist-get first-match :text)
+             for last-match = (car matches-being)
+             for last-start = (plist-get last-match :match-line-start)
+             for text = (plist-get last-match :text)
              nconc (cl-loop with prev-end = 0
                             for match in (nreverse matches-being)
                             for start = (plist-get match :match-line-start)
                             for len = (plist-get match :match-len)
                             for end = (+ start len)
-                            for summary = (substring text prev-end end)
+                            for summary = (if (= start last-start)
+                                              (substring text prev-end)
+                                            (substring text prev-end end))
                             do (add-face-text-property
                                 (- start prev-end) (- end prev-end)
                                 'isearch t summary)
@@ -136,7 +138,8 @@
 (defun my-grep-xref-fetcher (regexp files)
   (unless files
     (user-error "Empty file list"))
-  (let ((xrefs (my-grep-xref-matches-in-files regexp files)))
+  (let* ((matches (my-grep-files files regexp))
+         (xrefs (my-grep-matches-to-xref matches)))
     (unless xrefs
       (user-error "No matches for: %s" regexp))
     xrefs))
