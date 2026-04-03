@@ -5,7 +5,7 @@
 xmodmap="xmodmap"
 xrdb="xrdb"
 
-userxinitdir="$HOME/.config/x11"
+userxinitdir="$HOME/.config/xinit"
 userresources="$HOME/.Xresources"
 userresources2="$HOME/.Xresources-2"
 usermodmap="$HOME/.Xmodmap"
