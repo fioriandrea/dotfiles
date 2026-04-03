@@ -201,7 +201,6 @@ The expanded code catches any error during package setup."
   (inhibit-startup-screen t)
   (tool-bar-mode nil)
   (menu-bar-mode t)
-  (next-error-message-highlight t)
   (debugger-stack-frame-as-list t)
   (confirm-kill-emacs 'y-or-n-p)
   (native-comp-async-report-warnings-errors 'silent)
@@ -357,6 +356,7 @@ The expanded code catches any error during package setup."
 
 (use-package compile
   :custom
+  (next-error-message-highlight t)
   (compilation-scroll-output 'first-error))
 
 (use-package diff-mode
