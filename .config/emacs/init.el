@@ -365,8 +365,7 @@ corresponds to a loadable library."
   (history-delete-duplicates t)
   (savehist-save-minibuffer-history t)
   (savehist-additional-variables
-   '(kill-ring
-     search-ring
+   '(search-ring
      regexp-search-ring)))
 
 (use-package compile
