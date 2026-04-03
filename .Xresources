@@ -1,8 +1,11 @@
-!! XTerm
+! https://wiki.archlinux.org/title/HiDPI#X_Resources
+Xft.dpi: 192
+Xcursor.size: 60
 
+!! XTerm
 XTerm*termName: xterm-256color
 XTerm*renderFont: true
-XTerm*faceName: xft:Fragment Mono:style=Medium:size=24, Monospace:style=Medium:size=24
+XTerm*faceName: xft:Fragment Mono:style=Medium:size=18, Monospace:style=Medium:size=18
 XTerm*utf8: true
 XTerm*locale: false
 XTerm*metaSendsEscape: true

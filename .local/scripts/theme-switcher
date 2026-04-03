@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+# References:
+# https://wiki.archlinux.org/title/Dark_mode_switching
+# https://wiki.archlinux.org/title/XDG_Desktop_Portal
+
+set -euo pipefail
+
+readonly schema="org.gnome.desktop.interface"
+readonly key="color-scheme"
+readonly dark_value="prefer-dark"
+readonly light_value="default"
+
+current_theme() {
+    gsettings get "$schema" "$key" | tr -d "'"
+}
+
+set_theme() {
+    gsettings set "$schema" "$key" "$1"
+}
+
+usage() {
+    cat <<'EOF'
+usage: theme-switcher [dark|light|toggle|current]
+EOF
+}
+
+case "${1:-toggle}" in
+    dark)
+        set_theme "$dark_value"
+        ;;
+    light)
+        set_theme "$light_value"
+        ;;
+    toggle)
+        if [[ "$(current_theme)" == "$dark_value" ]]; then
+            set_theme "$light_value"
+        else
+            set_theme "$dark_value"
+        fi
+        ;;
+    current)
+        current_theme
+        ;;
+    -h|--help|help)
+        usage
+        ;;
+    *)
+        usage >&2
+        exit 1
+        ;;
+esac
