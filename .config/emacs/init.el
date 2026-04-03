@@ -207,8 +207,8 @@ Expands only when PACK is loadable, and reports setup errors."
   (uniquify-strip-common-suffix nil)
   (uniquify-after-kill-buffer-p t)
   ;; https://emacs.stackexchange.com/questions/68499/automatically-uniquify-certain-buffers
-  (uniquify-min-dir-content 3)
-  (uniquify-buffer-name-style 'reverse)
+  (uniquify-min-dir-content 2)
+  (uniquify-buffer-name-style 'post-forward-angle-brackets)
   (uniquify-trailing-separator-p t))
 
 (use-package isearch
