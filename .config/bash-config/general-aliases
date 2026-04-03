@@ -1,0 +1,9 @@
+alias ls='ls --color=auto'
+alias la='ls -a'
+alias ll='ls -la'
+alias l='ls'
+alias l.="ls -A | grep -E '^\.'"
+alias cd..='cd ..'
+alias pdw="pwd"
+alias grep='grep --color=auto'
+alias diff='diff --color=auto'
