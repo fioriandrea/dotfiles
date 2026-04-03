@@ -536,8 +536,8 @@ Expands only when PACK is loadable, and reports setup errors."
 
 ;;;; custom-file
 
-(defconst custom-file
-  (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-file
+      (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load-file custom-file))
 
