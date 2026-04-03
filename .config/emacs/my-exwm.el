@@ -18,9 +18,6 @@
 (display-time-mode 1)
 (display-battery-mode 1)
 
-(defun my-exwm-run (cmd)
-  (start-process-shell-command cmd nil cmd))
-
 (defun my-exwm-run-sync (cmd)
   (call-process-shell-command cmd))
 
@@ -98,9 +95,6 @@
 (defun my-exwm-mic-status ()
   (my-exwm-format-audio-status "Microphone" "@DEFAULT_AUDIO_SOURCE@"))
 
-(defun my-exwm-start-session-processes ()
-  (my-exwm-run "pgrep -x redshift || redshift"))
-
 (defun my-exwm-start-systemtray ()
   (exwm-systemtray-mode 1))
 
@@ -160,7 +154,6 @@
           (lambda ()
             (exwm-workspace-rename-buffer exwm-class-name)))
 
-(add-hook 'exwm-init-hook #'my-exwm-start-session-processes)
 (add-hook 'exwm-init-hook #'my-exwm-fix-initial-workspace-glitch)
 ;; (add-hook 'exwm-init-hook #'my-exwm-start-systemtray)
 (add-hook 'exwm-init-hook #'my-exwm-update-workspace-indicator)
