@@ -164,9 +164,10 @@ library; tries to catch any error with `condition-case-unless-debug`."
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
   :bind
-  ("C-x f" . nil)
-  ("C-x C-b" . ibuffer)
-  ("C-c x" . window-swap-states)
+  (("C-x f" . nil)
+   ("C-x C-b" . ibuffer)
+   :map ctl-x-4-map
+   ("t" . window-swap-states))
   :hook
   ((prog-mode text-mode conf-mode) . display-line-numbers-mode)
   (text-mode . visual-line-mode)
