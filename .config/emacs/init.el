@@ -168,7 +168,7 @@ The expanded code catches any error during package setup."
 
 (defconst my-emacs-autosave-dir
   (file-name-as-directory
-   (expand-file-name "autosave" user-emacs-directory)))
+   (expand-file-name "autosaves" user-emacs-directory)))
 (unless (file-directory-p my-emacs-autosave-dir)
   (make-directory my-emacs-autosave-dir 'parents))
 
