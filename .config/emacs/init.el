@@ -537,20 +537,6 @@ corresponds to a loadable library."
   (magit-diff-refine-ignore-whitespace nil)
   (magit-auto-revert-mode nil))
 
-(use-package dired-subtree
-  :if (locate-library "dired-subtree")
-  :after dired
-  :bind
-  (:map dired-mode-map
-        ("TAB" . dired-subtree-toggle))
-  :config
-  (set-face-attribute 'dired-subtree-depth-1-face nil :background 'unspecified)
-  (set-face-attribute 'dired-subtree-depth-2-face nil :background 'unspecified)
-  (set-face-attribute 'dired-subtree-depth-3-face nil :background 'unspecified)
-  (set-face-attribute 'dired-subtree-depth-4-face nil :background 'unspecified)
-  (set-face-attribute 'dired-subtree-depth-5-face nil :background 'unspecified)
-  (set-face-attribute 'dired-subtree-depth-6-face nil :background 'unspecified))
-
 (defconst after-file (concat user-emacs-directory "after.el"))
 (when (file-exists-p after-file)
   (load after-file))
