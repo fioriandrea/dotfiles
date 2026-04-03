@@ -552,7 +552,8 @@ loadable library."
   (dired-recursive-copies 'always)
   (dired-auto-revert-buffer 'dired-directory-changed-p)
   (dired-listing-switches "-alh")
-  (dired-mouse-drag-files t))
+  (dired-mouse-drag-files t)
+  (dired-dwim-target t))
 
 (use-package wdired
   :custom
