@@ -5,6 +5,10 @@
 (require 'exwm-systemtray)
 (require 'exwm-workspace)
 
+(defvar my-exwm-brightness-step 0.01)
+(defvar my-exwm-volume-step 0.02)
+(defvar my-exwm-mic-step 0.02)
+
 (defvar my-exwm-path-command-history nil)
 
 (setopt exwm-workspace-number 4
@@ -38,10 +42,15 @@
                      nil t nil 'my-exwm-path-command-history)))
   (start-process command nil command))
 
-(defun my-exwm-shell-fn (cmd)
-  (lambda ()
-    (interactive)
-    (message "%s" (my-trimmed-shell-command-to-string cmd))))
+(defun my-exwm-shell-run (cmd &rest args)
+  (let* ((args (mapcar (lambda (x)
+                         (if (numberp x) (number-to-string x) x))
+                       args))
+         (quoted-args (mapcar #'shell-quote-argument args))
+         (command-line (cons cmd quoted-args))
+         (final-command (string-join command-line " "))
+         (result (my-trimmed-shell-command-to-string final-command)))
+    (message "%s" result)))
 
 (defun my-exwm-start-systemtray ()
   (exwm-systemtray-mode 1))
@@ -75,15 +84,39 @@
                        (start-process-shell-command command nil command)))
           ([?\s-x] . my-exwm-run-from-path)
 
-          ([XF86MonBrightnessUp] . ,(my-exwm-shell-fn "mybrightness up"))
-          ([XF86MonBrightnessDown] . ,(my-exwm-shell-fn "mybrightness down"))
+          ([XF86MonBrightnessUp] . (lambda (arg)
+                                     (interactive "p")
+                                     (my-exwm-shell-run "mybrightness up"
+                                                        (* arg my-exwm-brightness-step))))
+          ([XF86MonBrightnessDown] . (lambda (arg)
+                                       (interactive "p")
+                                       (my-exwm-shell-run "mybrightness down"
+                                                          (* arg my-exwm-brightness-step))))
 
-          ([XF86AudioRaiseVolume] . ,(my-exwm-shell-fn "myvolume up"))
-          ([XF86AudioLowerVolume] . ,(my-exwm-shell-fn "myvolume down"))
-          ([s-XF86AudioRaiseVolume] . ,(my-exwm-shell-fn "myvolume mic-up"))
-          ([s-XF86AudioLowerVolume] . ,(my-exwm-shell-fn "myvolume mic-down"))
-          ([XF86AudioMute] . ,(my-exwm-shell-fn "myvolume mute"))
-          ([XF86AudioMicMute] . ,(my-exwm-shell-fn "myvolume mic-mute"))))
+          ([XF86AudioRaiseVolume] . (lambda (arg)
+                                      (interactive "p")
+                                      (my-exwm-shell-run "myvolume up"
+                                                         (* arg my-exwm-volume-step))))
+          ([XF86AudioLowerVolume] . (lambda (arg)
+                                      (interactive "p")
+                                      (my-exwm-shell-run "myvolume down"
+                                                         (* arg my-exwm-volume-step))))
+
+          ([s-XF86AudioRaiseVolume] . (lambda (arg)
+                                        (interactive "p")
+                                        (my-exwm-shell-run "myvolume mic-up"
+                                                           (* arg my-exwm-mic-step))))
+          ([s-XF86AudioLowerVolume] . (lambda (arg)
+                                        (interactive "p")
+                                        (my-exwm-shell-run "myvolume mic-down"
+                                                           (* arg my-exwm-mic-step))))
+
+          ([XF86AudioMute] . (lambda ()
+                               (interactive)
+                               (my-exwm-shell-run "myvolume mute")))
+          ([XF86AudioMicMute] . (lambda ()
+                                  (interactive)
+                                  (my-exwm-shell-run "myvolume mic-mute")))))
 
 (exwm-wm-mode)
 

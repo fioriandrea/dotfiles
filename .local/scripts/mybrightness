@@ -2,21 +2,28 @@
 
 set -euo pipefail
 
-readonly default_step="1%"
+readonly default_fraction=0.01
 
 usage() {
     cat <<'EOF'
-usage: mybrightness [up|down|status] [STEP]
+usage: mybrightness [up|down|status] [STEP_FRACTION]
 EOF
 }
 
 print_status() {
-    printf 'Brightness: %s\n' "$(brightnessctl -m | cut -d, -f4)"
+    local value
+    value=$(brightnessctl -m | awk -F, '{ printf("%s (%d)\n", $4, $3) }')
+    printf 'Brightness: %s\n' "$value"
 }
 
-step="${2:-$default_step}"
+cmd="${1:-status}"
+step_fraction="${2:-$default_fraction}"
+step_fraction="${step_fraction#-}"
 
-case "${1:-status}" in
+max=$(brightnessctl max)
+step=$(awk -v m="$max" -v f="$step_fraction" 'BEGIN { printf "%d", m*f }')
+
+case "$cmd" in
     up)
         brightnessctl set "+${step}" >/dev/null
         print_status
@@ -27,9 +34,6 @@ case "${1:-status}" in
         ;;
     status)
         print_status
-        ;;
-    -h|--help|help)
-        usage
         ;;
     *)
         usage >&2
