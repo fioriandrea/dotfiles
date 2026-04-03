@@ -1,8 +1,21 @@
 ;;; init.el --- Emacs configuration -*- lexical-binding: t; no-byte-compile: t; -*-
 
-;;; Functions
+;; Copyright (C) Andrea Fiori
+;; This file is NOT part of GNU Emacs.
+;; This file is free software.
 
-;;;; Miscellanea
+;; Author: Andrea Fiori
+;; License: GPLv3
+
+;;; Commentary:
+
+;; My personal Emacs configuration.
+
+;;; Code:
+
+;;;; Functions
+
+;;;;; Miscellanea
 
 (defun my-open-config ()
   (interactive)
@@ -49,7 +62,7 @@
                    'file-name-history
                    (my-file-name-from-context)))
 
-;;;; Find
+;;;;; Find
 
 (defun my-find-lisp-find-files-excluding-vc (directory regexp)
   (require 'find-lisp)
@@ -94,7 +107,7 @@
                         (my-file-name-from-context))))
     (find-file (expand-file-name file root))))
 
-;;;; Grep
+;;;;; Grep
 
 (defun my-grep-files (files regexp)
   "Recursively search FILES for REGEXP.  Returns list with results."
@@ -232,7 +245,7 @@
    (mapcar #'find-file-noselect (dired-get-marked-files))
    regexp nlines))
 
-;;;; my-use-package
+;;;;; my-use-package
 
 (defmacro my-use-package (pack &rest args)
   "Minimal `use-package' variant supporting a limited set of options.
@@ -333,9 +346,9 @@ tries to catch any error with `condition-case-unless-debug'."
   (message "No use-package found, using compatibility shim")
   (defalias 'use-package 'my-use-package))
 
-;;; Configuration
+;;;; Configuration
 
-;;;; Built-in
+;;;;; Built-in
 
 (defconst my-emacs-backup-dir
   (file-name-as-directory
@@ -724,7 +737,7 @@ tries to catch any error with `condition-case-unless-debug'."
   (wdired-create-parent-directories t)
   (wdired-allow-to-redirect-links t))
 
-;;;; External Packages
+;;;;; External Packages
 
 (use-package magit
   :if (locate-library "magit")
@@ -756,7 +769,7 @@ tries to catch any error with `condition-case-unless-debug'."
   (dired-subtree-line-prefix "    ")
   (dired-subtree-use-backgrounds nil))
 
-;;;; custom-file
+;;;;; custom-file
 
 (defconst custom-file
   (expand-file-name "custom.el" user-emacs-directory))
