@@ -541,7 +541,6 @@ library; tries to catch any error with `condition-case-unless-debug`."
                                             (tags . hide)))
   (magit-buffer-name-format "*%M%v*:%t")
   (magit-uniquify-buffer-names t)
-  (magit-bind-magit-project-status nil)
   (magit-define-global-key-bindings 'default)
   (magit-refresh-status-buffer nil)
   (magit-branch-direct-configure nil)
@@ -549,6 +548,7 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (magit-diff-refine-ignore-whitespace nil)
   (magit-auto-revert-mode nil)
   :config
+  (setq magit-bind-magit-project-status nil)
   (setq magit-show-long-lines-warning nil))
 
 (use-package dired-subtree
