@@ -161,15 +161,11 @@ The expanded code catches any error during package setup."
 
 ;;;;; Built-in
 
-(defconst my-emacs-backup-dir
+(defconst my-emacs-auxiliary-files-dir
   (file-name-as-directory
    (abbreviate-file-name
-    (expand-file-name "backups" user-emacs-directory))))
-
-(defconst my-emacs-autosave-dir
-  (file-name-as-directory
-   (expand-file-name "autosaves" user-emacs-directory)))
-(make-directory my-emacs-autosave-dir 'parents)
+    (expand-file-name "auxiliary-files" user-emacs-directory))))
+(make-directory my-emacs-auxiliary-files-dir 'parents)
 
 (defconst my-before-file (concat user-emacs-directory "before.el"))
 (when (file-exists-p my-before-file)
@@ -231,9 +227,9 @@ The expanded code catches any error during package setup."
   (delete-old-versions t)
   (kept-new-versions 10)
   (kept-old-versions 5)
-  (auto-save-file-name-transforms `((".*" ,my-emacs-autosave-dir t)))
-  (backup-directory-alist `(("." . ,my-emacs-backup-dir)))
-  (lock-file-name-transforms `((".*" ,temporary-file-directory sha1)))
+  (auto-save-file-name-transforms `((".*" ,my-emacs-auxiliary-files-dir t)))
+  (lock-file-name-transforms `((".*" ,my-emacs-auxiliary-files-dir t)))
+  (backup-directory-alist `(("." . ,my-emacs-auxiliary-files-dir)))
   :init
   (defun my-delete-autosave-current-buffer ()
     (interactive)
