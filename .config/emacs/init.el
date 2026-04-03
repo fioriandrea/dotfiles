@@ -523,9 +523,26 @@ corresponds to a loadable library."
 
 (use-package completion-preview
   :if (locate-library "completion-preview")
-  :hook (prog-mode . completion-preview-mode)
+  :custom
+  (global-completion-preview-mode t)
+  (global-completion-preview-modes '(prog-mode comint-mode))
+  :init
+  (defun my-cp-pcomplete-termination-string ()
+    (if (derived-mode-p 'comint-mode) "" pcomplete-termination-string))
   :bind
   (:map completion-preview-active-mode-map
+        ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2025-03/msg00725.html
+        ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2025-03/msg01431.html
+        ("C-i" . (lambda ()
+                   (interactive)
+                   (let ((pcomplete-termination-string
+                          (my-cp-pcomplete-termination-string)))
+                     (completion-preview-insert))))
+        ("M-i" . (lambda ()
+                   (interactive)
+                   (let ((pcomplete-termination-string
+                          (my-cp-pcomplete-termination-string)))
+                     (completion-preview-complete))))
         ("M-n" . completion-preview-next-candidate)
         ("M-p" . completion-preview-prev-candidate)))
 
