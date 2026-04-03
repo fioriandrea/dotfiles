@@ -5,11 +5,9 @@
 (require 'exwm-systemtray)
 (require 'exwm-workspace)
 
-(defvar my-workspace-number 4)
-
 (defvar my-exwm-path-command-history nil)
 
-(setopt exwm-workspace-number my-workspace-number
+(setopt exwm-workspace-number 4
         exwm-workspace-index-map (lambda (i) (number-to-string (1+ i))))
 
 (display-time-mode 1)
