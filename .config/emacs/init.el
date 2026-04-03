@@ -106,10 +106,6 @@ Expands only when PACK is loadable, and reports setup errors."
   (use-package-expand-minimally nil)
   (use-package-use-theme t))
 
-(use-package package
-  :config
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
-
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
   :bind
