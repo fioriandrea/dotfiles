@@ -115,12 +115,3 @@ inoremap <silent> <C-j> <Esc>:m .+1<CR>==gi
 inoremap <silent> <C-k> <Esc>:m .-2<CR>==gi
 vnoremap <silent> <C-j> :m '>+1<CR>gv=gv
 vnoremap <silent> <C-k> :m '<-2<CR>gv=gv
-
-" undo break points
-inoremap , ,<c-g>u
-inoremap . .<c-g>u
-inoremap / /<c-g>u
-inoremap ? ?<c-g>u
-inoremap : :<c-g>u
-inoremap ; ;<c-g>u
-inoremap <space> <space><c-g>u
