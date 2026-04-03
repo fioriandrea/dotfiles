@@ -1,5 +1,7 @@
 #!/bin/bash
 
-dir=$(ffd)
+set -Eeuo pipefail
+
+{ dir=$(ffd) ; } || exit $?
 [[ -d $dir ]] || dir=${dir%/*}
 printf '%s\n' "$dir"

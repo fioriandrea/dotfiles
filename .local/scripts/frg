@@ -1,44 +1,56 @@
 #!/bin/bash
 
-# file, linenr and rest can be considered splitter's return values
 splitter() {
     local regex
-    local line
-    local matches
-
-    regex='(.+?):([0-9]+):(.*)'
-    matches=()
-    read -r line
-    for ((i = 0; i < 3; i++)); do
-        matches+=("$(rg "$regex" --only-matching --replace '$'$((i + 1)) <<< "$line")")
-    done
-    file="${matches[0]}"
-    linenr="${matches[1]}"
-    rest="${matches[2]}"
+    regex='(.+?)//([0-9]+): (.*)'
+    IFS= read -r -d ''
+    if [[ $REPLY =~ $regex ]]; then
+        file="${BASH_REMATCH[1]}"
+        linenr="${BASH_REMATCH[2]}"
+        rest="${BASH_REMATCH[3]}"
+        printf '%s:%d:0\0' "$file" "$linenr"
+    fi
 }
 
 export -f splitter
 
+previewer() {
+    local f
+    local n
+    f="$1"
+    n="${2%%:*}"
+    fpreviewer -f "$f" -l "$n"
+}
+
+export -f previewer
+
+rgcommand() {
+    rgargs=(
+        --hidden
+        --null
+        --line-number
+        --no-heading
+        --with-filename
+        --line-buffered
+    )
+    rg ${rgargs[*]} "$@" | while IFS= read -r -d '' file; do
+        IFS=: read -r linenr rest
+        printf '%s//%d: %s\0' "$file" "$linenr" "$rest"
+    done 
+}
+
+export -f rgcommand
+
 fzfargs=(
     --ansi
-    --multi
+    --no-multi
+    --delimiter '//'
+    --read0
+    --print0
     --query ''
-    --preview $'printf \'%s\' {} | { splitter; fpreviewer -f "$file" -l "$linenr" ; }'
+    --preview 'previewer {1} {2}'
 )
 
-rgargs=(
-    --hidden
-    --line-number
-    --no-heading
-    --with-filename
-    --line-buffered
-    "$@"
-)
+[[ -n $FRG_RELOAD ]] && fzfargs+=(--bind "change:reload(rgcommand -- {q} || true)" --disabled)
 
-[[ -n $FRG_RELOAD ]] && fzfargs+=(--bind "change:reload(rg ${rgargs[*]} -- {q} || true)" --disabled)
-
-FZF_DEFAULT_COMMAND="rg ${rgargs[*]} ''" fzf "${fzfargs[@]}" | \
-    while IFS= read -r; do
-        splitter <<< "$REPLY"
-        printf '%s:%d:0\n' "$file" "$linenr"
-    done
+rgcommand '' | fzf "${fzfargs[@]}" | splitter
