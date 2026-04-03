@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (defun my-reload-config ()
   (interactive)
   (load-file user-init-file))
