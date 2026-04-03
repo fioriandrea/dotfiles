@@ -487,6 +487,11 @@ loadable library."
   :custom
   (fido-mode t)
   (fido-vertical-mode t)
+  (icomplete-compute-delay .08)
+  ;; ensure compute delay is applied for most inputs
+  (icomplete-max-delay-chars 1000)
+  ;; ensure compute delay is applied for any number of completions
+  (icomplete-delay-completions-threshold 0)
   (minibuffer-default-prompt-format " [%.22s]")
   (tab-always-indent 'complete)
   (completion-cycle-threshold nil)
