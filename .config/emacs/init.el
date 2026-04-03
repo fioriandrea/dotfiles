@@ -143,6 +143,7 @@ KEY must be given in `kbd' notation."
   :bind
   ("<f5>" . (lambda () (interactive)
               (revert-buffer t t)))
+  ("<f6>" . delete-trailing-whitespace)
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
   ([remap pop-global-mark] . my-pop-global-mark)
