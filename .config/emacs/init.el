@@ -511,7 +511,7 @@ auto-revert. Taken from doomemacs."
   :init
   ;; https://github.com/minad/vertico/blob/2.3/vertico.el#L590
   (defun my-icomplete-minibuffer-truncate-lines-hook ()
-    (setq-local truncate-lines (< (point) (* 0.8 (window-width)))))
+    (setq-local truncate-lines (< (point) (* 0.85 (window-width)))))
   (defun my-icomplete-minibuffer-setup ()
     ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
     ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
