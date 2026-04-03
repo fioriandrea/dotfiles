@@ -533,7 +533,7 @@ auto-revert. Taken from doomemacs."
   (completion-show-help nil)
   (completion-auto-help 'visible)
   (suggest-key-bindings t)
-  (completions-detailed nil))
+  (completions-detailed t))
 
 (use-package ffap
   :custom
