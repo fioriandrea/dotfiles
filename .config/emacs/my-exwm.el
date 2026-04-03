@@ -118,21 +118,12 @@
 (add-hook 'exwm-init-hook
           'my-exwm-fix-initial-workspace-glitch)
 
-;;;; Hook for after init file
+;;;; Load additional configs
 
-(defconst my-exwm-after-init-file
-  (concat user-emacs-directory "my-exwm-after-init.el"))
-(defun my-exwm-source-after-init-file ()
-  (when (file-exists-p my-exwm-after-init-file)
-    (load-file my-exwm-after-init-file)))
-(add-hook 'exwm-init-hook 'my-exwm-source-after-init-file)
-
-;;;; Load before init file
-
-(defconst my-exwm-before-init-file
-  (concat user-emacs-directory "my-exwm-before-init.el"))
-(when (file-exists-p my-exwm-before-init-file)
-  (load-file my-exwm-before-init-file))
+(defconst my-exwm-local-file
+  (concat user-emacs-directory "my-exwm-local.el"))
+(when (file-exists-p my-exwm-local-file)
+  (load-file my-exwm-local-file))
 
 ;;;; Enable ewxm
 
