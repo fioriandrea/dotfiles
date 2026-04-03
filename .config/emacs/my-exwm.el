@@ -70,6 +70,9 @@
               (kbd "C-g")
               (kbd "C-[")))
 
+(setopt exwm-input-simulation-keys
+        `((,(kbd "C-c C-c") . ,(kbd "C-c"))))
+
 (keymap-set exwm-mode-map "C-q" 'exwm-input-send-next-key)
 
 (setopt exwm-input-global-keys
