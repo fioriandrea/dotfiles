@@ -206,8 +206,8 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (backup-by-copying-when-linked t)
   (version-control t)
   (delete-old-versions t)
-  (kept-new-versions 6)
-  (kept-old-versions 2)
+  (kept-new-versions 10)
+  (kept-old-versions 5)
   (auto-save-file-name-transforms `((".*" ,my-emacs-autosave-dir t)))
   (backup-directory-alist `(("." . ,my-emacs-backup-dir)))
   :init
