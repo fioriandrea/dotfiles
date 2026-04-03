@@ -220,6 +220,11 @@
     #'my-grep-xref-fetcher regexp files)
    nil))
 
+(defun my-grep-multi-occur-backend (regexp files)
+  (multi-occur
+   (mapcar #'find-file-noselect (my-flatten-filesystem-tree files))
+   regexp))
+
 (defvar my-grep-file-regexp-history nil)
 (defvar my-grep-backend-function #'my-grep-show-xrefs-backend)
 
