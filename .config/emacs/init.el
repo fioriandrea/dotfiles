@@ -444,6 +444,7 @@ loadable library."
        '(:application tramp :protocol "scp")
        'remote-direct-async-process)))
   :custom
+  (tramp-show-ad-hoc-proxies t)
   (tramp-use-scp-direct-remote-copying t)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
