@@ -199,7 +199,9 @@ configure."
   :custom
   (use-package-always-ensure nil)
   (use-package-always-demand nil)
-  (use-package-always-defer t))
+  (use-package-always-defer t)
+  (use-package-expand-minimally t)
+  (use-package-use-theme t))
 
 (use-package package
   :config
