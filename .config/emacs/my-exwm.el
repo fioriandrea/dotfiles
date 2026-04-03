@@ -137,12 +137,12 @@
 (add-to-list 'exwm-input-prefix-keys ?\C-g)
 
 (setopt exwm-input-global-keys
-        `(([?\s-r] . exwm-reset)
+        `(([?\s-j] . exwm-reset)
           ([?\s-s] . exwm-workspace-switch)
           ([?\s-&] . (lambda (command)
                        (interactive (list (read-shell-command "$ ")))
                        (start-process-shell-command command nil command)))
-          ([?\s-m] . my-exwm-run-from-path)
+          ([?\s-x] . my-exwm-run-from-path)
 
           ([XF86MonBrightnessUp] . my-exwm-brightness-up)
           ([XF86MonBrightnessDown] . my-exwm-brightness-down)
