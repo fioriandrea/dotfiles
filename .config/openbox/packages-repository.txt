@@ -28,6 +28,7 @@ openbox
 pasystray
 picom
 polkit-gnome
+polkit-gnome
 rofi
 scrot
 slock

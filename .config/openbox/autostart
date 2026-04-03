@@ -15,17 +15,15 @@ tint2 &
 # network manager
 nm-applet &
 
+# redshift
+
+redshift-gtk &
+
 # Autostart
 dex -a -s /etc/xdg/autostart/:~/.config/autostart/ &
-
-# Set display from arandr saved script
-sh ~/.screenlayout/monitor.sh &
 
 # Polkit
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
 # Wallpaper
 nitrogen --restore &
-
-# Low battery notifier
-~/.config/openbox/scripts/low_bat_notifier.sh &
