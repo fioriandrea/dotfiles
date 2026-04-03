@@ -530,6 +530,8 @@ expanded code catches any error during package setup."
 
 (use-package magit
   :if (locate-library "magit")
+  :bind (:map project-prefix-map
+              ("m" . magit-project-status))
   :hook
   (magit-diff-mode . (lambda () (setq truncate-lines nil)))
   (magit-status-mode . (lambda () (setq truncate-lines nil)))
