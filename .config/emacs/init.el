@@ -410,6 +410,7 @@ expanded code catches any error during package setup."
   (completions-max-height 12)
   (completion-show-help nil)
   (completion-auto-help 'visible)
+  (extended-command-suggest-shorter nil)
   (suggest-key-bindings t)
   (completions-detailed t))
 
