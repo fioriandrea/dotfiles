@@ -121,34 +121,40 @@ configure."
                        (eq ',pack 'emacs)
                        (locate-library ,(symbol-name pack)))))
     (while args
-      (pcase (pop args)
-        ((or :if :when) (push (pop args) condition))
-        (:custom
-         (let ((v (pop args)))
-           (cond
-            ((null v) nil)
-            ((and (listp v) (listp (car v)))
-             (setq customs (append customs v)))
-            ((listp v)
-             (push v customs)
-             (push :custom args))
-            (t (push v args)))))
-        (:config
-         (let ((v (pop args)))
-           (cond
-            ((null v) nil)
-            ((not (keywordp v))
-             (push v configs)
-             (push :config args))
-            (t (push v args)))))
-        (:init
-         (let ((v (pop args)))
-           (cond
-            ((null v) nil)
-            ((not (keywordp v))
-             (push v inits)
-             (push :init args))
-            (t (push v args)))))))
+      (let ((key (pop args)))
+        (cond
+         ((or (eq key :if) (eq key :when))
+          (push (pop args) condition))
+         ((eq key :custom)
+          (let ((v (pop args)))
+            (cond
+             ((null v) nil)
+             ((and (listp v) (listp (car v)))
+              (setq customs (append customs v)))
+             ((listp v)
+              (push v customs)
+              (push :custom args))
+             (t
+              (push v args)))))
+         ((eq key :config)
+          (let ((v (pop args)))
+            (cond
+             ((null v) nil)
+             ((not (keywordp v))
+              (push v configs)
+              (push :config args))
+             (t
+              (push v args)))))
+         ((eq key :init)
+          (let ((v (pop args)))
+            (cond
+             ((null v) nil)
+             ((not (keywordp v))
+              (push v inits)
+              (push :init args))
+             (t
+              (push v args)))))
+         (t nil))))
     `(when (and ,@condition)
        ,@(nreverse inits)
        ;; see use-package-handler/:custom
@@ -168,8 +174,8 @@ configure."
                                           (symbol-name pack)))))
                         `'(,variable ,value nil nil ,comment)))
                     (nreverse customs))))
-       (with-eval-after-load ',pack
-         ,@(nreverse configs)))))
+       (eval-after-load ',pack
+         (quote ,(cons 'progn (nreverse configs)))))))
 
 (defconst emacs-backup-dir
   (file-name-as-directory
