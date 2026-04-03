@@ -536,7 +536,7 @@ provided or corresponds to a loadable library."
   (magit-refresh-status-buffer nil)
   (magit-branch-direct-configure nil)
   (magit-commit-show-diff nil)
-  (magit-diff-refine-hunk t)
+  (magit-diff-refine-hunk 'all)
   (magit-diff-refine-ignore-whitespace nil)
   (magit-auto-revert-mode nil))
 
