@@ -542,6 +542,10 @@ loadable library."
   (proced-show-remote-processes t)
   (proced-format 'short))
 
+(use-package project
+  :custom
+  (project-vc-extra-root-markers '(".dir-locals.el")))
+
 (use-package dired
   :hook
   (dired-mode . dired-hide-details-mode)
