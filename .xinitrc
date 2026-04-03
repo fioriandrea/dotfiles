@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec openbox-session
+exec ssh-agent openbox-session
