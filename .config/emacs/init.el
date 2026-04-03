@@ -42,8 +42,8 @@
                'find-tag-default-as-regexp
                'grep-regexp-history))
 
-(defun my-pick-file-name-from-list (files &optional prompt)
-  (completing-read (or prompt "Pick file: ")
+(defun my-read-file-name-from-list (files &optional prompt)
+  (completing-read (or prompt "Choose file: ")
                    files
                    nil t nil
                    'file-name-history
@@ -70,15 +70,6 @@
       (my-find-lisp-find-files directory ".")
     (my-find-lisp-find-files-excluding-vc directory ".")))
 
-(defun my-flatten-filesystem-tree (files-and-dirs &optional include-vc)
-  (mapcan (lambda (f)
-            (cond
-             ((not (file-readable-p f)) nil)
-             ((file-directory-p f)
-              (my-find-lisp-find-all-files f include-vc))
-             (t (list f))))
-          files-and-dirs))
-
 (defun my-project-files (project &optional dirs)
   (condition-case err
       (project-files project dirs)
@@ -102,25 +93,6 @@
                         'file-name-history
                         (my-file-name-from-context))))
     (find-file (expand-file-name file root))))
-
-(defun my-find-file-picker-from-list (files)
-  (let* ((all-files (my-flatten-filesystem-tree files))
-         (unique-files
-          (cl-delete-duplicates all-files :test #'equal)))
-    (unless unique-files
-      (user-error "Empty file list"))
-    (if (length= unique-files 1)
-        (car unique-files)
-      (my-pick-file-name-from-list unique-files))))
-
-(defun my-find-file-picker (dir)
-  (interactive (list (my-read-directory-name-default)))
-  (find-file (my-find-file-picker-from-list (list dir))))
-
-(defun my-dired-find-file-picker ()
-  (interactive nil dired-mode)
-  (find-file
-   (my-find-file-picker-from-list (dired-get-marked-files))))
 
 ;;;; Grep
 
