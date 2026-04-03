@@ -510,7 +510,6 @@ The expanded code catches any error during package setup."
 (use-package calendar
   :custom
   (calendar-date-style 'european)
-  (calendar-mark-holidays-flag t)
   (calendar-week-start-day 1)
   (calendar-christian-all-holidays-flag t))
 
