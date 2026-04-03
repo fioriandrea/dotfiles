@@ -83,7 +83,7 @@ try
     syntax on
     colorscheme elfmono
 catch
-	syntax off
+    syntax off
     set t_Co=0
 endtry
 
