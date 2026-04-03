@@ -64,10 +64,13 @@
 (defun my-grep-files (files regexp)
   (let (results)
     (dolist (file files (nreverse results))
-      (when (and (file-readable-p file)
-                 (file-regular-p file))
-        (with-temp-buffer
-          (insert-file-contents file)
+      (with-temp-buffer
+        (when (condition-case err
+                  (insert-file-contents file)
+                (error
+                 (message "Failed to grep %S because of %S"
+                          file err)
+                 nil))
           (goto-char (point-min))
           (while (re-search-forward regexp nil t)
             (let* ((line-beg (line-beginning-position))
