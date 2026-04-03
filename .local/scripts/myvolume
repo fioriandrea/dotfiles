@@ -8,7 +8,7 @@ readonly default_fraction=0.01
 
 usage() {
     cat <<'EOF'
-usage: myvolume [up|down|mute|status|mic-up|mic-down|mic-mute|mic-status] [FRACTION]
+usage: myvolume [up|down|set|mute|status|mic-up|mic-down|mic-mute|mic-status] [FRACTION]
 EOF
 }
 
@@ -45,6 +45,10 @@ case "$cmd" in
         ;;
     down)
         wpctl set-volume "$default_sink" "${fraction}-"
+        print_status "Volume" "$default_sink"
+        ;;
+    set)
+        wpctl set-volume "$default_sink" "${fraction}"
         print_status "Volume" "$default_sink"
         ;;
     mute)
