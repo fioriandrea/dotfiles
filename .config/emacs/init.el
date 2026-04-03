@@ -299,7 +299,7 @@ The expanded code catches any error during package setup."
 
 (use-package tab-bar
   :bind
-  (:repeat-map repeat-tab-bar-history-map
+  (:repeat-map my-repeat-tab-bar-history-map
                ("<left>" . tab-bar-history-back)
                ("<right>" . tab-bar-history-forward))
   :custom
