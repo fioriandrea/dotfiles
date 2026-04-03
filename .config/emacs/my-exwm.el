@@ -54,7 +54,8 @@
 (setopt exwm-workspace-number 4
         exwm-workspace-index-map (lambda (i) (number-to-string (1+ i)))
         exwm-systemtray-mode t
-        exwm-layout-show-all-buffers t)
+        exwm-layout-show-all-buffers t
+        exwm-workspace-show-all-buffers t)
 
 ;;;; Keys
 
@@ -75,8 +76,7 @@
 (setopt exwm-input-global-keys
         `((,(kbd "s-r") . exwm-reset)
           (,(kbd "s-i") . exwm-input-toggle-keyboard)
-          (,(kbd "s-b") . exwm-workspace-switch-to-buffer)
-          (,(kbd "s-s") . exwm-workspace-switch)
+          (,(kbd "s-f") . exwm-workspace-switch)
           (,(kbd "s-&") . (lambda (command)
                             (interactive (list (read-shell-command "$ ")))
                             (start-process-shell-command command nil command)))
