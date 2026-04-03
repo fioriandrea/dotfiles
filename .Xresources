@@ -2,7 +2,7 @@
 
 XTerm*termName: xterm-256color
 XTerm*renderFont: true
-XTerm*faceName: xft:Monospace:style=Medium:size=24
+XTerm*faceName: xft:Fragment Mono:style=Medium:size=24, Monospace:style=Medium:size=24
 XTerm*utf8: true
 XTerm*locale: false
 XTerm*metaSendsEscape: true
@@ -20,38 +20,38 @@ XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
 !! colors
 
 ! special
-*.foreground:   #ffffff
-*.background:   #000000
-*.cursorColor:  #ff00ff
+*.foreground:   #586e75
+*.background:   #fdf6e3
+*.cursorColor:  #d30102
 
 ! black
-*.color0: #000000
-*.color8: #79A9FF
+*.color0:  #073642
+*.color8:  #839496
 
 ! red
-*.color1: #ff5555
-*.color9: #ff6e67
+*.color1:  #dc322f
+*.color9:  #cb4b16
 
 ! green
-*.color2: #50fa7b
-*.color10: #5af78e
+*.color2:  #859900
+*.color10: #586e75
 
 ! yellow
-*.color3: #f1fa8c
-*.color11: #f4f99d
+*.color3:  #b58900
+*.color11: #657b83
 
 ! blue
-*.color4: #6790EB
-*.color12: #79A9FF
+*.color4:  #268bd2
+*.color12: #839496
 
 ! magenta
-*.color5: #ff79c6
-*.color13: #ff92d0
+*.color5:  #d33682
+*.color13: #6c71c4
 
 ! cyan
-*.color6: #8be9fd
-*.color14: #9aedfe
+*.color6:  #2aa198
+*.color14: #93a1a1
 
 ! white
-*.color7: #bfbfbf
-*.color15: #e6e6e6
+*.color7:  #eee8d5
+*.color15: #fdf6e3
