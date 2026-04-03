@@ -588,7 +588,6 @@ auto-revert. Taken from doomemacs."
 (use-package magit
   :if (locate-library "magit")
   :bind
-  ("C-x g" . magit-status)
   ("C-x p m" . magit-project-status)
   :hook
   (magit-diff-mode . (lambda () (setq truncate-lines nil)))
