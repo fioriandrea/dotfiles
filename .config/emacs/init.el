@@ -444,15 +444,9 @@ library; tries to catch any error with `condition-case-unless-debug`."
     (define-key eshell-prompt-repeat-map (kbd "C-n") nil)
     (define-key eshell-prompt-repeat-map (kbd "C-p") nil)))
 
-(use-package python
-  :hook
-  ;; Disable eldoc-mode for remote Python files because it triggers
-  ;; expensive project root detection via `python-shell-get-buffer'
-  (python-mode . (lambda ()
-                   (when (file-remote-p default-directory)
-                     (eldoc-mode -1)))))
-
 (use-package eldoc
+  :hook
+  ((emacs-lisp-mode ielm-mode) . eldoc-mode)
   :config
   (advice-add 'eldoc-display-in-echo-area :around
               (lambda (orig &rest args)
@@ -464,6 +458,7 @@ library; tries to catch any error with `condition-case-unless-debug`."
                          eldoc-echo-area-use-multiline-p)))
                   (apply orig args))))
   :custom
+  (global-eldoc-mode nil)
   (eldoc-echo-area-use-multiline-p nil)
   (eldoc-echo-area-display-truncation-message nil))
 
