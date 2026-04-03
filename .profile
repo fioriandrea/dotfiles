@@ -12,6 +12,7 @@ export SCRIPTS_DIR="$HOME/.local/scripts"
 export WALLPAPER_DIR="$XDG_DATA_HOME/wallpapers"
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
 export HISTFILE="$XDG_DATA_HOME/history"
+export GOPATH="$HOME/.local/go"
 export npm_config_prefix="$HOME/.local"
 
 pathappend() {
@@ -40,4 +41,4 @@ recursive_pathappend() {
     export PATH
 }
 
-recursive_pathappend "$SCRIPTS_DIR" "$HOME/.local/bin"
+recursive_pathappend "$SCRIPTS_DIR" "$HOME/.local/bin" "$GOPATH/bin"
