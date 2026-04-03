@@ -204,7 +204,6 @@
         (my-rgrep regexp file-regexp directory))
     (let* ((pr (project-current t))
            (default-directory (project-root pr))
-           (project-files-relative-names nil)
            (files-all (my-project-files pr))
            (files (seq-filter #'file-regular-p files-all)))
       (my-grep-show-xrefs regexp files))))
