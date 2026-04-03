@@ -542,6 +542,14 @@ auto-revert. Taken from doomemacs."
   (org-startup-truncated nil)
   (org-html-validation-link nil))
 
+(use-package proced
+  :hook (proced-mode . hl-line-mode)
+  :custom
+  (proced-filter 'all)
+  (proced-enable-color-flag t)
+  (proced-show-remote-processes t)
+  (proced-format 'medium))
+
 (use-package dired
   :hook
   (dired-mode . dired-hide-details-mode)
