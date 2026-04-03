@@ -58,13 +58,18 @@
 
 (defmacro my-with-fn-overrides (specs &rest body)
   (declare (indent 1))
-  `(cl-letf
-       ,(mapcar
+  `(cl-letf*
+       ,(mapcan
          (lambda (spec)
-           (pcase-let ((`(,fn ,wrapper) spec))
-             `((symbol-function ',fn)
-               (let ((orig (symbol-function ',fn)))
-                 (apply-partially ,wrapper orig)))))
+           (pcase-let ((`(,fndef ,wrapperdef) spec)
+                       (orig (make-symbol "orig"))
+                       (fn (make-symbol "fn"))
+                       (wrapper (make-symbol "wrapper")))
+             `((,fn ,fndef)
+               (,wrapper ,wrapperdef)
+               (,orig (symbol-function ,fn))
+               ((symbol-function ,fn)
+                (apply-partially ,wrapper ,orig)))))
          specs)
      ,@body))
 
@@ -100,7 +105,7 @@
 (defmacro my-with-project-files-fallback (&rest args)
   (declare (indent 1))
   `(my-with-fn-overrides
-       ((project-files
+       (('project-files
          (lambda (orig project &optional dirs)
            (condition-case err
                (apply orig (list project dirs))
