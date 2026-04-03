@@ -116,9 +116,7 @@ expanded code catches any error during package setup."
   (message "No use-package found, using compatibility shim")
   (defalias 'use-package 'my-use-package))
 
-;;;; Configuration
-
-;;;;; Built-in
+;;;; Built-in Packages
 
 (defconst my-emacs-auxiliary-files-dir
   (file-name-as-directory
@@ -526,7 +524,7 @@ expanded code catches any error during package setup."
   (wdired-create-parent-directories t)
   (wdired-allow-to-redirect-links t))
 
-;;;;; External Packages
+;;;; External Packages
 
 (use-package magit
   :if (locate-library "magit")
@@ -550,7 +548,7 @@ expanded code catches any error during package setup."
   (setq magit-bind-magit-project-status nil)
   (setq magit-show-long-lines-warning nil))
 
-;;;;; custom-file
+;;;; custom-file
 
 (defconst custom-file
   (expand-file-name "custom.el" user-emacs-directory))
