@@ -502,6 +502,14 @@ corresponds to a loadable library."
   :demand t
   :after dired)
 
+(use-package completion-preview
+  :if (locate-library "completion-preview")
+  :hook (prog-mode . completion-preview-mode)
+  :bind
+  (:map completion-preview-active-mode-map
+        ("M-n" . completion-preview-next-candidate)
+        ("M-p" . completion-preview-prev-candidate)))
+
 (use-package magit
   :if (locate-library "magit")
   :bind
