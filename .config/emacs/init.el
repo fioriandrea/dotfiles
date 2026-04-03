@@ -148,7 +148,6 @@ KEY must be given in `kbd' notation."
   ([remap pop-global-mark] . my-pop-global-mark)
   ([remap set-mark-command] . my-set-mark-command)
   :hook
-  ((prog-mode text-mode) . display-line-numbers-mode)
   (text-mode . visual-line-mode)
   :custom
   (inhibit-startup-screen t)
