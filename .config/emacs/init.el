@@ -424,7 +424,6 @@ provided or corresponds to a loadable library."
        'remote-direct-async-process)))
   :custom
   (tramp-use-scp-direct-remote-copying t)
-  (remote-file-name-inhibit-auto-save-visited nil)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
   ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
@@ -432,7 +431,8 @@ provided or corresponds to a loadable library."
   ;; https://stackoverflow.com/a/47021266
   (tramp-backup-directory-alist backup-directory-alist)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
-  (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors)))
+  (debug-ignored-errors
+   (cons 'remote-file-error debug-ignored-errors)))
 
 (use-package icomplete
   :init
