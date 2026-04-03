@@ -3,7 +3,6 @@
 
 [[ -r $HOME/.profile ]] && source "$HOME/.profile"
 
-set -o vi
 shopt -s autocd
 shopt -s cdspell
 shopt -s cmdhist
