@@ -125,28 +125,33 @@
                      (recursive-search (my-find-files file "."))
                    (insert-file-contents file nil nil nil 'if-regular)
                    (goto-char (point-min))
-                   (let ((prev-line -1)
-                         (prev-text nil))
+                   (let ((filematches nil)
+                         (prev-line -1))
                      (while (and (not (eobp))
                                  (re-search-forward regexp nil t))
                        (let* ((line (line-number-at-pos))
                               (line-beg (line-beginning-position))
                               (match-beg (match-beginning 0))
-                              (match-len (- (match-end 0) match-beg))
-                              (text (if (= prev-line line)
-                                        prev-text
-                                      (setq prev-text
-                                            (buffer-substring-no-properties
-                                             line-beg (line-end-position))))))
-                         (setq prev-line line)
-                         (push (list :file file
-                                     :line line
-                                     :match-line-start (- match-beg line-beg)
-                                     :match-len match-len
-                                     :text text)
-                               results)
+                              (match-line-start (- match-beg line-beg))
+                              (match-len (- (match-end 0) match-beg)))
+                         (when (/= prev-line line)
+                           (push (list :text (buffer-substring-no-properties
+                                              line-beg (line-end-position))
+                                       :line line
+                                       :matches nil)
+                                 filematches)
+                           (setq prev-line line))
+                         (push (list :match-line-start match-line-start
+                                     :match-len match-len)
+                               (plist-get (car filematches) :matches))
                          (when (= match-len 0)
-                           (forward-char 1))))))
+                           (forward-char 1))))
+                     (when filematches
+                       (setq filematches (nreverse filematches))
+                       (cl-loop for m in filematches do
+                                (plist-put m :matches
+                                           (nreverse (plist-get m :matches))))
+                       (push (cons file filematches) results))))
                (file-error
                 (message "my-grep-files: failed to grep %S because of %S"
                          file err))))))
@@ -155,37 +160,34 @@
     (nreverse results)))
 
 (defun my-grep-matches-to-xref (matches)
-  (require 'cl-lib)
-  (let ((grouped (make-hash-table :test 'equal)))
-    (dolist (match matches)
-      (let ((key (cons (plist-get match :file)
-                       (plist-get match :line))))
-        (push match (gethash key grouped '()))))
-    (cl-loop for matches-group being the hash-values of grouped
-             for first-match = (car (last matches-group))
-             for first-start = (plist-get first-match :match-line-start)
-             for text = (plist-get first-match :text)
-             for textlen = (length text)
-             nconc (nreverse
-                    (cl-loop with prev-start = textlen
-                             for match in matches-group
-                             for start = (plist-get match :match-line-start)
-                             for len = (plist-get match :match-len)
-                             for end = (+ start len)
-                             for sumstart = (if (= start first-start)
-                                                0 start)
-                             for summary = (substring text sumstart prev-start)
-                             do (add-face-text-property
-                                 (- start sumstart) (- (+ start len) sumstart)
-                                 'xref-match t summary)
-                             (setq prev-start start)
-                             collect (xref-make-match
-                                      summary
-                                      (xref-make-file-location
-                                       (plist-get match :file)
-                                       (plist-get match :line)
-                                       start)
-                                      len))))))
+  (cl-loop
+   for (file . file-matches) in matches
+   nconc (cl-loop
+          for file-match in file-matches
+          for line = (plist-get file-match :line)
+          for text = (plist-get file-match :text)
+          for textlen = (length text)
+          for line-matches = (plist-get file-match :matches)
+          nconc (nreverse
+                 (cl-loop
+                  with prev-start = textlen
+                  with first-match = (car line-matches)
+                  with first-start = (plist-get first-match :match-line-start)
+                  for line-match in (nreverse line-matches)
+                  for start = (plist-get line-match :match-line-start)
+                  for len = (plist-get line-match :match-len)
+                  for end = (+ start len)
+                  for sumstart = (if (= start first-start)
+                                     0 start)
+                  for summary = (substring text sumstart prev-start)
+                  do (add-face-text-property
+                      (- start sumstart) (- (+ start len) sumstart)
+                      'xref-match t summary)
+                  (setq prev-start start)
+                  collect (xref-make-match summary
+                                           (xref-make-file-location
+                                            file line start)
+                                           len))))))
 
 (defun my-grep-xrefs-show (regexp files)
   (let ((fetcher (lambda (regexp files)
