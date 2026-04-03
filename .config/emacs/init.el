@@ -530,11 +530,12 @@ corresponds to a loadable library."
   (:map completion-preview-active-mode-map
         ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2025-03/msg00725.html
         ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2025-03/msg01431.html
-        ("C-i" . (lambda ()
+        ;; Swapped M-i and C-i for behaviour similar to default completion bindings
+        ("M-i" . (lambda ()
                    (interactive)
                    (let ((pcomplete-termination-string ""))
                      (completion-preview-insert))))
-        ("M-i" . (lambda ()
+        ("C-i" . (lambda ()
                    (interactive)
                    (let ((pcomplete-termination-string ""))
                      (completion-preview-complete))))
