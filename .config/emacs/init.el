@@ -29,7 +29,6 @@ The expanded code catches any error during package setup."
         (configs nil)
         (inits nil)
         (disabled nil)
-        (demand nil)
         (condition
          `((or (featurep ',pack)
                (locate-library ,(symbol-name pack))))))
@@ -46,7 +45,6 @@ The expanded code catches any error during package setup."
               (pcase key
                 (:disabled (setq disabled t))
                 ((or :if :when) (setq condition (append condition body)))
-                (:demand (setq demand (car body)))
                 (:custom
                  (dolist (item body)
                    (if (and (listp item) (listp (car item)))
@@ -82,9 +80,6 @@ The expanded code catches any error during package setup."
                (error
                 (warn "Failed to :init for package %S because of %S"
                       ',pack err))))
-         ;; :demand
-         ,(when demand
-            `(require ',pack nil nil))
          ;; :config
          ,(when configs
             `(eval-after-load ',pack
