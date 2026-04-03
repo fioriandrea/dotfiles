@@ -28,9 +28,11 @@ EOF
 case "${1:-toggle}" in
     dark)
         set_theme "$dark_value"
+        current_theme
         ;;
     light)
         set_theme "$light_value"
+        current_theme
         ;;
     toggle)
         if [[ "$(current_theme)" == "$dark_value" ]]; then
@@ -38,6 +40,7 @@ case "${1:-toggle}" in
         else
             set_theme "$dark_value"
         fi
+        current_theme
         ;;
     current)
         current_theme
