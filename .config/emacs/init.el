@@ -185,21 +185,17 @@
                                        start)
                                       len))))))
 
-(defun my-grep-xref-fetcher (regexp files)
-  (unless files
-    (user-error "Empty file list"))
-  (let* ((matches (my-grep-files files regexp))
-         (xrefs (my-grep-matches-to-xref matches)))
-    (unless xrefs
-      (user-error "No matches for: %s" regexp))
-    xrefs))
-
 (defun my-grep-xrefs-show (regexp files)
   (require 'xref)
-  (xref-show-xrefs
-   (apply-partially
-    #'my-grep-xref-fetcher regexp files)
-   nil))
+  (let ((fetcher (lambda (regexp files)
+                   (unless files
+                     (user-error "Empty file list"))
+                   (let* ((matches (my-grep-files files regexp))
+                          (xrefs (my-grep-matches-to-xref matches)))
+                     (unless xrefs
+                       (user-error "No matches for: %s" regexp))
+                     xrefs))))
+    (xref-show-xrefs (apply-partially fetcher regexp files) nil)))
 
 (defvar my-grep-file-regexp-history nil)
 
