@@ -9,6 +9,25 @@
 (require 'cl-lib)
 (require 'seq)
 
+;;; Functions
+
+(defun my-exwm-workspace-switch-relative (delta)
+  (let* ((count (length exwm-workspace--list))
+         (index (mod (+ exwm-workspace-current-index delta) count)))
+    (exwm-workspace-switch index)
+    index))
+
+(defun my-exwm-workspace-next (n &optional messagep)
+  (interactive (list (prefix-numeric-value current-prefix-arg) t))
+  (let ((index (my-exwm-workspace-switch-relative n)))
+    (when messagep
+      (message "Workspace %s" (funcall exwm-workspace-index-map index)))
+    index))
+
+(defun my-exwm-workspace-prev (n &optional messagep)
+  (interactive (list (prefix-numeric-value current-prefix-arg) t))
+  (my-exwm-workspace-next (- n) messagep))
+
 ;;; App launcher
 
 (defvar my-exwm-xdg-apps-dirs
@@ -80,9 +99,11 @@
 (setopt exwm-input-global-keys
         `((,(kbd "s-r") . exwm-reset)
           (,(kbd "s-i") . exwm-input-toggle-keyboard)
-          (,(kbd "s-f") . exwm-workspace-switch)
+          (,(kbd "s-w") . exwm-workspace-switch)
+          (,(kbd "s-<left>") . my-exwm-workspace-prev)
+          (,(kbd "s-<right>") . my-exwm-workspace-next)
           (,(kbd "s-&") . my-exwm-spawn-shell-process)
-          (,(kbd "s-x") . my-exwm-run-desktop-app)))
+          (,(kbd "s-d") . my-exwm-run-desktop-app)))
 
 ;;;; Hooks
 
