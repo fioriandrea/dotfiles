@@ -517,7 +517,9 @@ loadable library."
   :custom
   (org-startup-truncated nil)
   (org-html-validation-link nil)
-  (org-edit-src-content-indentation 0))
+  (org-edit-src-content-indentation 0)
+  :config
+  (add-to-list 'org-link-frame-setup '(file . find-file)))
 
 (use-package outline
   :custom
