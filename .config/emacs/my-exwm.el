@@ -65,9 +65,6 @@
                   (shell-command-to-string final-command))))
     (message "%s" result)))
 
-(defun my-exwm-start-systemtray ()
-  (exwm-systemtray-mode 1))
-
 (defun my-exwm-fix-initial-workspace-glitch ()
   (run-at-time
    0.2 nil
@@ -81,7 +78,6 @@
             (exwm-workspace-rename-buffer exwm-class-name)))
 
 (add-hook 'exwm-init-hook #'my-exwm-fix-initial-workspace-glitch)
-(add-hook 'exwm-init-hook #'my-exwm-start-systemtray)
 
 (setopt exwm-input-prefix-keys
         '([?\C-x]
@@ -141,6 +137,8 @@
                                   (my-exwm-shell-run "myvolume mic-mute")))))
 
 (exwm-wm-mode)
+
+(exwm-systemtray-mode 1)
 
 (provide 'my-exwm)
 ;;; my-exwm.el ends here
