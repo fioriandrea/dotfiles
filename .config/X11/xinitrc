@@ -1,0 +1,63 @@
+#!/bin/sh
+
+# https://wiki.archlinux.org/title/Xinit
+
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+user_dir="$config_home/X11"
+user_xinitrc_d="$user_dir"/xinitrc.d
+user_resources="$user_dir/xresources"
+user_resources2="$user_dir/xresources-2"
+user_modmap="$user_dir/.Xmodmap"
+
+sys_dir="/etc/X11"
+sys_xinitrc_d="$sys_dir/xinit"/xinitrc.d
+sys_resources="$sys_dir/xinit/.Xresources"
+sys_modmap="$sys_dir/xinit/.Xmodmap"
+
+# merge in defaults and keymaps
+
+merge_resources() {
+    xrdb="xrdb"
+    if [ -f "$1" ]; then
+        if [ -x /usr/bin/cpp ] ; then
+            "$xrdb" -merge "$1"
+        else
+            "$xrdb" -nocpp -merge "$1"
+        fi
+    fi
+}
+
+apply_xmodmap() {
+    xmodmap="xmodmap"
+    if [ -f "$1" ]; then
+        "$xmodmap" "$1"
+    fi
+}
+
+merge_resources "$sys_resources"
+apply_xmodmap "$sys_modmap"
+
+merge_resources "$user_resources"
+merge_resources "$user_resources2"
+apply_xmodmap "$user_modmap"
+
+# start some nice programs
+
+source_xinitrc_d() {
+    if [ -d "$1" ] ; then
+	for f in "$1"/?*.sh ; do
+	    if [ -f "$f" ] && [ -x "$f" ]; then
+                . "$f"
+            fi
+	done
+	unset f
+    fi
+}
+
+source_xinitrc_d "$sys_xinitrc_d"
+source_xinitrc_d "$user_xinitrc_d"
+
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+exec dbus-launch ssh-agent /usr/bin/emacs --load "$config_home/emacs/my-exwm.el"
