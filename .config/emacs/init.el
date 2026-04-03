@@ -395,8 +395,7 @@ library; tries to catch any error with `condition-case-unless-debug`."
                 ;; https://github.com/minad/vertico/blob/2.3/vertico.el#L590
                 (setq-local truncate-lines
                             (< (point) (* 0.85 (window-width)))))
-              nil
-              'local))
+              nil 'local))
   :config
   (when (boundp 'scroll-bar-mode)
     ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Scroll-Bars.html
@@ -409,10 +408,7 @@ library; tries to catch any error with `condition-case-unless-debug`."
                 (with-selected-frame frame
                   (my-disable-minibuffer-scrollbar)))))
   ;; don't insert icomplete completion display if there's pending input
-  (advice-add 'icomplete-exhibit
-              :before-while
-              (lambda ()
-                (sit-for 0)))
+  (advice-add 'icomplete-exhibit :before-while (lambda () (sit-for 0)))
   :hook
   (icomplete-minibuffer-setup . my-icomplete-minibuffer-setup)
   :bind
