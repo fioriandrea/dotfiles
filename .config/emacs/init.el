@@ -722,7 +722,8 @@ tries to catch any error with `condition-case-unless-debug'."
 
 ;;;; custom-file
 
-(defconst custom-file (concat user-emacs-directory "custom.el"))
+(defconst custom-file
+  (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load-file custom-file))
 
