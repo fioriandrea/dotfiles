@@ -51,9 +51,7 @@
 
 ;;; Config
 
-(setopt exwm-workspace-number 4
-        exwm-workspace-index-map (lambda (i) (number-to-string (1+ i)))
-        exwm-layout-show-all-buffers t
+(setopt exwm-layout-show-all-buffers t
         exwm-workspace-show-all-buffers t)
 
 ;;;; Keys
@@ -80,7 +78,7 @@
 (setopt exwm-input-global-keys
         `((,(kbd "s-j") . exwm-reset)
           (,(kbd "s-i") . exwm-input-toggle-keyboard)
-          (,(kbd "s-s") . exwm-workspace-switch)
+          (,(kbd "s-w") . exwm-workspace-switch)
           (,(kbd "s-&") . my-exwm-spawn-shell-process)
           (,(kbd "s-d") . my-exwm-run-desktop-app)))
 
