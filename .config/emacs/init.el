@@ -203,8 +203,8 @@ loadable library."
 (defconst emacs-autosave-dir
   (file-name-as-directory
    (expand-file-name "autosave" user-emacs-directory)))
-(unless (file-exists-p emacs-autosave-dir)
-  (make-directory emacs-autosave-dir))
+(unless (file-directory-p emacs-autosave-dir)
+  (make-directory emacs-autosave-dir 'parents))
 
 (defconst custom-file (concat user-emacs-directory "custom.el"))
 
