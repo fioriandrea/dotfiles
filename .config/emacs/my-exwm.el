@@ -65,8 +65,12 @@
 
 (add-to-list 'exwm-input-prefix-keys ?\C-g)
 
+(define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+
 (setopt exwm-input-global-keys
         `(([?\s-j] . exwm-reset)
+          ([?\s-i] . exwm-input-toggle-keyboard)
+          ([?\s-b] . exwm-workspace-switch-to-buffer)
           ([?\s-s] . exwm-workspace-switch)
           ([?\s-&] . (lambda (command)
                        (interactive (list (read-shell-command "$ ")))
