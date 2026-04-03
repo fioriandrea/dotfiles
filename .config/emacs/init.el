@@ -236,6 +236,7 @@ loadable library."
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
   ("C-c x" . window-swap-states)
+  ("C-c t" . tool-bar-mode)
   ([remap pop-global-mark] . my-pop-global-mark)
   ([remap set-mark-command] . my-set-mark-command)
   :hook
