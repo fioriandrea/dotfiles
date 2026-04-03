@@ -612,7 +612,7 @@ auto-revert. Taken from doomemacs."
   :custom
   (magit-define-global-key-bindings nil)
   (magit-commit-show-diff nil)
-  (magit-diff-refine-hunk 'all)
+  (magit-diff-refine-hunk t)
   (magit-diff-refine-ignore-whitespace nil)
   (magit-auto-revert-mode nil))
 
