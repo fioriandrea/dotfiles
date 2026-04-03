@@ -27,12 +27,6 @@
     (let (kill-buffer-hook kill-buffer-query-functions)
       (kill-buffer))))
 
-(defun my-dired-do-occur (regexp &optional nlines)
-  (interactive (occur-read-primary-args) dired-mode)
-  (multi-occur
-   (mapcar #'find-file-noselect (dired-get-marked-files))
-   regexp nlines))
-
 (defun my-read-directory-name-default (&optional prompt)
   (read-directory-name (or prompt "Base directory: ")
 		       default-directory nil t))
@@ -54,6 +48,15 @@
                    nil t nil
                    'file-name-history
                    (my-file-name-from-context)))
+
+(defun my-flatten-filesystem-tree (files-and-dirs)
+  (mapcan (lambda (f)
+            (cond
+             ((not (file-readable-p f)) nil)
+             ((file-directory-p f)
+              (my-find-lisp-find-all-files-excluding-vc f))
+             (t (list f))))
+          files-and-dirs))
 
 ;;;; Find
 
@@ -99,14 +102,7 @@
     (find-file (expand-file-name file root))))
 
 (defun my-find-file-picker-from-list (files)
-  (let ((all-files
-         (mapcan (lambda (f)
-                   (cond
-                    ((not (file-readable-p f)) nil)
-                    ((file-directory-p f)
-                     (my-find-lisp-find-all-files-excluding-vc f))
-                    (t (list f))))
-                 files))
+  (let ((all-files (my-flatten-filesystem-tree files))
         (unique-files
          (cl-delete-duplicates all-files :test #'equal)))
     (unless unique-files
@@ -215,7 +211,7 @@
       (user-error "No matches for: %s" regexp))
     xrefs))
 
-(defun my-grep-show-xrefs (regexp files)
+(defun my-grep-show-xrefs-backend (regexp files)
   (require 'xref)
   (xref-show-xrefs
    (apply-partially
@@ -223,6 +219,7 @@
    nil))
 
 (defvar my-grep-file-regexp-history nil)
+(defvar my-grep-backend-function #'my-grep-show-xrefs-backend)
 
 (defun my-grep-read-file-regexp ()
   (read-regexp "File name regexp"
@@ -234,8 +231,9 @@
     (my-read-regexp-default)
     (my-grep-read-file-regexp)
     (my-read-directory-name-default)))
-  (my-grep-show-xrefs regexp (my-find-lisp-find-files-excluding-vc
-                              dir file-regexp)))
+  (funcall my-grep-backend-function
+           regexp (my-find-lisp-find-files-excluding-vc
+                   dir file-regexp)))
 
 (defun my-project-find-regexp (regexp)
   (interactive (list (my-read-regexp-default)))
@@ -247,13 +245,20 @@
            (default-directory (project-root pr))
            (files-all (my-project-files pr))
            (files (seq-filter #'file-regular-p files-all)))
-      (my-grep-show-xrefs regexp files))))
+      (funcall my-grep-backend-function regexp files))))
 
 (defun my-dired-do-find-regexp (regexp)
   (interactive (list (read-regexp "Find regexp"
                                   nil 'dired-regexp-history))
                dired-mode)
-  (my-grep-show-xrefs regexp (dired-get-marked-files)))
+  (funcall my-grep-backend-function
+           regexp (dired-get-marked-files)))
+
+(defun my-dired-do-occur (regexp &optional nlines)
+  (interactive (occur-read-primary-args) dired-mode)
+  (multi-occur
+   (mapcar #'find-file-noselect (dired-get-marked-files))
+   regexp nlines))
 
 ;;;; my-use-package
 
