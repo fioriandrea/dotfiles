@@ -85,7 +85,8 @@ Expands only when PACK is loadable, and reports setup errors."
 
 ;;;; before-file
 
-(defconst my-before-file (concat user-emacs-directory "before.el"))
+(defconst my-before-file
+  (expand-file-name "before.el" user-emacs-directory))
 (when (file-exists-p my-before-file)
   (load-file my-before-file))
 
