@@ -273,6 +273,8 @@ KEY must be given in `kbd' notation."
   (save-place-forget-unreadable-files nil))
 
 (use-package recentf
+  :bind
+  ("C-c f" . recentf-open)
   :custom
   (recentf-mode t)
   (recentf-max-saved-items 200))
@@ -415,6 +417,7 @@ KEY must be given in `kbd' notation."
   ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
   ([remap switch-to-buffer-other-tab] . consult-buffer-other-tab)
   ([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
+  ([remap recentf-open] . consult-recent-file)
   ([remap icomplete-fido-kill] . my-icomplete-consult-fido-kill)
   :config
   (consult-customize
@@ -423,6 +426,7 @@ KEY must be given in `kbd' notation."
    consult-buffer-other-window
    consult-buffer-other-tab
    consult-buffer-other-frame
+   consult-recent-file
    :preview-key nil
    :annotate (lambda (x) ""))
   (setq-default consult-buffer-sources
