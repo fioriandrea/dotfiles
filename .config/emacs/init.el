@@ -23,6 +23,12 @@
     (with-current-buffer buf
       (my-delete-autosave-current-buffer))))
 
+(defun my-kill-buffer-skip-hooks (buffer)
+  (interactive "bBuffer: ")
+  (with-current-buffer buffer
+    (let (kill-buffer-hook kill-buffer-query-functions)
+      (kill-buffer))))
+
 ;; https://emacs.stackexchange.com/a/13433
 (defun my-simulate-key-press (key)
   "Return a command that pretends KEY was presssed.
