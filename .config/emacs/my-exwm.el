@@ -9,15 +9,7 @@
 (require 'cl-lib)
 (require 'seq)
 
-(defvar my-exwm-brightness-step 0.01)
-(defvar my-exwm-volume-step 0.02)
-(defvar my-exwm-mic-step 0.02)
-
-(setopt exwm-workspace-number 4
-        exwm-workspace-index-map (lambda (i) (number-to-string (1+ i))))
-
-(display-time-mode 1)
-(display-battery-mode 1)
+;;; Desktop launcher
 
 (defvar my-exwm-xdg-apps-dirs
   (cl-loop for dir in (cons (xdg-data-home) (xdg-data-dirs))
@@ -54,30 +46,17 @@
       (apply #'start-process choice nil
              (if terminal (append my-exwm-desktop-terminal-command argv) argv)))))
 
-(defun my-exwm-shell-run (cmd &rest args)
-  (let* ((args (mapcar (lambda (x)
-                         (if (numberp x) (number-to-string x) x))
-                       args))
-         (quoted-args (mapcar #'shell-quote-argument args))
-         (command-line (cons cmd quoted-args))
-         (final-command (string-join command-line " "))
-         (result (string-trim
-                  (shell-command-to-string final-command))))
-    (message "%s" result)))
+;;; Config
 
-(defun my-exwm-fix-initial-workspace-glitch ()
-  (run-at-time
-   0.2 nil
-   (lambda ()
-     (when (> exwm-workspace-number 1)
-       (exwm-workspace-switch-create 1)
-       (exwm-workspace-switch-create 0)))))
+(setopt display-time-mode t
+        display-battery-mode t)
 
-(add-hook 'exwm-update-class-hook
-          (lambda ()
-            (exwm-workspace-rename-buffer exwm-class-name)))
+(setopt exwm-workspace-number 4
+        exwm-workspace-index-map (lambda (i) (number-to-string (1+ i)))
+        exwm-systemtray-mode t
+        exwm-layout-show-all-buffers t)
 
-(add-hook 'exwm-init-hook #'my-exwm-fix-initial-workspace-glitch)
+;;;; Keys
 
 (setopt exwm-input-prefix-keys
         '([?\C-x]
@@ -93,52 +72,46 @@
 (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
 
 (setopt exwm-input-global-keys
-        `(([?\s-j] . exwm-reset)
+        `(([?\s-r] . exwm-reset)
           ([?\s-i] . exwm-input-toggle-keyboard)
           ([?\s-b] . exwm-workspace-switch-to-buffer)
           ([?\s-s] . exwm-workspace-switch)
           ([?\s-&] . (lambda (command)
                        (interactive (list (read-shell-command "$ ")))
                        (start-process-shell-command command nil command)))
-          ([?\s-x] . my-exwm-run-desktop-app)
+          ([?\s-x] . my-exwm-run-desktop-app)))
 
-          ([XF86MonBrightnessUp] . (lambda (arg)
-                                     (interactive "p")
-                                     (my-exwm-shell-run "mybrightness up"
-                                                        (* arg my-exwm-brightness-step))))
-          ([XF86MonBrightnessDown] . (lambda (arg)
-                                       (interactive "p")
-                                       (my-exwm-shell-run "mybrightness down"
-                                                          (* arg my-exwm-brightness-step))))
 
-          ([XF86AudioRaiseVolume] . (lambda (arg)
-                                      (interactive "p")
-                                      (my-exwm-shell-run "myvolume up"
-                                                         (* arg my-exwm-volume-step))))
-          ([XF86AudioLowerVolume] . (lambda (arg)
-                                      (interactive "p")
-                                      (my-exwm-shell-run "myvolume down"
-                                                         (* arg my-exwm-volume-step))))
+;;;; Hooks
 
-          ([s-XF86AudioRaiseVolume] . (lambda (arg)
-                                        (interactive "p")
-                                        (my-exwm-shell-run "myvolume mic-up"
-                                                           (* arg my-exwm-mic-step))))
-          ([s-XF86AudioLowerVolume] . (lambda (arg)
-                                        (interactive "p")
-                                        (my-exwm-shell-run "myvolume mic-down"
-                                                           (* arg my-exwm-mic-step))))
+(defconst my-exwm-after-file
+  (concat user-emacs-directory "my-exwm-after.el"))
 
-          ([XF86AudioMute] . (lambda ()
-                               (interactive)
-                               (my-exwm-shell-run "myvolume mute")))
-          ([XF86AudioMicMute] . (lambda ()
-                                  (interactive)
-                                  (my-exwm-shell-run "myvolume mic-mute")))))
+(defun my-exwm-source-after-file ()
+  (when (file-exists-p my-exwm-after-file)
+    (load-file my-exwm-after-file)))
+
+(defun my-exwm-workspace-rename-buffer-hook ()
+  (exwm-workspace-rename-buffer exwm-class-name))
+
+(defun my-exwm-fix-initial-workspace-glitch ()
+    (run-at-time
+     0.3 nil
+     (lambda ()
+       (when (> exwm-workspace-number 1)
+         (exwm-workspace-switch-create 1)
+         (exwm-workspace-switch-create 0)))))
+
+(add-hook 'exwm-update-class-hook
+          'my-exwm-workspace-rename-buffer-hook)
+(add-hook 'exwm-init-hook
+          'my-exwm-fix-initial-workspace-glitch)
+(add-hook 'exwm-init-hook
+          'my-exwm-source-after-file)
+
+;;;; Enable ewxm
 
 (exwm-wm-mode)
-
-(exwm-systemtray-mode 1)
 
 (provide 'my-exwm)
 ;;; my-exwm.el ends here
