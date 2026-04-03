@@ -415,6 +415,10 @@ Expands only when PACK is loadable, and reports setup errors."
   (set-mark-command-repeat-pop t)
   (repeat-exit-key "<escape>"))
 
+(use-package shell
+  :custom
+  (shell-get-old-input-include-continuation-lines t))
+
 (use-package comint
   :config
   (define-key comint-repeat-map (kbd "C-n") nil)
