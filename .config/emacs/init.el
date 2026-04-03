@@ -80,7 +80,7 @@
     (error
      (message "project-files error: %S" err)
      (mapcan (lambda (d)
-               (my-find-lisp-find-files-excluding-vc d "."))
+               (my-find-lisp-find-all-files-excluding-vc d))
              (or dirs (list (project-root project)))))))
 
 (defun my-project-find-file (&optional include-all)
@@ -88,18 +88,14 @@
   (let* ((project (project-current t))
          (root (project-root project))
          (all-files (if include-all
-                        (my-find-lisp-find-files-excluding-vc root ".")
+                        (my-find-lisp-find-all-files-excluding-vc root)
                       (my-project-files project (list root))))
-         (mb-default (or
-                      (thing-at-point 'filename)
-                      (file-name-nondirectory
-                       (buffer-file-name))))
          (file (funcall project-read-file-name-function
                         "Find file"
                         all-files
                         nil
                         'file-name-history
-                        (and mb-default (list mb-default)))))
+                        (my-file-name-from-context))))
     (find-file (expand-file-name file root))))
 
 (defun my-find-file-picker-from-list (files)
@@ -228,30 +224,24 @@
 
 (defvar my-grep-file-regexp-history nil)
 
+(defun my-grep-read-file-regexp ()
+  (read-regexp "File name regexp"
+               "." 'my-grep-file-regexp-history))
+
 (defun my-rgrep (regexp file-regexp dir)
   (interactive
    (list
-    (read-regexp "Search for"
-                 'find-tag-default-as-regexp
-                 'grep-regexp-history)
-    (read-regexp "File name regexp"
-                 "." 'my-grep-file-regexp-history)
-    (read-directory-name "Base directory: "
-			 default-directory nil t)))
+    (my-read-regexp-default)
+    (my-grep-read-file-regexp)
+    (my-read-directory-name-default)))
   (my-grep-show-xrefs regexp (my-find-lisp-find-files-excluding-vc
                               dir file-regexp)))
 
 (defun my-project-find-regexp (regexp)
-  (interactive (list (read-regexp "Search for"
-                                  'find-tag-default-as-regexp
-                                  'grep-regexp-history)))
+  (interactive (list (my-read-regexp-default)))
   (if current-prefix-arg
-      (let ((directory
-             (read-directory-name "Base directory: "
-			          default-directory nil t))
-            (file-regexp
-             (read-regexp "File name regexp"
-                          "." 'my-grep-file-regexp-history)))
+      (let ((directory (my-read-directory-name-default))
+            (file-regexp (my-grep-read-file-regexp)))
         (my-rgrep regexp file-regexp directory))
     (let* ((pr (project-current t))
            (default-directory (project-root pr))
