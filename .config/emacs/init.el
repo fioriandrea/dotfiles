@@ -466,7 +466,6 @@ corresponds to a loadable library."
   (tab-always-indent 'complete)
   (completions-max-height 12)
   (completion-show-help nil)
-  ;; (completion-auto-select 'second-tab)
   (completion-auto-help 'visible)
   (suggest-key-bindings t)
   (completions-detailed nil))
