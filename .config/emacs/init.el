@@ -141,7 +141,8 @@ KEY must be given in `kbd' notation."
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
   :bind
-  ("<f6>" . other-window)
+  ("<f5>" . (lambda () (interactive)
+              (revert-buffer t t)))
   ("C-c x" . window-swap-states)
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
@@ -307,6 +308,8 @@ KEY must be given in `kbd' notation."
   (global-auto-revert-ignore-modes '(Buffer-menu-mode electric-buffer-menu-mode)))
 
 (use-package tramp
+  :bind
+  ("<f9>" . tramp-cleanup-connection)
   :custom
   (auto-revert-remote-files nil)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
