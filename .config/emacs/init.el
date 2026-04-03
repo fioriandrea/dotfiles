@@ -567,7 +567,6 @@ loadable library."
   (magit-define-global-key-bindings 'default)
   (magit-refresh-status-buffer nil)
   (magit-branch-direct-configure nil)
-  (magit-commit-show-diff nil)
   (magit-diff-refine-hunk 'all)
   (magit-diff-refine-ignore-whitespace nil)
   (magit-auto-revert-mode nil))
