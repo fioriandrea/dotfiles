@@ -551,6 +551,15 @@ library; tries to catch any error with `condition-case-unless-debug`."
   :config
   (setq magit-show-long-lines-warning nil))
 
+(use-package dired-subtree
+  :if (locate-library "dired-subtree")
+  :after dired
+  :bind
+  (:map dired-mode-map
+        ("TAB" . dired-subtree-toggle))
+  :custom
+  (dired-subtree-use-backgrounds nil))
+
 (when (file-exists-p custom-file)
   (load-file custom-file))
 
