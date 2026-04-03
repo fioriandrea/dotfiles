@@ -446,13 +446,19 @@ configure."
               ("C-s" . nil)
               ("C-r" . nil)
               ("C-n" . icomplete-forward-completions)
-              ("C-p" . icomplete-backward-completions))
+              ("C-p" . icomplete-backward-completions)
+              :map completion-in-region-mode-map
+              ("M-g M-c" . switch-to-completions)
+              ("M-v" . switch-to-completions))
   :custom
   (fido-mode t)
   (fido-vertical-mode t)
   (minibuffer-default-prompt-format "")
   (tab-always-indent 'complete)
-  (completions-max-height 15)
+  (completions-max-height 12)
+  (completion-show-help nil)
+  ;; (completion-auto-select 'second-tab)
+  (completion-auto-help 'visible)
   (suggest-key-bindings t)
   (completions-detailed nil))
 
@@ -486,14 +492,6 @@ configure."
 (use-package dired-x
   :demand t
   :after dired)
-
-(use-package completion-preview
-  :if (locate-library "completion-preview")
-  :hook ((prog-mode comint-mode) . completion-preview-mode)
-  :bind
-  (:map completion-preview-active-mode-map
-        ("M-n" . completion-preview-next-candidate)
-        ("M-p" . completion-preview-prev-candidate)))
 
 (use-package magit
   :if (locate-library "magit")
