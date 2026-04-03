@@ -49,12 +49,12 @@
                    'file-name-history
                    (my-file-name-from-context)))
 
-(defun my-flatten-filesystem-tree (files-and-dirs)
+(defun my-flatten-filesystem-tree (files-and-dirs &optional include-vc)
   (mapcan (lambda (f)
             (cond
              ((not (file-readable-p f)) nil)
              ((file-directory-p f)
-              (my-find-lisp-find-all-files-excluding-vc f))
+              (my-find-lisp-find-all-files f include-vc))
              (t (list f))))
           files-and-dirs))
 
@@ -74,8 +74,10 @@
      file-predicate
      directory-predicate)))
 
-(defun my-find-lisp-find-all-files-excluding-vc (directory)
-  (my-find-lisp-find-files-excluding-vc directory "."))
+(defun my-find-lisp-find-all-files (directory &optional include-vc)
+  (if include-vc
+      (my-find-lisp-find-files directory ".")
+    (my-find-lisp-find-files-excluding-vc directory ".")))
 
 (defun my-project-files (project &optional dirs)
   (condition-case err
@@ -83,7 +85,7 @@
     (error
      (message "project-files error: %S" err)
      (mapcan (lambda (d)
-               (my-find-lisp-find-all-files-excluding-vc d))
+               (my-find-lisp-find-all-files d))
              (or dirs (list (project-root project)))))))
 
 (defun my-project-find-file (&optional include-all)
@@ -91,7 +93,7 @@
   (let* ((project (project-current t))
          (root (project-root project))
          (all-files (if include-all
-                        (my-find-lisp-find-all-files-excluding-vc root)
+                        (my-find-lisp-find-all-files root)
                       (my-project-files project (list root))))
          (file (funcall project-read-file-name-function
                         "Find file"
