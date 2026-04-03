@@ -133,7 +133,7 @@
                                       (plist-get match :file)
                                       (plist-get match :line)
                                       start)
-                                     (length summary))))))
+                                     len)))))
 
 (defun my-grep-xref-fetcher (regexp files)
   (unless files
