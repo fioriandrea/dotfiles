@@ -78,21 +78,28 @@
             (with-temp-buffer
               (insert-file-contents file)
               (goto-char (point-min))
-              (while (and (not (eobp))
-                          (re-search-forward regexp nil t))
-                (let* ((line-beg (line-beginning-position))
-                       (line (line-number-at-pos))
-                       (match-beg (match-beginning 0))
-                       (match-len (- (match-end 0) match-beg)))
-                  (push (list :file file
-                              :line line
-                              :match-line-start (- match-beg line-beg)
-                              :match-len match-len
-                              :text (buffer-substring-no-properties
-                                     line-beg (line-end-position)))
-                        results)
-                  (when (= match-len 0)
-                    (forward-char 1))))))
+              (let ((prev-line -1)
+                    (prev-text nil))
+                (while (and (not (eobp))
+                            (re-search-forward regexp nil t))
+                  (let* ((line (line-number-at-pos))
+                         (line-beg (line-beginning-position))
+                         (match-beg (match-beginning 0))
+                         (match-len (- (match-end 0) match-beg))
+                         (text (if (= prev-line line)
+                                   prev-text
+                                 (setq prev-text
+                                       (buffer-substring
+                                        line-beg (line-end-position))))))
+                    (setq prevline line)
+                    (push (list :file file
+                                :line line
+                                :match-line-start (- match-beg line-beg)
+                                :match-len match-len
+                                :text text)
+                          results)
+                    (when (= match-len 0)
+                      (forward-char 1)))))))
         (error
          (message "my-grep-files: failed to grep %S because of %S"
                   file err))))))
