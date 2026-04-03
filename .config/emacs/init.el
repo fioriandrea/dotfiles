@@ -105,6 +105,8 @@
 
 ;;;;; Grep
 
+(require 'xref)
+
 (defun my-grep-files (files regexp)
   (require 'cl-lib)
   (let ((results nil))
@@ -179,7 +181,6 @@
                                       len))))))
 
 (defun my-grep-xrefs-show (regexp files)
-  (require 'xref)
   (let ((fetcher (lambda (regexp files)
                    (unless files
                      (user-error "Empty file list"))
