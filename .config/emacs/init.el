@@ -421,37 +421,42 @@ already provided or corresponds to a loadable library."
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (use-package autorevert
-  :init
-  (defun my-auto-revert-buffer-h ()
-    "Automatically revert the current buffer if not already managed by
-auto-revert. Taken from doomemacs."
-    (unless (or auto-revert-mode
-                auto-revert-tail-mode
-                (active-minibuffer-window)
-                (and buffer-file-name
-                     (boundp 'auto-revert-remote-files)
-                     auto-revert-remote-files
-                     (file-remote-p buffer-file-name nil t)))
-      (let ((auto-revert-mode t))
-        (auto-revert-handler))))
-  (add-hook 'window-selection-change-functions (lambda (_)
-                                                 (my-auto-revert-buffer-h)))
-  (add-hook 'window-buffer-change-functions (lambda (_)
-                                              (my-auto-revert-buffer-h)))
-  ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
-  (add-hook 'server-visit-hook 'my-auto-revert-buffer-h)
+  :demand t
+  :config
+  (defconst my-auto-revert-use-notify (and
+                                       (boundp 'auto-revert-use-notify)
+                                       auto-revert-use-notify))
+  (customize-set-variable 'global-auto-revert-mode my-auto-revert-use-notify)
+  ;; The first revert gets done after auto-revert-interval, even when using notifications
+  (customize-set-variable 'auto-revert-interval (if my-auto-revert-use-notify 5 15))
   :custom
-  ;; Don't need global-auto-revert since we use doomemacs' trick
-  (global-auto-revert-mode nil)
   (auto-revert-remote-files nil)
   (auto-revert-verbose nil)
   (auto-revert-check-vc-info nil)
   ;; See function auto-revert--polled-buffers
   (auto-revert-avoid-polling t)
-  ;; The first revert gets done after auto-revert-interval, even when using notifications
-  (auto-revert-interval 15)
   (global-auto-revert-non-file-buffers t)
-  (global-auto-revert-ignore-modes '(Buffer-menu-mode electric-buffer-menu-mode)))
+  (global-auto-revert-ignore-modes '(Buffer-menu-mode electric-buffer-menu-mode))
+  :config
+  (unless my-auto-revert-use-notify
+    (defun my-auto-revert-buffer-h ()
+      "Automatically revert the current buffer if not already managed by
+auto-revert. Taken from doomemacs."
+      (unless (or auto-revert-mode
+                  auto-revert-tail-mode
+                  (active-minibuffer-window)
+                  (and buffer-file-name
+                       (boundp 'auto-revert-remote-files)
+                       auto-revert-remote-files
+                       (file-remote-p buffer-file-name nil t)))
+        (let ((auto-revert-mode t))
+          (auto-revert-handler))))
+    (add-hook 'window-selection-change-functions (lambda (_)
+                                                   (my-auto-revert-buffer-h)))
+    (add-hook 'window-buffer-change-functions (lambda (_)
+                                                (my-auto-revert-buffer-h)))
+    ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
+    (add-hook 'server-visit-hook 'my-auto-revert-buffer-h)))
 
 (use-package tramp
   :custom
