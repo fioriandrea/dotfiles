@@ -33,11 +33,6 @@ set nohlsearch
 " let backspace over indent, eol (join two lines) and start of insert
 set backspace=indent,eol,start
 
-" disable backup and swap files
-set nobackup
-set noswapfile
-set nowritebackup
-
 " never show status line
 set laststatus=0
 
