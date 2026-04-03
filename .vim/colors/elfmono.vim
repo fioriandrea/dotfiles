@@ -49,12 +49,15 @@ function! ApplySyntax()
                 \ 'SpecialComment': 'bold',
                 \ 'WildMenu': 'reverse',
                 \ 'Underlined': 'underline',
-                \ 'Pmenu': 'reverse'
+                \ 'Pmenu': 'reverse',
+                \ 'RedundantSpaces': 'underline'
                 \ }
 
     for [group, style] in items(table)
         exec printf('hi %s cterm=%s term=%s', group, style, style)
     endfor
+
+	match RedundantSpaces /\s\+$/
 endfunction
 
 call ApplySyntax()
