@@ -743,6 +743,7 @@ tries to catch any error with `condition-case-unless-debug'."
 
 (use-package project
   :custom
+  (project-buffers-viewer 'project-list-buffers-ibuffer)
   (project-vc-extra-root-markers '(".project.el")))
 
 (use-package dired
