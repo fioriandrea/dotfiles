@@ -1,4 +1,7 @@
-;; -*- lexical-binding: t; -*-
+;;; init.el --- Emacs configuration  -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; Commentary:
+;;; Code:
+
 (defun my-open-config ()
   (interactive)
   (find-file user-init-file))
@@ -596,3 +599,5 @@ loadable library."
 
 (when (file-exists-p custom-file)
   (load-file custom-file))
+
+;;; init.el ends here
