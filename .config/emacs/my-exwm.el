@@ -17,8 +17,6 @@
 (display-time-mode 1)
 (display-battery-mode 1)
 
-(defun my-trimmed-shell-command-to-string (cmd)
-  (string-trim (shell-command-to-string cmd)))
 
 (defun my-exwm-path-executables ()
   (let ((seen (make-hash-table :test #'equal))
@@ -49,7 +47,8 @@
          (quoted-args (mapcar #'shell-quote-argument args))
          (command-line (cons cmd quoted-args))
          (final-command (string-join command-line " "))
-         (result (my-trimmed-shell-command-to-string final-command)))
+         (result (string-trim
+                  (shell-command-to-string final-command))))
     (message "%s" result)))
 
 (defun my-exwm-start-systemtray ()
