@@ -573,11 +573,8 @@ is already provided or corresponds to a loadable library."
 
 (use-package magit
   :if (locate-library "magit")
-  :bind (("C-c m s" . magit-status)
-         ("C-c m h" . magit-dispatch)
-         ("C-c m f" . magit-file-dispatch)
-         :map project-prefix-map
-         ("m" . magit-project-status))
+  :bind (:map project-prefix-map
+              ("m" . magit-project-status))
   :hook
   (magit-diff-mode . (lambda () (setq truncate-lines nil)))
   (magit-status-mode . (lambda () (setq truncate-lines nil)))
@@ -586,7 +583,7 @@ is already provided or corresponds to a loadable library."
                                             (tags . hide)))
   (magit-buffer-name-format "*%M%v*:%t")
   (magit-uniquify-buffer-names t)
-  (magit-define-global-key-bindings nil)
+  (magit-define-global-key-bindings 'default)
   (magit-refresh-status-buffer nil)
   (magit-branch-direct-configure nil)
   (magit-commit-show-diff nil)
