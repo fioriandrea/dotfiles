@@ -206,7 +206,10 @@ KEY must be given in `kbd' notation."
 (use-package whitespace
   :bind
   ("C-c s m" . whitespace-mode)
-  ("C-c s d" . delete-trailing-whitespace))
+  ("C-c s d" . (lambda ()
+                 (interactive)
+                 (delete-trailing-whitespace)
+                 (message "Trailing whitespace deleted"))))
 
 (use-package window
   :bind ("C-c x" . window-swap-states)
@@ -322,7 +325,10 @@ KEY must be given in `kbd' notation."
 
 (use-package tramp
   :bind
-  ("C-c t a" . tramp-cleanup-all-connections)
+  ("C-c t a" . (lambda ()
+                 (interactive)
+                 (tramp-cleanup-all-connections)
+                 (message "Tramp cleaned up all connections")))
   ("C-c t c" . tramp-cleanup-connection)
   :custom
   (auto-revert-remote-files nil)
