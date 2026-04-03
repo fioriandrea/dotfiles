@@ -63,49 +63,50 @@
 
 (defun my-grep-files (files regexp)
   "Recursively search FILES for REGEXP.  Returns list with results."
-  (with-temp-buffer
-    (my-grep-files-1 files regexp)))
-
-(defvar my-grep--follow-links t)
-(defun my-grep-files-1 (files regexp)
-  (let (results)
-    (dolist (file files (nreverse results))
-      (condition-case err
-          (if (file-directory-p file)
-              (unless (and (file-symlink-p file)
-                           (not my-grep--follow-links))
-                (let* ((my-grep--follow-links nil)
-                       (subfiles (directory-files
-                                  file t directory-files-no-dot-files-regexp))
-                       (subres (my-grep-files-1 subfiles regexp)))
-                  (setq results (nconc (nreverse subres) results))))
-            (insert-file-contents file nil nil nil 'if-regular)
-            (goto-char (point-min))
-            (let ((prev-line -1)
-                  (prev-text nil))
-              (while (and (not (eobp))
-                          (re-search-forward regexp nil t))
-                (let* ((line (line-number-at-pos))
-                       (line-beg (line-beginning-position))
-                       (match-beg (match-beginning 0))
-                       (match-len (- (match-end 0) match-beg))
-                       (text (if (= prev-line line)
-                                 prev-text
-                               (setq prev-text
-                                     (buffer-substring-no-properties
-                                      line-beg (line-end-position))))))
-                  (setq prev-line line)
-                  (push (list :file file
-                              :line line
-                              :match-line-start (- match-beg line-beg)
-                              :match-len match-len
-                              :text text)
-                        results)
-                  (when (= match-len 0)
-                    (forward-char 1))))))
-        (error
-         (message "my-grep-files: failed to grep %S because of %S"
-                  file err))))))
+  (require 'cl-lib)
+  (defvar my-grep--follow-links t)
+  (let ((results nil))
+    (cl-labels
+        ((recursive-search (files)
+           (dolist (file files)
+             (condition-case err
+                 (if (file-directory-p file)
+                     (unless (and (file-symlink-p file)
+                                  (not my-grep--follow-links))
+                       (let ((my-grep--follow-links nil))
+                         (recursive-search
+                          (directory-files
+                           file t directory-files-no-dot-files-regexp))))
+                   (insert-file-contents file nil nil nil 'if-regular)
+                   (goto-char (point-min))
+                   (let ((prev-line -1)
+                         (prev-text nil))
+                     (while (and (not (eobp))
+                                 (re-search-forward regexp nil t))
+                       (let* ((line (line-number-at-pos))
+                              (line-beg (line-beginning-position))
+                              (match-beg (match-beginning 0))
+                              (match-len (- (match-end 0) match-beg))
+                              (text (if (= prev-line line)
+                                        prev-text
+                                      (setq prev-text
+                                            (buffer-substring-no-properties
+                                             line-beg (line-end-position))))))
+                         (setq prev-line line)
+                         (push (list :file file
+                                     :line line
+                                     :match-line-start (- match-beg line-beg)
+                                     :match-len match-len
+                                     :text text)
+                               results)
+                         (when (= match-len 0)
+                           (forward-char 1))))))
+               (error
+                (message "my-grep-files: failed to grep %S because of %S"
+                         file err))))))
+      (with-temp-buffer
+        (recursive-search files)))
+    (nreverse results)))
 
 (defun my-grep-matches-to-xref (matches)
   (require 'cl-lib)
