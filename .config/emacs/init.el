@@ -411,14 +411,15 @@ library; tries to catch any error with `condition-case-unless-debug`."
                 (sit-for 0)))
   :hook
   (icomplete-minibuffer-setup . my-icomplete-minibuffer-setup)
-  :bind (:map icomplete-fido-mode-map
-              ("C-s" . nil)
-              ("C-r" . nil)
-              ("C-n" . icomplete-forward-completions)
-              ("C-p" . icomplete-backward-completions)
-              :map completion-in-region-mode-map
-              ("M-g M-c" . switch-to-completions)
-              ("M-v" . switch-to-completions))
+  :bind
+  (:map icomplete-fido-mode-map
+        ("C-s" . nil)
+        ("C-r" . nil)
+        ("C-n" . icomplete-forward-completions)
+        ("C-p" . icomplete-backward-completions)
+        :map completion-in-region-mode-map
+        ("M-g M-c" . switch-to-completions)
+        ("M-v" . switch-to-completions))
   :custom
   (fido-mode t)
   (fido-vertical-mode t)
