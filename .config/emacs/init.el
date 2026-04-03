@@ -165,11 +165,9 @@ expanded code catches any error during package setup."
   (truncate-lines nil)
   (truncate-partial-width-windows nil)
   (indent-tabs-mode nil)
-  (context-menu-mode t)
   (use-short-answers t)
   (frame-inhibit-implied-resize t)
   (save-interprogram-paste-before-kill t)
-  (xterm-mouse-mode t)
   ;; Scrolling
   (scroll-bar-mode 'right)
   (horizontal-scroll-bar-mode nil)
@@ -201,6 +199,11 @@ expanded code catches any error during package setup."
                             (with-current-buffer buf
                               (my-delete-autosave-current-buffer)))))
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+
+(use-package mouse
+  :custom
+  (xterm-mouse-mode t)
+  (context-menu-mode t))
 
 (use-package help
   :custom
