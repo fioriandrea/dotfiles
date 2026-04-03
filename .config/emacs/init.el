@@ -62,14 +62,20 @@
 ;;;; Grep
 
 (defun my-grep-files (files regexp)
-  (let (results)
-    (dolist (file files (nreverse results))
+  (let (results errors)
+    (dolist (file files (list
+                         :results (nreverse results)
+                         :errors (nreverse errors)))
       (with-temp-buffer
         (when (condition-case err
                   (insert-file-contents file)
                 (error
                  (message "Failed to grep %S because of %S"
                           file err)
+                 (push (list
+                        :file file
+                        :error err)
+                       errors)
                  nil))
           (goto-char (point-min))
           (while (re-search-forward regexp nil t)
@@ -79,7 +85,6 @@
                    (match-text (match-string 0)))
               (push (list :file file
                           :line line
-                          :col (1+ (- match-beg line-beg))
                           :match-line-start (- match-beg line-beg)
                           :match-len (length match-text)
                           :text (buffer-substring-no-properties
@@ -107,14 +112,17 @@
      collect first-match)))
 
 (defun my-grep-xref-matches-in-files (regexp files)
-  (let ((matches (my-grep-merge-highlight-matches
-                  (my-grep-files files regexp))))
+  (let* ((raw-matches (plist-get (my-grep-files files regexp)
+                                 :results))
+         (matches (my-grep-merge-highlight-matches
+                   raw-matches)))
     (mapcar (lambda (match)
-              (xref-make (plist-get match :text)
-                         (xref-make-file-location
-                          (plist-get match :file)
-                          (plist-get match :line)
-                          (plist-get match :col))))
+              (xref-make-match (plist-get match :text)
+                               (xref-make-file-location
+                                (plist-get match :file)
+                                (plist-get match :line)
+                                (plist-get match :match-line-start))
+                               (plist-get match :match-len)))
             matches)))
 
 (defun my-grep-xref-fetcher (regexp files)
@@ -139,12 +147,14 @@
   (let* ((pr (project-current t))
          (default-directory (project-root pr))
          (project-files-relative-names t)
-         (files (project-files pr)))
+         (files-all (project-files pr))
+         (files (seq-filter #'file-regular-p files-all)))
     (my-grep-show-xrefs regexp files)))
 
 (defun my-dired-do-find-regexp (regexp)
   (interactive (list (read-regexp "Find regexp")) dired-mode)
-  (my-grep-show-xrefs regexp (dired-get-marked-files)))
+  (my-grep-show-xrefs regexp (dired-get-marked-files
+                              nil nil #'file-regular-p)))
 
 (defvar my-rgrep-regexp-history nil)
 (defvar my-rgrep-file-regexp-history nil)
