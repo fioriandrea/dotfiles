@@ -306,7 +306,6 @@ is already provided or corresponds to a loadable library."
   (delete-old-versions t)
   (kept-new-versions 6)
   (kept-old-versions 2)
-  (auto-save-list-file-prefix (file-name-as-directory emacs-autosave-dir))
   (auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t)))
   (backup-directory-alist `(("." . ,emacs-backup-dir)))
   :init
