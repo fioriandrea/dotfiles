@@ -33,32 +33,6 @@
    (mapcar #'find-file-noselect (dired-get-marked-files))
    regexp nlines))
 
-;;;; my-http-fetch-url
-
-(defun my-http-fetch-url (url)
-  (require 'url)
-  (unless (or (string-prefix-p "http://" url)
-              (string-prefix-p "https://" url))
-    (error "URL must start with http:// or https://"))
-  (let (result)
-    (with-current-buffer (url-retrieve-synchronously url)
-      (let ((response-headers
-             (mapcar (lambda (line)
-                       (let ((parts (split-string line ": ")))
-                         (cons (car parts) (cadr parts))))
-                     (split-string
-                      (buffer-substring-no-properties
-                       (point-min) url-http-end-of-headers)
-                      "\n" t)))
-            (body (buffer-substring-no-properties
-                   url-http-end-of-headers (point-max))))
-        (setq result (list :headers response-headers
-                           :response-version url-http-response-version
-                           :response-status url-http-response-status
-                           :body (string-trim body)))
-        (kill-buffer)))
-    result))
-
 ;;;; Grep
 
 (defun my-grep-files (files regexp)
@@ -187,6 +161,32 @@
 			 nil default-directory t)))
   (my-grep-show-xrefs regexp (directory-files-recursively
                               dir file-regexp nil t nil)))
+
+;;;; my-http-fetch-url
+
+(defun my-http-fetch-url (url)
+  (require 'url)
+  (unless (or (string-prefix-p "http://" url)
+              (string-prefix-p "https://" url))
+    (error "URL must start with http:// or https://"))
+  (let (result)
+    (with-current-buffer (url-retrieve-synchronously url)
+      (let ((response-headers
+             (mapcar (lambda (line)
+                       (let ((parts (split-string line ": ")))
+                         (cons (car parts) (cadr parts))))
+                     (split-string
+                      (buffer-substring-no-properties
+                       (point-min) url-http-end-of-headers)
+                      "\n" t)))
+            (body (buffer-substring-no-properties
+                   url-http-end-of-headers (point-max))))
+        (setq result (list :headers response-headers
+                           :response-version url-http-response-version
+                           :response-status url-http-response-status
+                           :body (string-trim body)))
+        (kill-buffer)))
+    result))
 
 ;;;; my-use-package
 
