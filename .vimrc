@@ -1,3 +1,6 @@
+" don't bother trying to be compatible with vi
+set nocompatible
+
 " load Plugins.vim, searching it in "all vim places"
 runtime PlugPlugins.vim
 " disable bells
@@ -65,9 +68,9 @@ set autoindent
 set expandtab
 
 " suppress netrw banner
-let g:netrw_banner=0
-" netrw tree style
-let g:netrw_liststyle=3
+" let g:netrw_banner=0
+" netrw tree style 0=thin; 1=long; 2=wide; 3=tree
+let g:netrw_liststyle=1
 
 " faster scrolling
 set ttyfast
@@ -77,7 +80,7 @@ set fileformat=unix
 
 " syntax highlighting
 syntax off
-" set t_Co=0
+set t_Co=0
 
 " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
 filetype plugin indent on
