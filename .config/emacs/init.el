@@ -501,14 +501,14 @@ loadable library."
   (repeat-exit-key "<escape>"))
 
 (use-package comint
-  :config
-  (put 'comint-previous-prompt 'repeat-map nil)
-  (put 'comint-next-prompt 'repeat-map nil))
+  :bind (:map comint-repeat-map
+              ("C-n" . nil)
+              ("C-p" . nil)))
 
 (use-package em-prompt
-  :config
-  (put 'eshell-previous-prompt 'repeat-map nil)
-  (put 'eshell-next-prompt 'repeat-map nil))
+  :bind (:map eshell-prompt-repeat-map
+              ("C-n" . nil)
+              ("C-p" . nil)))
 
 (use-package eldoc
   :custom
