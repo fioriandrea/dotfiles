@@ -9,7 +9,7 @@
 (require 'cl-lib)
 (require 'seq)
 
-;;; Desktop launcher
+;;; App launcher
 
 (defvar my-exwm-xdg-apps-dirs
   (cl-loop for dir in (cons (xdg-data-home) (xdg-data-dirs))
@@ -46,6 +46,10 @@
       (apply #'start-process choice nil
              (if terminal (append my-exwm-desktop-terminal-command argv) argv)))))
 
+(defun my-exwm-spawn-shell-process (command)
+  (interactive (list (read-shell-command "$ ")))
+  (start-process-shell-command command nil command))
+
 ;;; Config
 
 (setopt display-time-mode t
@@ -77,9 +81,7 @@
         `((,(kbd "s-r") . exwm-reset)
           (,(kbd "s-i") . exwm-input-toggle-keyboard)
           (,(kbd "s-f") . exwm-workspace-switch)
-          (,(kbd "s-&") . (lambda (command)
-                            (interactive (list (read-shell-command "$ ")))
-                            (start-process-shell-command command nil command)))
+          (,(kbd "s-&") . my-exwm-spawn-shell-process)
           (,(kbd "s-x") . my-exwm-run-desktop-app)))
 
 ;;;; Hooks
