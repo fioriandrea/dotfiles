@@ -253,10 +253,10 @@ Expands only when PACK is loadable, and reports setup errors."
   (tab-bar-new-tab-to 'right)
   (tab-bar-history-mode t)
   (tab-bar-history-limit 30)
+  (tab-bar-format '(tab-bar-format-tabs
+                    tab-bar-separator
+                    tab-bar-format-add-tab))
   :config
-  (customize-set-variable 'tab-bar-format
-                          (delq 'tab-bar-format-history
-                                tab-bar-format))
   (defun my-tab-bar-history-position-indicator ()
     (let* ((current (selected-frame))
            (hist-back-count (length (gethash current tab-bar-history-back)))
