@@ -629,9 +629,6 @@ The expanded code catches any error during package setup."
   (:map icomplete-fido-mode-map
         ("C-s" . nil)
         ("C-r" . nil)
-        ;; built-in for fido-vertical-mode, but not for fido-mode
-        ("C-n" . icomplete-forward-completions)
-        ("C-p" . icomplete-backward-completions)
         :map completion-in-region-mode-map
         ("M-g M-c" . switch-to-completions)
         ("M-v" . switch-to-completions))
