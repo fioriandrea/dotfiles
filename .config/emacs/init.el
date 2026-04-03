@@ -324,7 +324,8 @@ library; tries to catch any error with `condition-case-unless-debug`."
   (compilation-scroll-output 'first-error))
 
 (use-package diff-mode
-  :hook (diff-mode . whitespace-mode)
+  :hook
+  (diff-mode . whitespace-mode)
   :custom
   (diff-refine 'font-lock))
 
@@ -403,7 +404,8 @@ library; tries to catch any error with `condition-case-unless-debug`."
               :before-while
               (lambda ()
                 (sit-for 0)))
-  :hook (icomplete-minibuffer-setup . my-icomplete-minibuffer-setup)
+  :hook
+  (icomplete-minibuffer-setup . my-icomplete-minibuffer-setup)
   :bind (:map icomplete-fido-mode-map
               ("C-s" . nil)
               ("C-r" . nil)
