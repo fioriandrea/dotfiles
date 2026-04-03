@@ -230,8 +230,9 @@ is already provided or corresponds to a loadable library."
     (expand-file-name "backups" user-emacs-directory))))
 (defconst emacs-autosave-dir
   (file-name-as-directory
-   (abbreviate-file-name
-    (expand-file-name "autosave" user-emacs-directory))))
+   (expand-file-name "autosave" user-emacs-directory)))
+(unless (file-exists-p emacs-autosave-dir)
+  (make-directory emacs-autosave-dir))
 
 (defconst custom-file (concat user-emacs-directory "custom.el"))
 
