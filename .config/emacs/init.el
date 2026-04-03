@@ -548,7 +548,7 @@ is already provided or corresponds to a loadable library."
 (use-package proced
   :custom
   (proced-filter 'all)
-  (proced-enable-color-flag t)
+  (proced-enable-color-flag nil)
   (proced-show-remote-processes t)
   (proced-format 'short))
 
