@@ -1,289 +1,583 @@
-;;; Useful functions
-(defun reload-config ()
+(defun my-reload-config ()
   (interactive)
   (load-file user-init-file))
 
-(defun open-config ()
+(defun my-open-config ()
   (interactive)
   (find-file user-init-file))
 
-(defun tick (cmd)
-  ;; (interactive "M")
-  ;; (find-file (tick "which ricegit"))
+(defun my-tick (cmd)
   (let ((output (shell-command-to-string cmd)))
     (string-trim output)))
 
-(defun ctags-file-create (dir-name)
-  "Create tags file."
-  (interactive "Directory: ")
-  (shell-command
-   ;; -e for emacs format
-   (format "%s -f TAGS -e -R %s" "ctags" (directory-file-name dir-name))))
-
-(defun close-all-buffers ()
-  "Kill all buffers without regard for their origin."
+(defun my-delete-autosave-current-buffer ()
   (interactive)
-  (mapc 'kill-buffer (buffer-list)))
+  (when buffer-file-name
+    (let ((auto-save-file (make-auto-save-file-name)))
+      (when (file-exists-p auto-save-file)
+        (delete-file auto-save-file)))))
 
-(defun close-all-other-buffers ()
-  "Kill all buffers except current buffer."
+(defun my-delete-autosave-opened-files ()
   (interactive)
-  (let* ((predicate (lambda (b) (not (eq b (current-buffer)))))
-		(buffers (seq-filter predicate (buffer-list))))
-	(mapc 'kill-buffer buffers)
-	(delete-other-windows)))
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (my-delete-autosave-current-buffer))))
 
-;;; Packages
+;; https://www.emacswiki.org/emacs/AlarmBell
+(defun my-subtly-flash-modeline-fg (&optional delay)
+  (let ((orig-fg (face-foreground 'mode-line)))
+    (set-face-foreground 'mode-line "#FF0000")
+    (run-with-idle-timer (or delay 0.1) nil
+                         (lambda (fg) (set-face-foreground 'mode-line fg))
+                         orig-fg)))
 
-;;; Setup package.el
-(require 'package)
-(setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(unless package--initialized (package-initialize))
+(defun my-unpop-local-mark ()
+  "Unpop off local mark ring."
+  (interactive)
+  (or (not (null (mark t)))
+      (user-error "No mark set in this buffer"))
+  (let* ((full-mark-ring (cons
+                          (copy-marker (mark-marker))
+                          mark-ring))
+         (tl (last full-mark-ring 2))
+         (trunc-ring (nbutlast full-mark-ring 2)))
+    (setq full-mark-ring (nconc tl trunc-ring))
+    (setq mark-ring (cdr full-mark-ring))
+    (set-marker (mark-marker) (car full-mark-ring) (current-buffer))
+    (pop-to-mark-command)))
 
-;;; Setup use-package
-;; https://www.gnu.org/software/emacs/manual/html_mono/use-package.html
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(require 'use-package)
-(setq use-package-always-ensure nil)
-(setq use-package-always-defer nil)
-(setq use-package-verbose t)
-(setq use-package-compute-statistics t)
+(defun my-unpop-global-mark ()
+  "Unpop off global mark ring."
+  (interactive)
+  (or global-mark-ring
+      (error "No global mark set"))
+  (let* ((tl (last global-mark-ring 2))
+         (trunc-ring (nbutlast global-mark-ring 2)))
+    (setq global-mark-ring (nconc tl trunc-ring))
+    (pop-global-mark)))
 
+(defun my-set-mark-command (arg)
+  "Enhanced version of `set-mark-command' with wider support for prefix arguments."
+  (interactive "P")
+  (let ((arg-num (prefix-numeric-value arg)))
+    (cond
+     ((and
+       (null arg)
+       set-mark-command-repeat-pop
+       (eq last-command 'my-unpop-local-mark))
+      (setq this-command 'my-unpop-local-mark)
+      (my-unpop-local-mark))
+     ((and
+       (null arg)
+       set-mark-command-repeat-pop
+       (eq last-command 'my-unpop-global-mark))
+      (setq this-command 'my-unpop-global-mark)
+      (my-unpop-global-mark))
+     ((or
+       (null arg)
+       (equal arg '(4))
+       (equal arg '(16)))
+      (setq this-command 'set-mark-command)
+      (set-mark-command arg))
+     ((< arg-num 0)
+      (setq this-command 'my-unpop-local-mark)
+      (dotimes (_ (- arg-num))
+        (my-unpop-local-mark)))
+     ((>= arg-num 0)
+      (setq this-command 'pop-to-mark-command)
+      (dotimes (_ arg-num)
+        (pop-to-mark-command))))))
 
-;;; General emacs config
+(defun my-pop-global-mark (arg)
+  "Enhanced version of `pop-global-mark' with support for prefix arguments."
+  (interactive "P")
+  (let ((arg-num (prefix-numeric-value arg)))
+    (cond
+     ((< arg-num 0)
+      (setq this-command 'my-unpop-global-mark)
+      (dotimes (_ (- arg-num))
+        (my-unpop-global-mark)))
+     ((>= arg-num 0)
+      (setq this-command 'pop-global-mark)
+      (dotimes (_ arg-num)
+        (pop-global-mark))))))
+
+(defconst emacs-backup-dir
+  (file-name-as-directory
+   (abbreviate-file-name
+    (expand-file-name "backups" user-emacs-directory))))
+(defconst emacs-autosave-dir
+  (file-name-as-directory
+   (abbreviate-file-name
+    (expand-file-name "autosave" user-emacs-directory))))
+
+(defconst proxy-file (concat user-emacs-directory "proxy.el"))
+(when (file-exists-p proxy-file)
+  (load proxy-file))
+
+(defconst custom-file (concat user-emacs-directory "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+(use-package use-package
+  :ensure nil
+  :custom
+  (use-package-always-ensure nil)
+  (use-package-always-demand nil)
+  (use-package-always-defer t))
+
+(use-package package
+  :config
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
+
 ;; https://elpa.gnu.org/devel/doc/use-package.html#The-emacs-package
 (use-package emacs
-  :defer t
-  :ensure nil
-  :hook (before-save . delete-trailing-whitespace)
-  ;; https://github.com/jwiegley/use-package/issues/517 (Advantages of custom?)
+  :bind
+  ("<f6>" . other-window)
+  ("C-c x" . window-swap-states)
+  ("C-x f" . nil)
+  ("C-x C-b" . buffer-menu)
+  ([remap pop-global-mark] . my-pop-global-mark)
+  ([remap set-mark-command] . my-set-mark-command)
+  :hook
+  ((prog-mode text-mode) . display-line-numbers-mode)
+  (text-mode . visual-line-mode)
+  :custom
+  (inhibit-startup-screen t)
+  (tool-bar-mode nil)
+  (menu-bar-mode t)
+  (next-error-message-highlight t)
+  (debugger-stack-frame-as-list t)
+  (confirm-kill-emacs nil)
+  (native-comp-async-report-warnings-errors 'silent)
+  (set-mark-command-repeat-pop t)
+  (global-so-long-mode t)
+  (electric-pair-mode t)
+  (sentence-end-double-space t)
+  (ring-bell-function 'ignore)
+  (truncate-lines nil)
+  (truncate-partial-width-windows nil)
+  (indent-tabs-mode nil)
+  (context-menu-mode t)
+  (use-short-answers t)
+  (frame-inhibit-implied-resize t)
+  (save-interprogram-paste-before-kill t)
+  (xterm-mouse-mode t)
+  ;; Scrolling
+  (scroll-bar-mode 'right)
+  (horizontal-scroll-bar-mode nil)
+  (mouse-wheel-progressive-speed nil)
+  (fast-but-imprecise-scrolling t)
+  (scroll-preserve-screen-position t)
+  (scroll-conservatively 10)
+  (scroll-margin 4)
+  ;; Backup
+  (backup-by-copying t)
+  (version-control t)
+  (delete-old-versions t)
+  (kept-new-versions 6)
+  (kept-old-versions 2)
+  (auto-save-list-file-prefix (file-name-as-directory emacs-autosave-dir))
+  (auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t)))
+  (backup-directory-alist `(("." . ,emacs-backup-dir)))
+  :init
+  (add-hook 'kill-buffer-hook 'my-delete-autosave-current-buffer)
+  ;; hack to delete auto-save files on C-x C-c
+  (add-to-list 'kill-emacs-query-functions
+               (lambda () (progn
+                            (my-delete-autosave-opened-files)
+                            t)))
+  (setq-default bidi-paragraph-direction 'left-to-right)
+  (setq-default bidi-inhibit-bpa t)
+  (when (and (boundp 'scroll-bar-mode) scroll-bar-mode)
+    (set-window-scroll-bars (minibuffer-window) nil nil nil nil :persistent))
+  (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+
+(use-package help
+  :custom
+  (help-window-select t)
+  (help-window-keep-selected t))
+
+(use-package uniquify
+  :custom
+  (uniquify-strip-common-suffix nil)
+  (uniquify-after-kill-buffer-p t)
+  ;; https://emacs.stackexchange.com/questions/68499/automatically-uniquify-certain-buffers
+  (uniquify-min-dir-content 3)
+  (uniquify-buffer-name-style 'post-forward-angle-brackets)
+  (uniquify-trailing-separator-p t))
+
+(use-package isearch
+  :init
+  (defvar my-isearch-prev-ring-bell-function nil)
+  :hook
+  (isearch-mode . (lambda ()
+                    (when (not my-isearch-prev-ring-bell-function)
+                      (setq my-isearch-prev-ring-bell-function ring-bell-function)
+                      (when (equal ring-bell-function 'ignore)
+                        (setq ring-bell-function (lambda ()
+                                                   (my-subtly-flash-modeline-fg 0.2)))))))
+  (isearch-mode-end . (lambda ()
+                        (when my-isearch-prev-ring-bell-function
+                          (setq ring-bell-function my-isearch-prev-ring-bell-function)
+                          (setq my-isearch-prev-ring-bell-function nil))))
+  :custom
+  (isearch-lazy-count t)
+  (isearch-lazy-highlight t)
+  ;; `no-ding' makes keyboard macros never quit
+  (isearch-wrap-pause 'no))
+
+(use-package tab-bar
+  :custom
+  (tab-bar-show 1)
+  (tab-bar-format '(tab-bar-format-tabs
+                    tab-bar-separator
+                    tab-bar-format-add-tab))
+  (tab-bar-auto-width t)
+  (tab-bar-new-tab-choice t)
+  (tab-bar-history-mode t)
+  (tab-bar-history-limit 30)
+  :config
+  (defun my-tab-bar-history-position-indicator ()
+    (let* ((current (selected-frame))
+           (hist-back-count (length (gethash current tab-bar-history-back)))
+           (hist-forward-count (length (gethash current tab-bar-history-forward)))
+           (total (+ hist-back-count hist-forward-count))
+           (status (format "Tab history [%d / %d]" hist-back-count total))
+           (tab-bar-history-command-echo-text (current-message)))
+      (message
+       (if tab-bar-history-command-echo-text
+           (concat status " (" tab-bar-history-command-echo-text ")")
+         status))))
+  (advice-add 'tab-bar-history-forward :after 'my-tab-bar-history-position-indicator)
+  (advice-add 'tab-bar-history-back :after 'my-tab-bar-history-position-indicator))
+
+(use-package saveplace
+  :custom
+  (save-place-mode t)
+  ;; https://www.emacswiki.org/emacs/SavePlace
+  (save-place-forget-unreadable-files nil))
+
+(use-package recentf
+  :custom
+  (recentf-mode t)
+  (recentf-max-saved-items 200))
+
+(use-package savehist
+  :custom
+  (savehist-mode t)
+  (savehist-autosave-interval nil)
+  (history-delete-duplicates t)
+  (savehist-save-minibuffer-history t)
+  (savehist-additional-variables
+   '(kill-ring
+     search-ring
+     regexp-search-ring)))
+
+(use-package diff-mode
+  :hook (diff-mode . whitespace-mode)
+  :custom
+  (diff-refine 'font-lock))
+
+(use-package ediff
+  :custom
+  (ediff-auto-refine 'on)
+  (ediff-window-setup-function 'ediff-setup-windows-plain))
+
+(use-package autorevert
   :custom
   (global-auto-revert-mode t)
   (auto-revert-verbose nil)
-  (global-auto-revert-non-file-buffers t)
   (auto-revert-use-notify t)
+  ;; see function auto-revert--polled-buffers
   (auto-revert-avoid-polling t)
   ;; https://lists.gnu.org/archive/html/emacs-devel/2014-10/msg00743.html
   ;; https://emacs.stackexchange.com/a/50134 (read comments)
+  ;; The first revert gets done after auto-revert-interval, even when using notifications
   (auto-revert-interval 5)
-  (indent-tabs-mode nil)
-  :init
-  ;; Remove scroll-bar, tool-bar and menu-bar
-  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  ;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-  ;; Disable startup screen
-  (setq inhibit-startup-screen t)
+  (global-auto-revert-non-file-buffers t)
+  (global-auto-revert-ignore-modes '(Buffer-menu-mode electric-buffer-menu-mode)))
 
-  ;; Defalut Font
-  (defun font-available-p (font-name)
-	(if (member font-name (font-family-list)) t nil))
-  (cond
-   ((font-available-p "JetBrains Mono")
-	(set-frame-font "JetBrains Mono 14" nil t))
-   ((font-available-p "Cascadia Code")
-	(set-frame-font "Cascadia Code 14" nil t))
-   ((font-available-p "Inconsolata")
-	(set-frame-font "Inconsolata 16" nil t))
-   (t (set-face-attribute 'default nil :height 140)))
-
-  ;; Load Theme
-  (defconst light-theme 'modus-operandi)
-  (defconst dark-theme 'modus-vivendi)
-  (load-theme light-theme t)
-
-  ;; Open Emacs in fullscreen
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-  ;; Display Line Numbers
-  (global-display-line-numbers-mode)
-
-  ;; Line number format
-  (setq linum-format "%4d ")
-
-  ;; Don't put garbage in my config file
-  (setq custom-file (concat user-emacs-directory "custom.el"))
-  (when (file-exists-p custom-file)
-	(load custom-file))
-  ;; Uncomment this to use a temp file as custom file
-  ;; (setq custom-file (make-temp-file "emacs-custom"))
-
-  ;; Useful Defaults (most from https://sanemacs.com/)
-  ;; Disable bell sound
-  (setq ring-bell-function 'ignore)
-  ;; Line-style cursor similar to other text editors
-  (setq-default cursor-type 'bar)
-  ;; Make window title the buffer name
-  (setq-default frame-title-format '("%b"))
-  ;; y-or-n-p makes answering questions faster
-  (fset 'yes-or-no-p 'y-or-n-p)
-  ;; Show closing parens by default
-  (show-paren-mode 1)
-
-  ;; Backups
-  (defconst emacs-backup-dir
-	(file-name-as-directory
-	 (expand-file-name "backups" user-emacs-directory)))
-  (defconst emacs-autosave-dir
-	(file-name-as-directory
-	 (expand-file-name "autosave" user-emacs-directory)))
-  (setq
-   backup-by-copying t
-   delete-old-versions t
-   kept-new-versions 6
-   kept-old-versions 2
-   version-control t
-   ;; https://emacs.stackexchange.com/questions/17210/how-to-place-all-auto-save-files-in-a-directory
-   auto-save-list-file-prefix (file-name-as-directory emacs-autosave-dir)
-   auto-save-file-name-transforms `((".*" ,emacs-autosave-dir t))
-   backup-directory-alist `((".*" . ,emacs-backup-dir)))
-  ;; Disable Lockfiles
-  (setq create-lockfiles nil)
-
-  ;; Use system Clipboard
-  (setq select-enable-clipboard t)
-
-  (setq byte-compile-docstring-max-column 240)
-  (setq org-startup-truncated nil)
-  (setq truncate-lines nil)
-  (setq org-link-descriptive nil)
-
-  ;; http://xahlee.info/emacs/emacs/emacs_buffer_management.html
-  (defalias 'list-buffers 'ibuffer))
-
-;;; Tramp
 (use-package tramp
-  :defer t
-  :demand nil
   :custom
   (auto-revert-remote-files nil)
-  :init
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-File-Lock-and-Backup.html
   ;; https://emacs.stackexchange.com/questions/78644/how-to-tell-tramp-to-not-ask-me-about-autosave-on-local-directory
   ;; http://stackoverflow.com/questions/13794433/how-to-disable-autosave-for-tramp-buffers-in-emacs
-  (setq tramp-backup-directory-alist backup-directory-alist)
-  (setq tramp-auto-save-directory emacs-autosave-dir)
-  (setq remote-file-name-inhibit-locks t)
+  (tramp-auto-save-directory emacs-autosave-dir)
+  ;; https://stackoverflow.com/a/47021266
+  (tramp-backup-directory-alist backup-directory-alist)
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
-  (setq vc-ignore-dir-regexp
-		(format "\\(%s\\)\\|\\(%s\\)"
-				vc-ignore-dir-regexp
-				tramp-file-name-regexp)))
+  ;; https://robbmann.io/emacsd/
+  ;; https://git.sr.ht/~cfeeley/doom-emacs-config/commit/1cb3f6704f38f9dbc64ff434866b5e2537d8c2ba
+  (debug-ignored-errors (cons 'remote-file-error debug-ignored-errors)))
 
-;;; Evil Mode
-(use-package evil
-  :demand t
-  :ensure t
-  :bind (("<escape>" . keyboard-escape-quit)
-		 ("C-c v g" . evil-mode)
-		 ("C-c v l" . evil-local-mode)
-		 :map evil-normal-state-map
-		 ("C-n" . evil-next-line)
-		 ("C-p" . evil-previous-line))
-  :init
-  (setq evil-search-module 'evil-search)
-  (setq evil-want-keybinding nil)
-  (setq evil-vsplit-window-right t)
-  (setq evil-split-window-below t)
-  (setq evil-overriding-maps nil)
-  (setq evil-want-integration t)
-  (setq evil-want-minibuffer nil)
-  (setq evil-want-C-i-jump t)
-  (setq evil-want-C-d-scroll nil)
-  (setq evil-want-C-u-scroll nil)
-  ;; use emacs keys in insert mode
-  (setq evil-disable-insert-state-bindings t)
-  :config
-  (evil-mode 1)
-  (evil-set-undo-system 'undo-redo))
-;;; Additional Vim bindings
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :custom
-  (evil-collection-want-find-usages-bindings t)
-  (evil-collection-setup-minibuffer t)
-  :init
-  (evil-collection-init))
-
-;;; Alternative to evil mode. Has less features
-;;; https://www.reddit.com/r/emacs/comments/e81u80/comment/fa98l7z
-;; (use-package viper
-;;   :demand t
-;;   :ensure t
-;;   :config
-;;   (setq viper-mode t)
-;;   (viper-mode)
-;;   :init
-;;   (setq viper-inhibit-startup-message 't)
-;;   (setq viper-expert-level '3)
-;;   :bind
-;;   ("C-c v" . toggle-viper-mode))
-
-;;; Icomplete
 (use-package icomplete
-  :ensure t
-  :demand t
-  :custom
-  ;; https://www.scss.tcd.ie/~sulimanm/posts/default-emacs-completion.html
-  (completions-format 'one-column)
-  (completions-header-format nil)
-  (completions-max-height 20)
-  (completion-auto-select 'second-tab)
-  :config
-  (fido-vertical-mode 1)
   :bind (:map icomplete-fido-mode-map
-			  ("RET" . icomplete-fido-ret)
-			  ("C-RET" . icomplete-fido-ret)
-			  ("C-<return>" . icomplete-fido-ret)
-			  ("M-RET" . icomplete-fido-ret)
-			  ("TAB" . icomplete-force-complete)
-			  :map icomplete-minibuffer-map
-			  ("C-RET" . icomplete-fido-ret)
-			  ("C-<return>" . icomplete-fido-ret)
-			  ("C-n" . icomplete-forward-completions)
-			  ("C-p" . icomplete-backward-completions)
-			  :map completion-in-region-mode-map
-			  ("M-n" . minibuffer-next-completion)
-			  ("M-p" . minibuffer-previous-completion)
-			  ("C-n" . minibuffer-next-completion)
-			  ("C-p" . minibuffer-previous-completion)
-			  ("C-<return>" . minibuffer-choose-completion)
-			  ("C-RET" . minibuffer-choose-completion)))
-
-(use-package eglot
-  :defer t
-  :ensure nil)
-
-(use-package org-tempo
-  :after org
-  ;; https://edoput.it/2022/07/19/use-package.html
-  :ensure nil)
-
-;;; Git integration for Emacs (Magit)
-(use-package magit
-  :ensure t
-  :bind ("C-c g" . magit-status)
+              ("C-s" . nil)
+              ("C-r" . nil)
+              ("C-n" . icomplete-forward-completions)
+              ("C-p" . icomplete-backward-completions))
   :custom
-  (magit-auto-revert-mode nil))
+  (fido-mode t)
+  (fido-vertical-mode t)
+  (tab-always-indent 'complete)
+  ;; (completion-auto-select 'second-tab)
+  ;; (completion-auto-help 'always)
+  (suggest-key-bindings t)
+  (completions-detailed nil)
+  :config
+  ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
+  ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
+  (defun my-icomplete-styles ()
+    (setq-local completion-styles '(flex partial-completion)))
+  (add-hook 'icomplete-minibuffer-setup-hook 'my-icomplete-styles))
+
+(use-package eldoc
+  :custom
+  (eldoc-echo-area-use-multiline-p nil))
+
+(use-package org
+  :bind (("C-c l" . org-store-link)
+         ("C-c a" . org-agenda)
+         ("C-c c" . org-capture)
+         :map org-mode-map
+         ("C-c z" . org-toggle-link-display))
+  :custom
+  (org-startup-truncated nil)
+  (org-html-validation-link nil))
 
 (use-package dired
-  :demand t
-  :ensure nil
+  :hook
+  (dired-mode . dired-hide-details-mode)
   :custom
+  (dired-clean-confirm-killing-deleted-buffers t)
+  (dired-clean-up-buffers-too t)
+  (dired-recursive-deletes 'top)
+  (dired-recursive-copies 'always)
   (dired-auto-revert-buffer t)
-  :config
-  (setq dired-listing-switches "-alh")
-  (setq dired-mouse-drag-files t)
-  ;; Refresh dired automatically
-  (setq-default dired-dwim-target t))
+  (dired-listing-switches "-alh")
+  (dired-mouse-drag-files t)
+  (dired-dwim-target t))
 
 (use-package dired-x
   :demand t
-  :after dired
-  :ensure nil)
+  :after dired)
 
-;;; END
+(use-package evil
+  :if (package-installed-p 'evil)
+  ;; :demand t
+  :bind (("C-c e" . evil-mode)
+         :map evil-motion-state-map
+         ("TAB" . nil)
+         ("RET" . nil)
+         ("<backtab>" . nil)
+         ("C-f" . nil)
+         ("C-o" . nil)
+         ("C-b" . nil)
+         ("C-y" . nil)
+         ("C-e" . nil)
+         ("M-n" . evil-ex-search-next)
+         ("M-N" . evil-ex-search-previous)
+         ("?" . evil-ex-search-backward)
+         :map evil-normal-state-map
+         ("M-." . nil)
+         ("C-r" . nil)
+         ("C-p" . nil)
+         ("C-n" . nil)
+         ("DEL" . nil))
+  :hook
+  ;; https://www.reddit.com/r/emacs/comments/gxzsjn/trying_to_have_minor_mode_key_bindings_for_edebug/
+  (view-mode . evil-normalize-keymaps)
+  :custom
+  (evil-want-keybinding t)
+  (evil-vsplit-window-right t)
+  (evil-split-window-below t)
+  (evil-want-integration t)
+  (evil-want-minibuffer nil)
+  (evil-want-C-i-jump nil)
+  (evil-want-C-d-scroll nil)
+  (evil-want-C-u-scroll nil)
+  (evil-symbol-word-search t)
+  (evil-default-state 'normal)
+  (evil-emacs-state-modes '(term-mode))
+  :init
+  ;; Don't know why, but this cannot be under customize for some reason
+  (setq evil-search-module 'evil-search)
+  (setq evil-disable-insert-state-bindings t)
+  :config
+  ;; (evil-mode 1)
+  (evil-set-undo-system 'undo-redo)
+
+  (dolist (mode evil-emacs-state-modes)
+    (evil-set-initial-state mode 'emacs))
+
+  ;; https://emacs.stackexchange.com/a/13433
+  (defun my-simulate-key-press (key)
+    "Return a command that pretends KEY was presssed.
+KEY must be given in `kbd' notation."
+    `(lambda () (interactive)
+       (setq prefix-arg current-prefix-arg)
+       (setq unread-command-events (listify-key-sequence (read-kbd-macro ,key)))))
+  (defvar-keymap my-space-map
+    :parent ctl-x-map
+    "c" (my-simulate-key-press "C-c")
+    "x" 'execute-extended-command
+    "SPC" 'execute-extended-command
+    "f" 'find-file
+    "j" 'dired-jump)
+  (evil-define-key '(motion normal visual) 'global
+                   (kbd "SPC") my-space-map)
+
+  (defun my-evil-std-keys (state map)
+    (evil-add-hjkl-bindings map state
+                            "/"   'evil-ex-search-forward
+                            "?"   'evil-ex-search-backward
+                            "0"   'evil-beginning-of-line
+                            "$"   'evil-end-of-line
+                            (kbd "SPC") my-space-map
+                            (kbd "M-n") 'evil-ex-search-next
+                            (kbd "M-N") 'evil-ex-search-previous))
+
+  ;; For minor modes, add hook
+  ;; see https://www.reddit.com/r/emacs/comments/gxzsjn/trying_to_have_minor_mode_key_bindings_for_edebug/
+  ;; and https://github.com/emacs-evil/evil/issues/301
+  ;; and https://github.com/noctuid/evil-guide?tab=readme-ov-file#why-dont-keys-defined-with-evil-define-key-work-immediately
+  (defconst my-evil-normal-overriding-modes '(completion-list-mode
+                                              org-agenda-mode
+                                              Info-mode
+                                              occur-mode
+                                              magit-mode
+                                              view-mode
+                                              special-mode
+                                              diff-mode
+                                              archive-mode
+                                              Custom-mode
+                                              custom-mode
+                                              dired-mode
+                                              compilation-mode))
+  (defun my-evil-make-overriding-map (mode state)
+    (let* ((map-name (format "%s-map" (symbol-name mode)))
+           (map-sym (intern map-name))
+           (fn-name (format "my-evil-make-overriding-map-to-%s" map-name)))
+      (eval
+       `(evil-with-delay
+         (and
+          (boundp ',map-sym)
+          (keymapp ,map-sym))
+         (after-load-functions t nil ,fn-name)
+         (with-demoted-errors "Error in my-evil-apply-evil-std-keys-to: %S"
+           (evil-make-overriding-map ,map-sym ',state))))))
+  (dolist (mode my-evil-normal-overriding-modes)
+    (evil-set-initial-state mode 'normal)
+    (my-evil-make-overriding-map mode 'normal))
+
+  ;; https://github.com/noctuid/evil-guide
+  (defvar my-evil-intercept-mode-map (make-sparse-keymap)
+    "High precedence keymap.")
+  (define-minor-mode my-evil-intercept-mode
+    "Global minor mode for higher precedence evil keybindings."
+    :global t)
+  (my-evil-intercept-mode)
+  (dolist (state '(normal visual insert))
+    (evil-make-intercept-map
+     (evil-get-auxiliary-keymap my-evil-intercept-mode-map state t t)
+     state))
+  (my-evil-std-keys '(normal motion visual) my-evil-intercept-mode-map))
+
+(use-package magit
+  :if (package-installed-p 'magit)
+  :bind
+  ("C-x g" . magit-status)
+  ("C-x p m" . magit-project-status)
+  :hook
+  (magit-diff-mode . (lambda () (setq truncate-lines nil)))
+  (magit-status-mode . (lambda () (setq truncate-lines nil)))
+  :custom
+  (magit-diff-refine-hunk 'all)
+  (magit-diff-refine-ignore-whitespace nil)
+  (magit-auto-revert-mode nil))
+
+(use-package dired-subtree
+  :if (package-installed-p 'dired-subtree)
+  :after dired
+  :bind
+  (:map dired-mode-map
+        ("TAB" . dired-subtree-toggle))
+  :config
+  (set-face-attribute 'dired-subtree-depth-1-face nil :background 'unspecified)
+  (set-face-attribute 'dired-subtree-depth-2-face nil :background 'unspecified)
+  (set-face-attribute 'dired-subtree-depth-3-face nil :background 'unspecified)
+  (set-face-attribute 'dired-subtree-depth-4-face nil :background 'unspecified)
+  (set-face-attribute 'dired-subtree-depth-5-face nil :background 'unspecified)
+  (set-face-attribute 'dired-subtree-depth-6-face nil :background 'unspecified))
+
+(use-package consult
+  :if (package-installed-p 'consult)
+  :bind
+  ([remap switch-to-buffer] . consult-buffer)
+  ([remap project-switch-to-buffer] . consult-project-buffer)
+  ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+  ([remap switch-to-buffer-other-tab] . consult-buffer-other-tab)
+  ([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
+  ([remap icomplete-fido-kill] . my-icomplete-consult-fido-kill)
+  :config
+  (consult-customize
+   consult-buffer
+   consult-project-buffer
+   consult-buffer-other-window
+   consult-buffer-other-tab
+   consult-buffer-other-frame
+   :preview-key nil
+   :annotate (lambda (x) ""))
+  (setq-default consult-buffer-sources
+                (cl-set-difference
+                 consult-buffer-sources
+                 '(consult--source-bookmark
+                   consult--source-buffer-register
+                   consult--source-file-register
+                   consult--source-project-root-hidden)))
+  (setq-default consult-project-buffer-sources
+                (cl-set-difference
+                 consult-project-buffer-sources
+                 '(consult--source-project-root)))
+  :init
+  (defun my-icomplete-consult-fido-kill (&optional pcat pthing)
+    "Replaces `icomplete-fido-kill' so that C-k can work with
+fido-mode when using `consult-buffer' & co.  Massive hack stolen from
+https://debbugs.gnu.org/cgi/bugreport.cgi?bug=72210"
+    (interactive)
+    (if (< (point) (icomplete--field-end))
+        (call-interactively 'kill-line)
+      (let ((cat (or pcat (icomplete--category)))
+            (all (completion-all-sorted-completions)))
+        (if (eq cat 'multi-category)
+            (let ((mc (get-text-property 0 'multi-category (car all))))
+              (my-icomplete-consult-fido-kill (car mc) (format "%s" (cdr mc))))
+          (let* ((thing (or pthing (car all)))
+                 (action
+                  (cl-case cat
+                    (buffer
+                     (lambda ()
+                       (when (yes-or-no-p (concat "Kill buffer " thing "? "))
+                         (kill-buffer thing))))
+                    ((project-file file)
+                     (lambda ()
+                       (let* ((dir (file-name-directory (icomplete--field-string)))
+                              (path (expand-file-name thing dir)))
+                         (when (yes-or-no-p (concat "Delete file " path "? "))
+                           (delete-file path) t))))
+                    (t
+                     (error "Sorry, don't know how to kill things for `%s'" cat)))))
+            (when (let ((enable-recursive-minibuffers t)
+                        (icomplete-mode nil))
+                    (funcall action))
+              (completion--cache-all-sorted-completions
+               (icomplete--field-beg)
+               (icomplete--field-end)
+               (cdr all))))
+          (message nil))))))
+
+(defconst after-file (concat user-emacs-directory "after.el"))
+(when (file-exists-p after-file)
+  (load after-file))
