@@ -5,7 +5,7 @@
 ;; This file is free software.
 
 ;; Author: Andrea Fiori
-;; Package-Version: 20251312.0948
+;; Package-Version: 20251812.0756
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: convenience, extensions, files, matching, tools, unix
 ;; License: GPLv3
@@ -88,58 +88,67 @@
 
 ;;;; Grep
 
+(defcustom af-grep-insert-files-literally nil
+  "Whether af-grep commands should insert files literally or not."
+  :type 'boolean
+  :group 'af-grep)
+
 (defun af-grep-files (files regexp)
-  (cl-labels
-      ((process-files-and-dirs (files)
-         (cl-loop for file in files nconc
-                  (condition-case err
-                      (if (file-directory-p file)
-                          (process-files-and-dirs (af-grep-find-files file "."))
-                        (let ((res (process-one-file file)))
-                          (when res
-                            (list (cons file res)))))
-                    (file-error
-                     (message "af-grep-files: failed to grep %S because of %S"
-                              file err)
-                     nil))))
-       (process-one-file (file)
-         (insert-file-contents file nil nil nil 'if-regular)
-         (goto-char (point-min))
-         (let ((lines (list (cons -1 "")))
-               (matches nil))
-           (while (and (not (eobp))
-                       (re-search-forward regexp nil t))
-             (let* ((line (line-number-at-pos))
-                    (line-beg (line-beginning-position))
-                    (match-beg (match-beginning 0))
-                    (match-line-start (- match-beg line-beg))
-                    (match-len (- (match-end 0) match-beg)))
-               (when (/= (caar lines) line)
-                 (push (cons line (buffer-substring-no-properties
-                                   line-beg (line-end-position)))
-                       lines))
-               (push (cons line (list (cons :match-line-start match-line-start)
-                                      (cons :match-len match-len)))
-                     matches)
-               (when (= match-len 0)
-                 (forward-char 1))))
-           (group-matches lines matches)))
-       (group-matches (lines matches)
-         (let ((grouped (make-hash-table)))
-           (cl-loop for (linenr . match) in matches do
-                    (push match
-                          (gethash linenr grouped '())))
-           (cl-loop with matches-by-line = ()
-                    for (linenr . linetext) in lines
-                    unless (= linenr -1)
-                    do (push (list
-                              (cons :line linenr)
-                              (cons :text linetext)
-                              (cons :matches (gethash linenr grouped)))
-                             matches-by-line)
-                    finally return matches-by-line))))
-    (with-temp-buffer
-      (process-files-and-dirs files))))
+  (let ((insert-file-contents-function (if af-grep-insert-files-literally
+                                           #'insert-file-contents-literally
+                                         #'insert-file-contents)))
+    (cl-labels
+        ((process-files-and-dirs (files)
+           (cl-loop for file in files nconc
+                    (condition-case err
+                        (if (file-directory-p file)
+                            (process-files-and-dirs (af-grep-find-files file "."))
+                          (let ((res (process-one-file file)))
+                            (when res
+                              (list (cons file res)))))
+                      (file-error
+                       (message "af-grep-files: failed to grep %S because of %S"
+                                file err)
+                       nil))))
+         (process-one-file (file)
+           (funcall
+            insert-file-contents-function file nil nil nil 'if-regular)
+           (goto-char (point-min))
+           (let ((lines (list (cons -1 "")))
+                 (matches nil))
+             (while (and (not (eobp))
+                         (re-search-forward regexp nil t))
+               (let* ((line (line-number-at-pos))
+                      (line-beg (line-beginning-position))
+                      (match-beg (match-beginning 0))
+                      (match-line-start (- match-beg line-beg))
+                      (match-len (- (match-end 0) match-beg)))
+                 (when (/= (caar lines) line)
+                   (push (cons line (buffer-substring-no-properties
+                                     line-beg (line-end-position)))
+                         lines))
+                 (push (cons line (list (cons :match-line-start match-line-start)
+                                        (cons :match-len match-len)))
+                       matches)
+                 (when (= match-len 0)
+                   (forward-char 1))))
+             (group-matches lines matches)))
+         (group-matches (lines matches)
+           (let ((grouped (make-hash-table)))
+             (cl-loop for (linenr . match) in matches do
+                      (push match
+                            (gethash linenr grouped '())))
+             (cl-loop with matches-by-line = ()
+                      for (linenr . linetext) in lines
+                      unless (= linenr -1)
+                      do (push (list
+                                (cons :line linenr)
+                                (cons :text linetext)
+                                (cons :matches (gethash linenr grouped)))
+                               matches-by-line)
+                      finally return matches-by-line))))
+      (with-temp-buffer
+        (process-files-and-dirs files)))))
 
 (defun af-grep-matches-to-xref (matches)
   (cl-loop
