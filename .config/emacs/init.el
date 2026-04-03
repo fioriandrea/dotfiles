@@ -81,36 +81,36 @@ expanded code catches any error during package setup."
           nil)))
     ;; Expansion
     (unless disabled
-      `(when (condition-case-unless-debug nil
-                 (and ,@condition)
-               (error nil))
-         ;; :custom
-         ,(when customs
-            `(progn
-               ,@(mapcar
-                  (lambda (x)
-                    `(condition-case-unless-debug err
-                         (customize-set-variable ',(car x) ,@(cdr x))
-                       (error
-                        (warn "Failed to customize %S because of %S"
-                              ',x err))))
-                  customs)))
-         ;; :init
-         ,(when inits
-            `(condition-case-unless-debug err
-                 (progn ,@inits)
-               (error
-                (warn "Failed to :init for package %S because of %S"
-                      ',pack err))))
-         ;; :config
-         ,(when configs
-            `(eval-after-load ',pack
-               (quote
-                ,`(condition-case-unless-debug err
-                      (progn ,@configs)
-                    (error
-                     (warn "Failed to :config for package %S because of %S"
-                           ',pack err))))))))))
+      (let ((warn-fn (gensym "my-use-package--warn")))
+        `(progn
+           (defvar ,warn-fn (lambda (keyword error)
+                              (let ((msg (format "%s/%s: %s" ',pack keyword
+                                                 (error-message-string error))))
+                                (display-warning 'my-use-package msg :error))))
+           (when (condition-case-unless-debug err
+                     (and ,@condition)
+                   (funcall ,warn-fn :if err))
+             ;; :custom
+             ,(when customs
+                `(progn
+                   ,@(mapcar
+                      (lambda (x)
+                        `(condition-case-unless-debug err
+                             (customize-set-variable ',(car x) ,@(cdr x))
+                           (error (funcall ,warn-fn :custom err))))
+                      customs)))
+             ;; :init
+             ,(when inits
+                `(condition-case-unless-debug err
+                     (progn ,@inits)
+                   (error (funcall ,warn-fn :init err))))
+             ;; :config
+             ,(when configs
+                `(eval-after-load ',pack
+                   (quote
+                    ,`(condition-case-unless-debug err
+                          (progn ,@configs)
+                        (error (funcall ,warn-fn :config err))))))))))))
 
 (unless (fboundp 'use-package)
   (message "No use-package found, using compatibility shim")
