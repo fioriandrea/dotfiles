@@ -173,23 +173,20 @@ loadable library."
           (push `(progn ,@(nreverse inits)) body))
         (when customs
           (push
-           ;; see use-package-handler/:custom
-           `(let ((custom--inhibit-theme-enable nil))
-              (unless (memq 'my-use-package custom-known-themes)
-                (deftheme my-use-package) (enable-theme 'my-use-package)
-                (setq custom-enabled-themes
-                      (remq 'my-use-package custom-enabled-themes)))
-              (custom-theme-set-variables
-               'my-use-package
-               ,@(mapcar (lambda (p)
-                           (let ((variable (nth 0 p))
-                                 (value (nth 1 p))
-                                 (comment (or (nth 2 p)
-                                              (format
-                                               "Customized with my-use-package %s"
-                                               (symbol-name pack)))))
-                             `'(,variable ,value nil nil ,comment)))
-                         (nreverse customs))))
+           `(progn
+              ,@(mapcar
+                 (lambda (x)
+                   (let ((variable (nth 0 x))
+                         (value (nth 1 x))
+                         (comment (or (nth 2 x)
+                                      (format
+                                       "Customized with my-use-package %s"
+                                       (symbol-name pack)))))
+                     `(customize-set-variable
+                       ',variable
+                       ,value
+                       ,comment)))
+                 customs))
            body))
         `(progn
            ,@prefaces
