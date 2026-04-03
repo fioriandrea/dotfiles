@@ -335,7 +335,7 @@ is already provided or corresponds to a loadable library."
 
 (use-package whitespace
   :bind
-  ("C-c s m" . whitespace-mode)
+  ("C-c s s" . whitespace-mode)
   ("C-c s d" . (lambda ()
                  (interactive)
                  (delete-trailing-whitespace)
