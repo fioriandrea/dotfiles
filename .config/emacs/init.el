@@ -467,19 +467,19 @@ The expanded code catches any error during package setup."
                      (eldoc-mode -1)))))
 
 (use-package eldoc
+  :custom
+  (eldoc-echo-area-use-multiline-p 'truncate-sym-name-if-fit)
+  (eldoc-echo-area-display-truncation-message nil)
   :config
   (advice-add 'eldoc-display-in-echo-area :around
               (lambda (orig &rest args)
-                ;; allow multiline just for emacs-lisp
+                ;; allow multiline just for emacs lisp
                 (let ((eldoc-echo-area-use-multiline-p
                        (if (derived-mode-p '(emacs-lisp-mode
                                              inferior-emacs-lisp-mode))
-                           'truncate-sym-name-if-fit
-                         eldoc-echo-area-use-multiline-p)))
-                  (apply orig args))))
-  :custom
-  (eldoc-echo-area-use-multiline-p nil)
-  (eldoc-echo-area-display-truncation-message nil))
+                           eldoc-echo-area-use-multiline-p
+                         nil)))
+                  (apply orig args)))))
 
 (use-package eglot
   :custom
