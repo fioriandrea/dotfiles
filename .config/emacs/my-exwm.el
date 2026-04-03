@@ -83,7 +83,16 @@
 (add-hook 'exwm-init-hook #'my-exwm-fix-initial-workspace-glitch)
 (add-hook 'exwm-init-hook #'my-exwm-start-systemtray)
 
-(add-to-list 'exwm-input-prefix-keys ?\C-g)
+(setopt exwm-input-prefix-keys
+        '([?\C-x]
+          [?\C-u]
+          [?\C-h]
+          [?\M-x]
+          [?\M-`]
+          [?\M-&]
+          [?\M-:]
+          [?\M-!]
+          [?\C-g]))
 
 (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
 
