@@ -143,7 +143,6 @@ KEY must be given in `kbd' notation."
   :bind
   ("<f5>" . (lambda () (interactive)
               (revert-buffer t t)))
-  ("C-c x" . window-swap-states)
   ("C-x f" . nil)
   ("C-x C-b" . buffer-menu)
   ([remap pop-global-mark] . my-pop-global-mark)
@@ -206,6 +205,12 @@ KEY must be given in `kbd' notation."
   :custom
   (help-window-select t)
   (help-window-keep-selected t))
+
+(use-package window
+  :bind ("C-c x" . window-swap-states)
+  :custom
+  (split-height-threshold nil)
+  (split-width-threshold nil))
 
 (use-package uniquify
   :custom
