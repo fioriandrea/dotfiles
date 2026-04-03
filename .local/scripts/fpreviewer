@@ -9,6 +9,38 @@ cmdexists() {
     command -v "$1" >/dev/null 2>&1
 }
 
+mbat() {
+    local start="$1"
+    local end="$2"
+    local ln="$3"
+    local file="$4"
+
+    if cmdexists bat; then
+        bat --highlight-line "$ln" \
+            --paging never \
+            --color always \
+            --number \
+            --theme ansi \
+            --line-range "$start":"$end" \
+            "$file"
+    else
+        awk '
+            NR == '$ln' {
+                underbeg = "\033[4m"
+                underend = "\033[0m"
+            }
+            NR >= '$start' {
+                printf("%s%d %s%s\n", underbeg, NR, $0, underend)
+                underbeg = ""
+                underend = ""
+            }
+            NR > '$end' {
+                exit
+            }
+        ' "$file"
+    fi
+}
+
 file=/dev/stdin
 linenr=1
 while getopts ':f:l:' o; do
@@ -20,7 +52,6 @@ while getopts ':f:l:' o; do
     esac
 done
 
-cmdexists bat || die "missing dependency bat"
 [[ -e $file ]] || die "file '$file' does not exist"
 positiveintre='^[0-9]+$'
 [[ $linenr =~ $re ]] || die "invalid line number '$linenr'"
@@ -29,9 +60,5 @@ shopt -s checkwinsize; (:)
 center=$((LINES / 2))
 start=$((linenr - center > 0 ? linenr - center : 1))
 end=$((start + LINES))
-bat --highlight-line "$linenr" \
-    --paging never \
-    --color always \
-    --number \
-    --line-range "$start":"$end" \
-    "$file"
+
+mbat "$start" "$end" "$linenr" "$file"
