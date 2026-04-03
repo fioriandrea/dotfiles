@@ -39,80 +39,99 @@
 
 ;;;; my-use-package
 
+(defun my-use-package--collect-lists (key val acc rest)
+  (cond
+   ((and val (listp val) (listp (car val)))
+    (list (append acc val) rest))
+   ((and val (listp val))
+    (list (cons val acc) (cons key rest)))
+   (t
+    (list acc (cons val rest)))))
+
+(defun my-use-package--collect-sexprs (key val acc rest)
+  (if (keywordp val)
+      (list acc (cons val rest))
+    (list (cons val acc) (cons key rest))))
+
 (defmacro my-use-package (pack &rest args)
   "Minimal `use-package' variant supporting a limited set of options.
 Expands only if PACK names a provided feature or loadable library.
 The expanded code catches any error during package setup."
   (declare (indent defun))
-  (let (customs
-        disabled
-        configs
-        demand
-        inits
-        condition)
-    (setq condition
-          `((or
-             (featurep ',pack)
-             (locate-library ,(symbol-name pack)))))
-    (while (and args (cdr args))
-      (let (key val)
-        (setq key (pop args))
-        (setq val (pop args))
-        (cond
-         ((eq key :disabled)
-          (setq disabled t)
-          (setq args nil))
-         ((or (eq key :if) (eq key :when))
-          (push val condition))
-         ((eq key :demand)
-          (setq demand val))
-         ((eq key :custom)
-          (cond
-           ((and val (listp val) (listp (car val)))
-            (setq customs (append customs val)))
-           ((and val (listp val))
-            (push val customs)
-            (push :custom args))
-           (t
-            (push val args))))
-         ((eq key :config)
-          (cond
-           ((not (keywordp val))
-            (push val configs)
-            (push :config args))
-           (t
-            (push val args))))
-         ((eq key :init)
-          (cond
-           ((not (keywordp val))
-            (push val inits)
-            (push :init args))
-           (t
-            (push val args))))
-         (t (push val args)))))
+  (require 'cl-lib)
+  (let ((customs nil)
+        (custom-faces nil)
+        (configs nil)
+        (inits nil)
+        (disabled nil)
+        (demand nil)
+        (rest args)
+        (condition
+         `((or (featurep ',pack)
+               (locate-library ,(symbol-name pack))))))
+    ;; Parse arguments
+    (cl-loop
+     while (and rest (cdr rest))
+     for key = (pop rest)
+     for val = (pop rest)
+     do
+     (pcase key
+       (:disabled
+        (setq disabled t
+              rest nil)
+        (cl-return))
+       ((or :if :when)
+        (push val condition))
+       (:demand
+        (setq demand val))
+       (:custom-face
+        (cl-destructuring-bind (new new-rest)
+            (my-use-package--collect-lists key val custom-faces rest)
+          (setq custom-faces new
+                rest new-rest)))
+       (:custom
+        (cl-destructuring-bind (new new-rest)
+            (my-use-package--collect-lists key val customs rest)
+          (setq customs new
+                rest new-rest)))
+       (:init
+        (cl-destructuring-bind (new new-rest)
+            (my-use-package--collect-sexprs key val inits rest)
+          (setq inits new
+                rest new-rest)))
+       (:config
+        (cl-destructuring-bind (new new-rest)
+            (my-use-package--collect-sexprs key val configs rest)
+          (setq configs new
+                rest new-rest)))
+       (_
+        (push val rest))))
+    ;; Expansion
     (unless disabled
       `(when (condition-case-unless-debug nil
                  (and ,@condition)
                (error nil))
+         ;; :custom-face
+         ,(when custom-faces
+            `(progn
+               ,@(mapcar
+                  (lambda (x)
+                    `(condition-case-unless-debug err
+                         (apply #'face-spec-set (backquote ,x))
+                       (error
+                        (warn "Failed to customize face %S because of %S"
+                              ',x err))))
+                  (nreverse custom-faces))))
          ;; :custom
          ,(when customs
             `(progn
                ,@(mapcar
                   (lambda (x)
-                    (let ((variable (nth 0 x))
-                          (value (nth 1 x))
-                          (comment (or (nth 2 x)
-                                       (format
-                                        "Customized with my-use-package %s"
-                                        (symbol-name pack)))))
-                      `(condition-case-unless-debug err
-                           (customize-set-variable
-                            ',variable
-                            ,value
-                            ,comment)
-                         (error
-                          (warn "Failed to customize %S to %S because of %S"
-                                ',variable ',value err)))))
+                    `(condition-case-unless-debug err
+                         (customize-set-variable ',(car x) ,@(cdr x))
+                       (error
+                        (warn "Failed to customize %S because of %S"
+                              ',x err))))
                   (nreverse customs))))
          ;; :init
          ,(when inits
