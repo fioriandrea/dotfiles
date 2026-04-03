@@ -170,7 +170,6 @@ tries to catch any error with `condition-case-unless-debug'."
   (declare (indent defun))
   (let (customs
         disabled
-        prefaces
         configs
         demand
         inits
@@ -200,13 +199,6 @@ tries to catch any error with `condition-case-unless-debug'."
             (push :custom args))
            (t
             (push val args))))
-         ((eq key :preface)
-          (cond
-           ((not (keywordp val))
-            (push val prefaces)
-            (push :preface args))
-           (t
-            (push val args))))
          ((eq key :config)
           (cond
            ((not (keywordp val))
@@ -223,47 +215,48 @@ tries to catch any error with `condition-case-unless-debug'."
             (push val args))))
          (t (push val args)))))
     (unless disabled
-      (let (body)
-        (when configs
-          (push
-           `(eval-after-load ',pack
-              (quote
-               ,`(condition-case-unless-debug err
-                     (progn ,@(nreverse configs))
-                   (error "Failed to :config for package `%S' because of `%S'"
-                          ',pack err))))
-           body))
-        (when demand
-          (push
-           `(require ',pack nil nil) body))
-        (when inits
-          (push `(progn ,@(nreverse inits)) body))
-        (when customs
-          (push
-           `(progn
-              ,@(mapcar
-                 (lambda (x)
-                   (let ((variable (nth 0 x))
-                         (value (nth 1 x))
-                         (comment (or (nth 2 x)
-                                      (format
-                                       "Customized with my-use-package %s"
-                                       (symbol-name pack)))))
-                     `(customize-set-variable
-                       ',variable
-                       ,value
-                       ,comment)))
-                 customs))
-           body))
-        `(condition-case-unless-debug err
-             (progn
-               ,@prefaces
-               (when (and ,@condition)
-                 ,@body))
-           (error
-            (warn "Failed to configure package `%S' because of `%S'"
-                  ',pack err)
-            nil))))))
+      `(when (condition-case-unless-debug nil
+                 (and ,@condition)
+               (error nil))
+         ;; :custom
+         ,(when customs
+            `(progn
+               ,@(mapcar
+                  (lambda (x)
+                    (let ((variable (nth 0 x))
+                          (value (nth 1 x))
+                          (comment (or (nth 2 x)
+                                       (format
+                                        "Customized with my-use-package %s"
+                                        (symbol-name pack)))))
+                      `(condition-case-unless-debug err
+                           (customize-set-variable
+                            ',variable
+                            ,value
+                            ,comment)
+                         (error
+                          (warn "Failed to customize %S to %S because of %S"
+                                ',variable ',value err)))))
+                  (nreverse customs))))
+         ;; :init
+         ,(when inits
+            `(condition-case-unless-debug err
+                 (progn ,@(nreverse inits))
+               (error
+                (warn "Failed to :init for package %S because of %S"
+                      ',pack err))))
+         ;; :demand
+         ,(when demand
+            `(require ',pack nil nil))
+         ;; :config
+         ,(when configs
+            `(eval-after-load ',pack
+               (quote
+                ,`(condition-case-unless-debug err
+                      (progn ,@(nreverse configs))
+                    (error
+                     (warn "Failed to :config for package %S because of %S"
+                           ',pack err))))))))))
 
 (unless (fboundp 'use-package)
   (message "No use-package found, using compatibility shim")
@@ -521,7 +514,7 @@ tries to catch any error with `condition-case-unless-debug'."
    (cons 'remote-file-error debug-ignored-errors)))
 
 (use-package icomplete
-  :preface
+  :init
   (defun my-icomplete-minibuffer-setup ()
     ;; https://lists.gnu.org/archive/html/emacs-devel/2020-05/msg03432.html
     ;; https://www.reddit.com/r/emacs/comments/13enmhl/prioritize_exact_match_in_completion_styles/
