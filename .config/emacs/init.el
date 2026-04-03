@@ -1,10 +1,39 @@
-;;; init.el --- Emacs configuration  -*- lexical-binding: t; no-byte-compile: t; -*-
-;;; Commentary:
-;;; Code:
+;;; init.el --- Emacs configuration -*- lexical-binding: t; no-byte-compile: t; -*-
+
+;;; Functions
+
+;;;; Miscellanea
 
 (defun my-open-config ()
   (interactive)
   (find-file user-init-file))
+
+(defun my-delete-autosave-current-buffer ()
+  (interactive)
+  (when buffer-file-name
+    (let ((auto-save-file (make-auto-save-file-name)))
+      (when (file-exists-p auto-save-file)
+        (delete-file auto-save-file)))))
+
+(defun my-delete-autosave-opened-files ()
+  (interactive)
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (my-delete-autosave-current-buffer))))
+
+(defun my-kill-buffer-skip-hooks (buffer)
+  (interactive "bBuffer: ")
+  (with-current-buffer buffer
+    (let (kill-buffer-hook kill-buffer-query-functions)
+      (kill-buffer))))
+
+(defun my-dired-do-occur (regexp &optional nlines)
+  (interactive (occur-read-primary-args) dired-mode)
+  (multi-occur
+   (mapcar #'find-file-noselect (dired-get-marked-files))
+   regexp nlines))
+
+;;;; my-http-fetch-url
 
 (defun my-http-fetch-url (url)
   (require 'url)
@@ -30,11 +59,7 @@
         (kill-buffer)))
     result))
 
-(defun my-dired-do-occur (regexp &optional nlines)
-  (interactive (occur-read-primary-args) dired-mode)
-  (multi-occur
-   (mapcar #'find-file-noselect (dired-get-marked-files))
-   regexp nlines))
+;;;; Grep
 
 (defun my-grep-files (files regexp)
   (let (results)
@@ -133,24 +158,7 @@
   (my-grep-show-xrefs regexp
                       (find-lisp-find-files dir file-regexp)))
 
-(defun my-delete-autosave-current-buffer ()
-  (interactive)
-  (when buffer-file-name
-    (let ((auto-save-file (make-auto-save-file-name)))
-      (when (file-exists-p auto-save-file)
-        (delete-file auto-save-file)))))
-
-(defun my-delete-autosave-opened-files ()
-  (interactive)
-  (dolist (buf (buffer-list))
-    (with-current-buffer buf
-      (my-delete-autosave-current-buffer))))
-
-(defun my-kill-buffer-skip-hooks (buffer)
-  (interactive "bBuffer: ")
-  (with-current-buffer buffer
-    (let (kill-buffer-hook kill-buffer-query-functions)
-      (kill-buffer))))
+;;;; my-use-package
 
 (defmacro my-use-package (pack &rest args)
   "Minimal `use-package' variant supporting a limited set of options.
@@ -254,6 +262,14 @@ tries to catch any error with `condition-case-unless-debug'."
                   ',pack err)
             nil))))))
 
+(unless (fboundp 'use-package)
+  (message "No use-package found, using compatibility shim")
+  (defalias 'use-package 'my-use-package))
+
+;;; Configuration
+
+;;;; Built-in
+
 (defconst my-emacs-backup-dir
   (file-name-as-directory
    (abbreviate-file-name
@@ -264,15 +280,9 @@ tries to catch any error with `condition-case-unless-debug'."
 (unless (file-directory-p my-emacs-autosave-dir)
   (make-directory my-emacs-autosave-dir 'parents))
 
-(defconst custom-file (concat user-emacs-directory "custom.el"))
-
 (defconst my-before-file (concat user-emacs-directory "before.el"))
 (when (file-exists-p my-before-file)
   (load-file my-before-file))
-
-(unless (fboundp 'use-package)
-  (message "No use-package found, using compatibility shim")
-  (defalias 'use-package 'my-use-package))
 
 (use-package use-package
   :ensure nil
@@ -657,6 +667,8 @@ tries to catch any error with `condition-case-unless-debug'."
   :demand t
   :after dired)
 
+;;;; External Packages
+
 (use-package magit
   :if (locate-library "magit")
   :hook
@@ -687,6 +699,9 @@ tries to catch any error with `condition-case-unless-debug'."
   (dired-subtree-line-prefix "    ")
   (dired-subtree-use-backgrounds nil))
 
+;;;; custom-file
+
+(defconst custom-file (concat user-emacs-directory "custom.el"))
 (when (file-exists-p custom-file)
   (load-file custom-file))
 
