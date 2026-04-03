@@ -8,13 +8,19 @@
   "vim.useSystemClipboard": true,
   "vim.handleKeys": {
     "<C-p>": false,
-    "<C-b>": false
+    "<C-b>": false,
+    "<C-f>": false,
+    "<C-k>": false,
+    "<C-g>": false,
+    "<C-z>": false,
+    "<C-h>": false
   },
-  "workbench.colorTheme": "Visual Studio Light",
   "workbench.colorCustomizations": {
     "editorIndentGuide.background1": "#00ff00",
     "editorIndentGuide.activeBackground1": "#ff0000"
   },
   "window.zoomLevel": 2,
-  "telemetry.telemetryLevel": "off"
+  "telemetry.telemetryLevel": "off",
+  "workbench.colorTheme": "Visual Studio Light",
+  "files.trimTrailingWhitespace": true
 }
