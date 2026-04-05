@@ -1,6 +1,7 @@
 ! https://wiki.archlinux.org/title/HiDPI#X_Resources
 ! Xft.dpi: 170
 ! Xcursor.size: 60
+! Xcursor.theme: Adwaita
 
 !! XTerm
 XTerm*termName: xterm-256color
