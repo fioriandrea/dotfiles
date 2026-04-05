@@ -1,4 +1,4 @@
-[[ -e /etc/arch-release ]] || return
+[[ -e /etc/arch-release || -e /etc/artix-release ]] || return
 
 alias pacman_cleanup='sudo pacman -Rns $(pacman -Qtdq)'
 
