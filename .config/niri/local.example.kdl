@@ -1,0 +1,23 @@
+output "eDP-1" {
+    scale 1.5
+}
+
+cursor {
+    xcursor-size 30
+    xcursor-theme "Adwaita"
+}
+
+input {
+    touchpad {
+        tap
+        dwt
+        natural-scroll
+        scroll-factor 0.4
+        accel-speed -0.1
+        tap-button-map "left-right-middle"
+    }
+}
+
+switch-events {
+    lid-close { spawn "swaylock"; }
+}
