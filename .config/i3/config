@@ -117,10 +117,4 @@ mode $exit_mode {
     bindsym $mod+Shift+e mode "default"
 }
 
-bar {
-    status_command i3status
-    tray_output primary
-    position top
-}
-
 include ./config.d/*
