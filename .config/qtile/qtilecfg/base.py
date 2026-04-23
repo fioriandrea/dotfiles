@@ -8,7 +8,6 @@ from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 
-
 mod = "mod4"
 terminal = guess_terminal()
 font = "monospace Bold"
@@ -277,16 +276,12 @@ layout_theme = {
     "border_width": scaled(5, x_scale),
     "border_focus": colors["focus"],
     "border_normal": colors["border"],
+    "border_focus_stack": [colors["focus"], colors["focus_stack"]],
     "margin": 0,
 }
 
 layouts = [
-    layout.Columns(
-        **layout_theme,
-        border_focus_stack=[colors["focus"], colors["focus_stack"]],
-        num_columns=1,
-        insert_position=1,
-    ),
+    layout.Columns(**layout_theme),
     layout.MonadTall(**layout_theme),
     layout.MonadWide(**layout_theme),
     layout.Max(**layout_theme),
