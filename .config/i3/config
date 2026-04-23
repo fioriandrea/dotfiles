@@ -15,7 +15,7 @@ set $menu_desktop i3-dmenu-desktop
 
 include ./variable-overrides.conf
 
-font pango:monospace 10
+font pango:monospace bold 10
 
 workspace_layout tabbed
 
