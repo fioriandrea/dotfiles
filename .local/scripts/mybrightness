@@ -23,6 +23,10 @@ step_fraction="${step_fraction#-}"
 max=$(brightnessctl max)
 step=$(awk -v m="$max" -v f="$step_fraction" 'BEGIN { printf "%d", m*f }')
 
+if [[ $step == 0 ]]; then
+    step="1%"
+fi
+
 case "$cmd" in
     up)
         brightnessctl set "+${step}" >/dev/null
