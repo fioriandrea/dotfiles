@@ -218,6 +218,13 @@ Expands only when PACK is loadable, and reports setup errors."
   ;; `no-ding' makes keyboard macros never quit
   (isearch-wrap-pause t))
 
+(use-package window
+  :config
+  (defun my-fewer-than-two-windows-p (&rest _args)
+    (length< (window-list) 2))
+  (advice-add 'window-splittable-p :before-while
+              'my-fewer-than-two-windows-p))
+
 (use-package frame
   :init
   (defun my-other-frame-backward (&optional n)
