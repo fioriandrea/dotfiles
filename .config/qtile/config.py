@@ -4,9 +4,8 @@ import subprocess
 from pathlib import Path
 
 from libqtile import bar, layout, qtile, widget
-from libqtile.config import Click, Drag, DropDown, Group, Key, KeyChord, Match, Screen, ScratchPad
+from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
 from libqtile.lazy import lazy
-from libqtile.widget.import_error import ImportErrorWidget
 from libqtile.utils import guess_terminal
 
 mod = "mod4"
@@ -15,7 +14,11 @@ font = "monospace Bold"
 
 
 def get_x_scale():
-    if os.environ.get("WAYLAND_DISPLAY") or not os.environ.get("DISPLAY") or shutil.which("xrdb") is None:
+    if (
+        os.environ.get("WAYLAND_DISPLAY")
+        or not os.environ.get("DISPLAY")
+        or shutil.which("xrdb") is None
+    ):
         return 1.0
     try:
         output = subprocess.check_output(["xrdb", "-query"], text=True)
@@ -71,6 +74,7 @@ colors = {
     "red": "#ff0000",
 }
 
+
 @lazy.function
 def move_window_to_previous_group(qtile):
     if qtile.current_window is None:
@@ -95,9 +99,32 @@ def move_window_to_next_screen(qtile):
     if target >= len(qtile.screens):
         target = 0
     screen = qtile.screens[target]
-    qtile.current_window.togroup(screen.group.name)
+    win = qtile.current_window
+    win.togroup(screen.group.name)
     qtile.focus_screen(screen.index)
-    screen.group.focus(qtile.current_window, True)
+    screen.group.focus(win, True)
+
+
+def directional_keys(modifiers, commands_by_direction, desc_template="{direction}"):
+    direction_aliases = {
+        "left": ["h", "Left"],
+        "down": ["j", "Down"],
+        "up": ["k", "Up"],
+        "right": ["l", "Right"],
+    }
+    keys = []
+    for direction, command in commands_by_direction.items():
+        key_names = direction_aliases[direction]
+        for key_name in key_names:
+            keys.append(
+                Key(
+                    modifiers,
+                    key_name,
+                    command,
+                    desc=desc_template.format(direction=direction, key=key_name),
+                )
+            )
+    return keys
 
 
 keys = [
@@ -111,45 +138,25 @@ keys = [
     Key([mod], "d", lazy.spawn(menu_desktop), desc="Launch desktop menu"),
     Key([mod, "shift"], "d", lazy.spawn(menu), desc="Launch menu"),
     Key([mod, "shift"], "q", lazy.window.kill(), desc="Kill focused window"),
-    Key([mod], "h", lazy.layout.left(), desc="Focus left"),
-    Key([mod], "j", lazy.layout.down(), desc="Focus down"),
-    Key([mod], "k", lazy.layout.up(), desc="Focus up"),
-    Key([mod], "l", lazy.layout.right(), desc="Focus right"),
-    Key([mod], "Left", lazy.layout.left(), desc="Focus left"),
-    Key([mod], "Down", lazy.layout.down(), desc="Focus down"),
-    Key([mod], "Up", lazy.layout.up(), desc="Focus up"),
-    Key([mod], "Right", lazy.layout.right(), desc="Focus right"),
-    Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window left"),
-    Key([mod, "shift"], "j", lazy.layout.shuffle_down(), desc="Move window down"),
-    Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
-    Key([mod, "shift"], "l", lazy.layout.shuffle_right(), desc="Move window right"),
-    Key([mod, "shift"], "Left", lazy.layout.shuffle_left(), desc="Move window left"),
-    Key([mod, "shift"], "Down", lazy.layout.shuffle_down(), desc="Move window down"),
-    Key([mod, "shift"], "Up", lazy.layout.shuffle_up(), desc="Move window up"),
-    Key([mod, "shift"], "Right", lazy.layout.shuffle_right(), desc="Move window right"),
-    Key(
-        [mod, "control"],
-        "h",
-        lazy.layout.swap_column_left().when(layout=["columns"]),
-        desc="Move column to the left",
+    *directional_keys(
+        [mod],
+        {
+            "left": lazy.layout.left(),
+            "down": lazy.layout.down(),
+            "up": lazy.layout.up(),
+            "right": lazy.layout.right(),
+        },
+        desc_template="Focus {direction}",
     ),
-    Key(
-        [mod, "control"],
-        "l",
-        lazy.layout.swap_column_left().when(layout=["columns"]),
-        desc="Move column to the right",
-    ),
-    Key(
-        [mod, "control"],
-        "Left",
-        lazy.layout.swap_column_left().when(layout=["columns"]),
-        desc="Move column to the left",
-    ),
-    Key(
-        [mod, "control"],
-        "Right",
-        lazy.layout.swap_column_left().when(layout=["columns"]),
-        desc="Move column to the right",
+    *directional_keys(
+        [mod, "shift"],
+        {
+            "left": lazy.layout.shuffle_left(),
+            "down": lazy.layout.shuffle_down(),
+            "up": lazy.layout.shuffle_up(),
+            "right": lazy.layout.shuffle_right(),
+        },
+        desc_template="Move window {direction}",
     ),
     Key([mod], "n", lazy.layout.down(), desc="Focus down"),
     Key([mod], "p", lazy.layout.up(), desc="Focus up"),
@@ -157,50 +164,70 @@ keys = [
     Key([mod, "shift"], "p", lazy.layout.shuffle_up(), desc="Move window up"),
     Key([mod], "Page_Down", lazy.screen.next_group(), desc="Next workspace"),
     Key([mod], "Page_Up", lazy.screen.prev_group(), desc="Previous workspace"),
-    Key([mod, "shift"], "Page_Down", move_window_to_next_group(), desc="Move window to next workspace"),
-    Key([mod, "shift"], "Page_Up", move_window_to_previous_group(), desc="Move window to previous workspace"),
+    Key(
+        [mod, "shift"],
+        "Page_Down",
+        move_window_to_next_group(),
+        desc="Move window to next workspace",
+    ),
+    Key(
+        [mod, "shift"],
+        "Page_Up",
+        move_window_to_previous_group(),
+        desc="Move window to previous workspace",
+    ),
     Key([mod], "w", lazy.group.setlayout("max"), desc="Max layout"),
     Key([mod], "e", lazy.group.setlayout("columns"), desc="Columns layout"),
     Key([mod], "m", lazy.layout.maximize(), desc="Maximize window in layout"),
+    Key(
+        [mod, "control", "shift"],
+        "m",
+        lazy.group.unminimize_all(),
+        desc="Unminimize all windows in group",
+    ),
     Key([mod], "r", lazy.layout.normalize(), desc="Normalize layout"),
+    Key(
+        [mod],
+        "backslash",
+        lazy.layout.flip().when(layout=["monadtall", "monadwide"]),
+        lazy.layout.swap_column_right().when(layout=["columns"]),
+        desc="Flip current layout",
+    ),
     Key([mod], "f", lazy.window.toggle_fullscreen(), desc="Toggle fullscreen"),
     Key([mod], "Tab", lazy.next_layout(), desc="Next layout"),
     Key([mod, "shift"], "Tab", lazy.prev_layout(), desc="Previous layout"),
     Key([mod, "shift"], "space", lazy.window.toggle_floating(), desc="Toggle floating"),
     Key([mod], "space", lazy.layout.next(), desc="Cycle focus in layout"),
-    Key([mod], "comma", lazy.group["scratchpad"].dropdown_toggle("term"), desc="Toggle scratchpad terminal"),
     Key([mod], "u", lazy.next_screen(), desc="Focus next screen"),
     Key([mod], "o", move_window_to_next_screen(), desc="Move window to next screen"),
-    Key([mod, "shift"], "c", lazy.reload_config(), desc="Reload config"),
     Key([mod, "shift"], "r", lazy.restart(), desc="Restart Qtile"),
     Key(
         [mod],
         "equal",
         lazy.layout.grow_left().when(layout=["columns"]),
-        lazy.layout.grow_main().when(layout=["monadtall", "monadwide"]),
+        lazy.layout.grow().when(layout=["monadtall", "monadwide"]),
         lazy.layout.increase_ratio().when(layout=["tile"]),
-        desc="Grow window width",
+        desc="Grow in current layout",
     ),
     Key(
         [mod],
         "minus",
         lazy.layout.grow_right().when(layout=["columns"]),
-        lazy.layout.shrink_main().when(layout=["monadtall", "monadwide"]),
+        lazy.layout.shrink().when(layout=["monadtall", "monadwide"]),
         lazy.layout.decrease_ratio().when(layout=["tile"]),
-        desc="Shrink window width",
+        desc="Shrink in current layout",
     ),
-    Key(
-        [mod, "shift"],
-        "equal",
-        lazy.layout.grow_down().when(layout=["columns"]),
-        desc="Grow window height",
+    *directional_keys(
+        [mod, "control"],
+        {
+            "left": lazy.layout.grow_left(),
+            "down": lazy.layout.grow_down(),
+            "up": lazy.layout.grow_up(),
+            "right": lazy.layout.grow_right(),
+        },
+        desc_template="Grow window {direction}",
     ),
-    Key(
-        [mod, "shift"],
-        "minus",
-        lazy.layout.grow_up().when(layout=["columns"]),
-        desc="Shrink window height",
-    ),
+    Key([mod, "shift"], "c", lazy.reload_config(), desc="Reload config"),
     KeyChord(
         [mod, "shift"],
         "e",
@@ -244,15 +271,6 @@ for i in groups:
         ]
     )
 
-groups.append(
-    ScratchPad(
-        "scratchpad",
-        [
-            DropDown("term", "xterm", x=0.05, y=0.05, width=0.9, height=0.75, opacity=0.9),
-        ],
-    )
-)
-
 
 layout_theme = {
     "border_width": scaled(5, x_scale),
@@ -292,7 +310,9 @@ extension_defaults = widget_defaults.copy()
 
 def has_battery():
     try:
-        return any(name.startswith("BAT") for name in os.listdir("/sys/class/power_supply"))
+        return any(
+            name.startswith("BAT") for name in os.listdir("/sys/class/power_supply")
+        )
     except FileNotFoundError:
         return False
 
@@ -338,6 +358,9 @@ def build_widgets(include_tray):
             foreground=colors["fg"],
             padding=8,
         ),
+        widget.Prompt(
+            foreground=colors["fg"],
+        ),
         widget.Spacer(),
     ]
     if has_battery():
@@ -363,16 +386,25 @@ def build_widgets(include_tray):
 
 
 def build_screen(include_tray):
-    return Screen(bottom=bar.Bar(build_widgets(include_tray), bar_height, background=colors["bg"]))
+    return Screen(
+        bottom=bar.Bar(build_widgets(include_tray), bar_height, background=colors["bg"])
+    )
 
 
-screens = [build_screen(True)]
+screens = [build_screen(include_tray=True)]
 generate_screens = None
-
+fake_screens = None
 
 mouse = [
-    Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
-    Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
+    Drag(
+        [mod],
+        "Button1",
+        lazy.window.set_position_floating(),
+        start=lazy.window.get_position(),
+    ),
+    Drag(
+        [mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()
+    ),
     Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
 
@@ -394,17 +426,22 @@ floating_layout = layout.Floating(
         Match(wm_class="ssh-askpass"),
         Match(title="branchdialog"),
         Match(title="pinentry"),
-    ]
+    ],
 )
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
-auto_minimize = True
-fake_screens = None
+auto_minimize = False
+wl_input_rules = None
+wl_xcursor_theme = None
+wl_xcursor_size = 24
+idle_timers = []
+idle_inhibitors = []
 wmname = "LG3D"
 
 local_path = Path(__file__).with_name("local.py")
 if local_path.is_file():
     import local
+
     if hasattr(local, "apply_overrides"):
         local.apply_overrides(globals())
