@@ -1,0 +1,49 @@
+* {
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-size: 10pt;
+  font-weight: 500;
+}
+
+window#waybar {
+  background: #000000;
+  color: #ffffff;
+}
+
+.modules-right > widget {
+  margin-left: 8px;
+}
+
+#workspaces {
+  margin-left: 4px;
+}
+
+#workspaces button {
+  padding: 0 6px;
+  color: #d0d0d0;
+}
+
+#workspaces button.active {
+  background: #285577;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px #4c7899;
+}
+
+#tray,
+#battery,
+#clock {
+  padding: 0 4px;
+}
+
+#battery.warning {
+  color: #dca000;
+}
+
+#battery.critical {
+  color: #cc6666;
+}
+
+#clock {
+  font-feature-settings: "tnum";
+}
