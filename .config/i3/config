@@ -120,4 +120,4 @@ mode $exit_mode {
     bindsym $mod+Shift+e mode "default"
 }
 
-include ./config.d/*
+include ./config.d/*.conf
