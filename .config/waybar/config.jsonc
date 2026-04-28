@@ -11,9 +11,9 @@
   },
   "sway/workspaces": {
     "on-click": "activate",
-    "disable-scroll": true,
     "all-outputs": true,
-    "warp-on-scroll": false
+    "smooth-scrolling-threshold": 2.0,
+    "disable-scroll-wraparound": true
   },
   "niri/workspaces": {},
   "tray": {
