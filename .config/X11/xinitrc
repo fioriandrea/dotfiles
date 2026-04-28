@@ -60,4 +60,6 @@ source_xinitrc_d "$user_xinitrc_d"
 
 export _JAVA_AWT_WM_NONREPARENTING=1
 
-exec dbus-launch emacs --load "$config_home/emacs/my-exwm.el"
+# exec dbus-launch emacs --load "$config_home/emacs/my-exwm.el"
+exec dbus-launch --exit-with-session i3
+
