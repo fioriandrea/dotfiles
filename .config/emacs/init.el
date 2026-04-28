@@ -261,11 +261,9 @@ Expands only when PACK is loadable, and reports setup errors."
        (if tab-bar-history-command-echo-text
            (concat status " (" tab-bar-history-command-echo-text ")")
          status))))
-  (advice-add 'tab-bar-history-forward
-              :after
+  (advice-add 'tab-bar-history-forward :after
               'my-tab-bar-history-position-indicator)
-  (advice-add 'tab-bar-history-back
-              :after
+  (advice-add 'tab-bar-history-back :after
               'my-tab-bar-history-position-indicator))
 
 (use-package saveplace
