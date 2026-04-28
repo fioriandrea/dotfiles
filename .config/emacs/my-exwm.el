@@ -80,6 +80,7 @@
           (,(kbd "s-i") . exwm-input-toggle-keyboard)
           (,(kbd "s-w") . exwm-workspace-switch)
           (,(kbd "s-&") . my-exwm-spawn-shell-process)
+          (,(kbd "s-D") . my-exwm-spawn-shell-process)
           (,(kbd "s-d") . my-exwm-run-desktop-app)))
 
 ;;;; Hooks
