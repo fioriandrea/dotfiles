@@ -46,8 +46,6 @@ binds {
 
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
-    Mod+Ctrl+P { power-off-monitors; }
-
     Mod+Shift+Q repeat=false { close-window; }
 
     Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
@@ -126,12 +124,13 @@ binds {
     Mod+Shift+Minus { set-window-height "-10%"; }
     Mod+Shift+Equal { set-window-height "+10%"; }
 
-    Mod+N { focus-workspace-down; }
-    Mod+P { focus-workspace-up; }
+    Mod+N { focus-window-down; }
+    Mod+P { focus-window-up; }
+    Mod+Shift+N { move-window-down; }
+    Mod+Shift+P { move-window-up; }
+
     Mod+Page_Down { focus-workspace-down; }
     Mod+Page_Up { focus-workspace-up; }
-    Mod+Shift+N { move-column-to-workspace-down; }
-    Mod+Shift+P { move-column-to-workspace-up; }
     Mod+Shift+Page_Down { move-column-to-workspace-down; }
     Mod+Shift+Page_Up { move-column-to-workspace-up; }
 

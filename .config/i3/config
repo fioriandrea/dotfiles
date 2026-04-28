@@ -44,10 +44,15 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
-bindsym $mod+p workspace prev_on_output
-bindsym $mod+n workspace next_on_output
-bindsym $mod+Shift+p move container to workspace prev_on_output
-bindsym $mod+Shift+n move container to workspace next_on_output
+bindsym $mod+n focus down
+bindsym $mod+p focus up
+bindsym $mod+Shift+n move down
+bindsym $mod+Shift+p move up
+
+bindsym $mod+Page_Down workspace next_on_output
+bindsym $mod+Page_Up workspace prev_on_output
+bindsym $mod+Shift+Page_Down move container to workspace next_on_output
+bindsym $mod+Shift+Page_Up move container to workspace prev_on_output
 
 bindsym $mod+1 workspace number 1
 bindsym $mod+2 workspace number 2
