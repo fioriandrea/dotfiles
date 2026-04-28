@@ -1,0 +1,30 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 26,
+  "spacing": 10,
+  "modules-left": ["niri/workspaces"],
+  "modules-center": [],
+  "modules-right": ["battery", "clock", "tray"],
+  "niri/workspaces": {},
+  "tray": {
+    "spacing": 8
+  },
+  "battery": {
+    "interval": 30,
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{capacity}%",
+    "format-charging": "CHG {capacity}%",
+    "format-plugged": "AC {capacity}%",
+    "format-full": "{capacity}%",
+    "tooltip-format": "{capacity}%"
+  },
+  "clock": {
+    "interval": 20,
+    "format": "{:%Y-%m-%d %H:%M}",
+    "tooltip-format": "{:%Y-%m-%d %H:%M}"
+  }
+}
