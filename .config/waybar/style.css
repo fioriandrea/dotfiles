@@ -4,7 +4,7 @@
   min-height: 0;
   font-size: 10pt;
   font-family: monospace;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 window#waybar {
