@@ -5,8 +5,6 @@ from libqtile import hook, qtile
 from libqtile.config import Key
 from libqtile.lazy import lazy
 
-import gestures
-
 wl_input_rules = {
     "type:touchpad": InputConfig(
         tap=True,
