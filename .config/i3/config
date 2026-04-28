@@ -16,6 +16,9 @@ set $menu_desktop i3-dmenu-desktop
 include ./variable-overrides.conf
 
 font pango:monospace 10
+
+workspace_layout tabbed
+
 floating_modifier $mod
 
 bindsym $mod+Return exec $term
