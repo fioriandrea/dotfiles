@@ -3,9 +3,18 @@
   "position": "top",
   "height": 26,
   "spacing": 10,
-  "modules-left": ["niri/workspaces"],
+  "modules-left": ["sway/workspaces", "sway/mode", "niri/workspaces"],
   "modules-center": [],
   "modules-right": ["battery", "clock", "tray"],
+  "sway/mode": {
+    "format": "{}"
+  },
+  "sway/workspaces": {
+    "on-click": "activate",
+    "disable-scroll": true,
+    "all-outputs": true,
+    "warp-on-scroll": false
+  },
   "niri/workspaces": {},
   "tray": {
     "spacing": 8
