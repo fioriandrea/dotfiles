@@ -1,16 +1,21 @@
 set $mod Mod4
-set $dmenu_opts -i -fn monospace-15
 
 set $move_workspace_to_output_mode "Move workspace to output"
 set $exit_mode "Exit? [Return] yes, [Escape] no"
 set $resize_mode "resize"
 
+set $term i3-sensible-terminal
+set $menu dmenu_run -i
+set $menu_desktop i3-dmenu-desktop
+
+include ./variable-overrides.conf
+
 font pango:monospace 10
 floating_modifier $mod
 
-bindsym $mod+Return exec i3-sensible-terminal
-bindsym $mod+d exec i3-dmenu-desktop --dmenu='dmenu $dmenu_opts'
-bindsym $mod+Shift+d exec dmenu_run $dmenu_opts
+bindsym $mod+Return exec $term
+bindsym $mod+d exec $menu_desktop
+bindsym $mod+Shift+d exec $menu
 bindsym $mod+Shift+q kill
 
 bindsym $mod+Left focus left
@@ -60,8 +65,8 @@ bindsym $mod+minus scratchpad show
 bindsym $mod+Shift+m mark --add swapee
 bindsym $mod+Shift+s swap container with mark swapee; unmark swapee
 
-bindsym $mod+o move workspace to output next
-bindsym $mod+Shift+o move workspace to output right
+bindsym $mod+o move workspace to output right
+bindsym $mod+Shift+o move workspace to output next
 bindsym $mod+ctrl+o mode $move_workspace_to_output_mode
 
 bindsym $mod+Shift+c reload
@@ -95,9 +100,9 @@ mode $exit_mode {
 }
 
 bar {
-    status_command i3status -c ~/.config/i3/i3status.conf
+    status_command i3status
     tray_output primary
     position top
 }
 
-include ./local.conf
+include ./config.d/*
