@@ -130,6 +130,7 @@ Expands only when PACK is loadable, and reports setup errors."
   (ring-bell-function 'ignore)
   (truncate-lines nil)
   (truncate-partial-width-windows nil)
+  (window-combination-resize t)
   (indent-tabs-mode nil)
   (use-short-answers t)
   (frame-inhibit-implied-resize t)
