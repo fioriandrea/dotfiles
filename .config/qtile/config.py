@@ -401,6 +401,6 @@ wmname = "LG3D"
 
 local_path = Path(__file__).with_name("local.py")
 if local_path.is_file():
-    from local import *
-    if "extra_keys" in locals():
-        keys.extend(extra_keys)
+    import local
+    if hasattr(local, "apply_overrides"):
+        local.apply_overrides(globals())
