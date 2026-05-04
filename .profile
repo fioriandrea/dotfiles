@@ -19,17 +19,29 @@ export GOPATH="$HOME/.local/go"
 export npm_config_prefix="$HOME/.local"
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig"
 
+pathuniq() {
+    awk -v p="${1:-$PATH}" '
+BEGIN {
+    n = split(p, fields, ":")
+    set[""] = 1
+    for (i = 1; i <= n; i++) {
+        f = fields[i]
+        if (f in set) {
+           continue
+        }
+        set[f] = 1
+        printf("%s%s", delim, f)
+        delim = ":"
+    }
+}'
+}
+
 pathappend() {
-    PATH=$(
-        for arg in "$@"; do
-            test -d "${arg}" || continue
-            case :$PATH: in
-                *":${arg}:"*) continue ;;
-            esac
-            PATH="${arg}:$PATH"
-        done
-        printf '%s' "$PATH"
-    )
+    for arg in "$@"; do
+        test -d "$arg" || continue
+        PATH="$arg:$PATH"
+    done
+    PATH=$(pathuniq "$PATH")
     export PATH
 }
 
