@@ -149,7 +149,6 @@ Expands only when PACK is loadable, and reports setup errors."
   (vc-make-backup-files t)
   (delete-old-versions -1)
   (dired-kept-versions 10)
-  (kept-old-versions 5)
   (auto-save-file-name-transforms `((".*" ,my-emacs-auxiliary-files-dir t)))
   (lock-file-name-transforms `((".*" ,my-emacs-auxiliary-files-dir t)))
   (backup-directory-alist `(("." . ,my-emacs-auxiliary-files-dir)))
