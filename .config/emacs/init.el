@@ -485,6 +485,7 @@ Expands only when PACK is loadable, and reports setup errors."
 
 (use-package project
   :custom
+  (project-prune-zombie-projects '((list-first-read . project-prune-zombies-default)))
   (project-buffers-viewer 'project-list-buffers-ibuffer)
   (project-vc-extra-root-markers '(".project.el")))
 
