@@ -153,6 +153,10 @@ Expands only when PACK is loadable, and reports setup errors."
   (lock-file-name-transforms `((".*" ,my-emacs-auxiliary-files-dir t)))
   (backup-directory-alist `(("." . ,my-emacs-auxiliary-files-dir)))
   :init
+  ;; https://www.emacswiki.org/emacs/ForceBackups
+  (defun my-force-backup-of-buffer ()
+    (setq buffer-backed-up nil))
+  (add-hook 'before-save-hook 'my-force-backup-of-buffer)
   (defun my-delete-autosave-current-buffer ()
     (interactive)
     (when buffer-file-name
