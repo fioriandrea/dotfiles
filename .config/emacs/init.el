@@ -95,7 +95,6 @@ Expands only when PACK is loadable, and reports setup errors."
    ("C-x C-b" . ibuffer)
    ("C-M-/" . hippie-expand))
   :hook
-  ((prog-mode text-mode conf-mode) . display-line-numbers-mode)
   (text-mode . visual-line-mode)
   :custom
   (inhibit-startup-screen t)
@@ -152,6 +151,10 @@ Expands only when PACK is loadable, and reports setup errors."
   ;; hack to delete auto-save files on C-x C-c
   (add-to-list 'kill-emacs-query-functions 'my-delete-autosave-all-buffers)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+
+(use-package display-line-numbers
+  :custom
+  (global-display-line-numbers-mode t))
 
 (use-package mouse
   :custom
