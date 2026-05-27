@@ -23,7 +23,7 @@ xdg_config_home=${XDG_CONFIG_HOME:-$HOME/.config}
 bashconfdir=$xdg_config_home/bash/
 [[ -r $bashconfdir ]] || return
 for conffile in "$bashconfdir"/*; do
-    if [[ -f $conffile ]] && [[ -x $conffile ]]; then
+    if [[ -f $conffile ]]; then
         source "$conffile"
     fi
 done
