@@ -2,8 +2,6 @@
 
 ;; Copyright (C) Andrea Fiori
 
-;; Author: Andrea Fiori
-
 ;;; Commentary:
 
 ;; My personal Emacs configuration.
