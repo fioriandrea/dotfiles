@@ -452,6 +452,10 @@ Expands only when PACK is loadable, and reports setup errors."
   :custom
   (eglot-events-buffer-config '(:size 0 :format full)))
 
+(use-package gud
+  :custom
+  (gud-highlight-current-line t))
+
 (use-package calendar
   :custom
   (calendar-date-style 'european)
