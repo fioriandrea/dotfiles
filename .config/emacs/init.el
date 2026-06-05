@@ -456,6 +456,10 @@ Expands only when PACK is loadable, and reports setup errors."
   :custom
   (gud-highlight-current-line t))
 
+(use-package gdb-mi
+  :custom
+  (gdb-display-io-buffer nil))
+
 (use-package calendar
   :custom
   (calendar-date-style 'european)
