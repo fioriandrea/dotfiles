@@ -1,4 +1,5 @@
 set autoread
+set autochdir
 set number
 set incsearch
 set expandtab
