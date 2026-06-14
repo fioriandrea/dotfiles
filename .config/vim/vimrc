@@ -1,7 +1,11 @@
-" set to auto read when a file is changed from the outside
 set autoread
+set number
+set incsearch
+set expandtab
+set mouse=a
+set guicursor=
+set hidden
 
-" show possible matches in command-line completion
 set wildmenu
 set wildmode=full:lastused
 set wildignore=*.o,*~,*.pyc
@@ -12,21 +16,6 @@ else
 endif
 set wildignore+=tags
 set wildignorecase
-
-" allow moving through buffers withouth writing each one every time
-set hidden
-
-" cursor always as a block
-set guicursor=
-
-" show current line number
-set number
-
-" enable mouse support
-set mouse=a
-
-" highlights while you are typing in / search mode
-set incsearch
 
 if has("clipboard")
     " copy to the system clipboard
@@ -42,9 +31,6 @@ let indent=4
 let &tabstop=indent
 let &softtabstop=indent
 let &shiftwidth=indent
-
-" substitute tabs with spaces
-set expandtab
 
 " suppress netrw banner
 " let g:netrw_banner=0
