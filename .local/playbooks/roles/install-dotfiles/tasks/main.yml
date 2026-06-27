@@ -1,0 +1,65 @@
+---
+- block:
+    - name: Gather the package facts
+      package_facts:
+        manager: auto
+
+    - name: Ensure rsync and git are installed
+      package:
+        name:
+          - rsync
+          - git
+        state: present
+      become: true
+      when: >
+        ('rsync' not in ansible_facts.packages) or
+        ('git' not in ansible_facts.packages)
+
+    - name: Create temp directory.
+      tempfile:
+        state: directory
+      register: temp_dir
+
+    - name: Clone repo in temp directory.
+      git:
+        accept_newhostkey: true
+        clone: true
+        recursive: true
+        repo: "{{ dotfiles_repo_url }}"
+        version: "{{ dotfiles_version }}"
+        dest: "{{ temp_dir.path }}"
+
+    - name: Don't show untracked files.
+      command: git config --local status.showUntrackedFiles no
+      args:
+        chdir: "{{ temp_dir.path }}"
+
+    - name: Make backup directory if it doesn't exist.
+      file:
+        path: "{{ dotfiles_backup_dir }}"
+        state: directory
+      when: dotfiles_backup_dir is defined
+
+    - name: Make rsync backup options var.
+      set_fact:
+        rsync_opts:
+          - "--backup"
+
+    - name: Build rsync backup options.
+      set_fact:
+        rsync_opts: "{{ rsync_opts + ['--backup-dir=' ~ dotfiles_backup_dir] }}"
+      when: dotfiles_backup_dir is defined
+
+    - name: Copy repo to destination directory.
+      synchronize:
+        src: "{{ temp_dir.path }}/"
+        dest: "{{ dotfiles_install_dir | default(ansible_env['HOME'], true) }}/"
+        archive: true
+        rsync_opts: "{{ rsync_opts }}"
+      delegate_to: "{{ inventory_hostname }}"
+  always:
+    - name: Delete temp directory.
+      file:
+        path: "{{ temp_dir.path }}"
+        state: absent
+      when: temp_dir is defined and temp_dir.path is defined

@@ -1,0 +1,7 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+
+  roles:
+    - role: install-dotfiles
+      dotfiles_backup_dir: "{{ ansible_env.HOME }}/.dotfiles-backup"
