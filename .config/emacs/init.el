@@ -154,10 +154,6 @@ Expands only when PACK is loadable, and reports setup errors."
   (add-to-list 'kill-emacs-query-functions 'my-delete-autosave-all-buffers)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
-(use-package display-line-numbers
-  :hook
-  ((prog-mode text-mode conf-mode) . display-line-numbers-mode))
-
 (use-package mouse
   :custom
   (xterm-mouse-mode t)
