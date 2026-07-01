@@ -154,6 +154,16 @@ Expands only when PACK is loadable, and reports setup errors."
   (add-to-list 'kill-emacs-query-functions 'my-delete-autosave-all-buffers)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
+(use-package display-line-numbers
+  :init
+  (defun my-toggle-line-numbers (&optional arg)
+    (interactive "P")
+    (if arg
+        (display-line-numbers-mode 'toggle)
+      (global-display-line-numbers-mode 'toggle)))
+  :bind
+  ("C-c n" . my-toggle-line-numbers))
+
 (use-package mouse
   :custom
   (xterm-mouse-mode t)
