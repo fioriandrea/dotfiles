@@ -492,6 +492,7 @@ Expands only when PACK is loadable, and reports setup errors."
   (org-startup-truncated nil)
   (org-html-validation-link nil)
   (org-edit-src-content-indentation 0)
+  (org-use-speed-commands t)
   :config
   (setf (alist-get 'file org-link-frame-setup) 'find-file))
 
