@@ -174,6 +174,10 @@ Expands only when PACK is loadable, and reports setup errors."
   (help-window-select t)
   (help-window-keep-selected t))
 
+(use-package man
+  :custom
+  (Man-notify-method 'aggressive))
+
 (use-package hl-line
   :hook
   (dired-mode . hl-line-mode)
