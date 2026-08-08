@@ -176,7 +176,7 @@ Expands only when PACK is loadable, and reports setup errors."
 
 (use-package man
   :custom
-  (Man-notify-method 'aggressive))
+  (Man-notify-method 'thrifty))
 
 (use-package hl-line
   :hook
