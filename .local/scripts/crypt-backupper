@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+die() {
+    log ERROR "$1"
+    exit 1
+}
+
+log() {
+    printf '%s: %s %s\n' "$0" "$1" "$2" >&2
+}
+
+cmdexists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+encrypt_stdin() {
+    gpg --symmetric --no-symkey-cache --cipher-algo "$cipher_algo" -
+}
+
+usage() {
+    echo "usage: $0 [-h] -s SOURCE [-c CIPHER_ALGO] [-- TAR_EXTRA_ARGS]"
+}
+
+usage_and_die() {
+    usage >&2
+    die "$1"
+}
+
+source=
+cipher_algo=AES-256
+
+echo "$@"
+
+while getopts ':hs:c:' o; do
+    case $o in
+        h) usage; exit 0 ;;
+        s) source=$OPTARG ;;
+        c) cipher_algo=$OPTARG ;;
+        :) usage_and_die "must supply argument to '$OPTARG'" ;;
+        ?) usage_and_die "unknown option '$OPTARG'" ;;
+    esac
+done
+
+shift "$((OPTIND - 1))"
+
+tar_extra_args=("$@")
+
+[[ -e $source ]] || die "source argument is mandatory and must exist"
+
+destfile="$(basename "$source").tar.gz.gpg"
+log INFO "using '$destfile' as destination"
+
+cmdexists gpg || die 'missing dependency rsync'
+cmdexists tar || die 'missing dependency tar'
+cmdexists gzip || die 'missing dependency gzip'
+
+if [[ -f $destfile ]]; then
+    yesre='^[Yy]$'
+    read -p "WARNING: file '$destfile' already exists, overwrite? [y/N] " overwrite
+    if ! [[ "$overwrite" =~ $yesre ]]; then
+        log INFO "leaving file '$destfile' unchanged..."
+        exit 0
+    fi
+fi
+
+tar czfv - "${tar_extra_args[@]}" "$source" | encrypt_stdin > "$destfile"
