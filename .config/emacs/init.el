@@ -103,7 +103,6 @@ Expands only when PACK is loadable, and reports setup errors."
   (tool-bar-mode nil)
   (menu-bar-mode t)
   (confirm-kill-emacs 'y-or-n-p)
-  (native-comp-async-report-warnings-errors 'silent)
   (view-read-only nil)
   (global-subword-mode t)
   (global-so-long-mode t)
@@ -153,6 +152,11 @@ Expands only when PACK is loadable, and reports setup errors."
   ;; hack to delete auto-save files on C-x C-c
   (add-to-list 'kill-emacs-query-functions 'my-delete-autosave-all-buffers)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+
+(use-package comp-run
+  :custom
+  (native-comp-async-report-warnings-errors 'silent)
+  (native-comp-async-on-battery-power nil))
 
 (use-package display-line-numbers
   :init
