@@ -514,6 +514,13 @@ Expands only when PACK is loadable, and reports setup errors."
   (proced-format 'short))
 
 (use-package project
+  :init
+  (defun my-project-ibuffer ()
+    (interactive)
+    (project-list-buffers-ibuffer (project-current t)))
+  (defun my-project-buffer-menu ()
+    (interactive)
+    (project-list-buffers-buffer-menu (project-current t)))
   :custom
   (project-prune-zombie-projects '((list-first-read . project-prune-zombies-default)))
   (project-buffers-viewer 'project-list-buffers-ibuffer)
