@@ -92,7 +92,7 @@ Expands only when PACK is loadable, and reports setup errors."
 (use-package emacs
   :bind
   (("C-x f" . nil)
-   ("C-x C-b" . ibuffer)
+   ("C-x C-b" . buffer-menu)
    ("C-M-/" . hippie-expand))
   :hook
   (text-mode . visual-line-mode)
@@ -521,7 +521,7 @@ Expands only when PACK is loadable, and reports setup errors."
     (project-list-buffers-buffer-menu (project-current t)))
   :custom
   (project-prune-zombie-projects '((list-first-read . project-prune-zombies-default)))
-  (project-buffers-viewer 'project-list-buffers-ibuffer)
+  (project-buffers-viewer 'project-list-buffers-buffer-menu)
   (project-vc-extra-root-markers '(".project.el")))
 
 (use-package dired
