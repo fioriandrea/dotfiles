@@ -227,10 +227,9 @@ Expands only when PACK is loadable, and reports setup errors."
 
 (use-package window
   :config
-  (defun my-fewer-than-two-windows-p (&rest _args)
-    (length< (window-list) 2))
-  (advice-add 'window-splittable-p :before-while
-              'my-fewer-than-two-windows-p))
+  (defun my-window-alone-p (window &rest _args)
+    (length< (window-list (window-frame window)) 2))
+  (advice-add 'window-splittable-p :before-while 'my-window-alone-p))
 
 (use-package frame
   :init
