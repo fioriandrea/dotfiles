@@ -102,7 +102,7 @@ Expands only when PACK is loadable, and reports setup errors."
   (inhibit-startup-screen t)
   (tool-bar-mode nil)
   (menu-bar-mode t)
-  (confirm-kill-emacs 'y-or-n-p)
+  (confirm-kill-emacs 'my-confirm-exit)
   (view-read-only nil)
   (global-subword-mode t)
   (global-so-long-mode t)
@@ -148,9 +148,12 @@ Expands only when PACK is loadable, and reports setup errors."
     (dolist (buf (buffer-list) t)
       (with-current-buffer buf
         (my-delete-autosave-current-buffer))))
+  (defun my-confirm-exit (prompt)
+    "Confirm exiting Emacs, then remove auto-save files."
+    (when (y-or-n-p prompt)
+      (my-delete-autosave-all-buffers)
+      t))
   (add-hook 'kill-buffer-hook 'my-delete-autosave-current-buffer)
-  ;; hack to delete auto-save files on C-x C-c
-  (add-to-list 'kill-emacs-query-functions 'my-delete-autosave-all-buffers)
   (add-to-list 'default-frame-alist '(fullscreen . maximized)))
 
 (use-package comp-run
