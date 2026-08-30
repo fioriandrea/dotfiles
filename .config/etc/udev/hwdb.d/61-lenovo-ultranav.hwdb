@@ -1,0 +1,19 @@
+# The USB Travel Keyboard with UltraNav exposes its TrackPoint as a generic
+# mouse. Mark that input node as a pointing stick so libinput enables the
+# middle-button scrolling method on Wayland.
+id-input:modalias:input:b0003v17EFp6080e0100-e0,1,2,4*
+ ID_INPUT_POINTINGSTICK=1
+
+# The special-key interface has no ordinary alphanumeric keys, so udev
+# otherwise classifies it only as ID_INPUT_KEY. Mark it as a keyboard too so
+# GNOME receives the ThinkVantage key as a modifier.
+id-input:usb:v17efp6080:name:Lite-On Tech Lenovo USB Travel Keyboard with Ultra Nav Consumer Control:
+ ID_INPUT_KEYBOARD=1
+
+# The Fn brightness and ThinkVantage reports are exposed by hid-generic on
+# this Consumer Control interface as vendor button usages. Convert them to
+# standard Linux key events on that interface only.
+evdev:name:Lite-On Tech Lenovo USB Travel Keyboard with Ultra Nav Consumer Control:*
+ KEYBOARD_KEY_900f4=brightnessup
+ KEYBOARD_KEY_900f5=brightnessdown
+ KEYBOARD_KEY_900f6=leftmeta # ThinkVantage/Access IBM key -> Super
