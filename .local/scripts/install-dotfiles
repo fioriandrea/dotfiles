@@ -52,7 +52,7 @@ repo=https://github.com/fioriandrea/dotfiles
 destination=$HOME
 backup=
 
-while getopts ':hr:d:c:b:' o; do
+while getopts ':hr:d:b:' o; do
     case $o in
         h) print_help ; exit 0 ;;
         r) repo=$OPTARG ;;
