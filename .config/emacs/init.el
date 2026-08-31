@@ -1,7 +1,5 @@
 ;;; init.el --- Emacs configuration -*- lexical-binding: t; no-byte-compile: t; -*-
 
-;; Copyright (C) Andrea Fiori
-
 ;;; Commentary:
 
 ;; My personal Emacs configuration.
