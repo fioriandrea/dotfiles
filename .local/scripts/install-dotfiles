@@ -19,7 +19,7 @@ print_summary() {
     {
         printf '\nInstallation of %s dotfiles ' "$repo"
         if [[ $1 -eq 0 ]]; then
-            printf 'completed succesfully'
+            printf 'completed successfully'
         else
             printf 'failed'
         fi
