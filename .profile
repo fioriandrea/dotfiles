@@ -46,3 +46,7 @@ pathappend() {
 }
 
 pathappend "$HOME/.local/scripts" "$HOME/.local/bin" "$HOME/.local/opt" "$GOPATH/bin" "$HOME/.cargo/bin"
+
+if [ -f "$HOME/.profile.local" ]; then
+    . "$HOME/.profile.local"
+fi
