@@ -421,7 +421,8 @@ Expands only when PACK is loadable, and reports setup errors."
 
 (use-package shell
   :custom
-  (shell-get-old-input-include-continuation-lines t))
+  (shell-get-old-input-include-continuation-lines t)
+  (shell-completion-execonly nil))
 
 (use-package comint
   :config
