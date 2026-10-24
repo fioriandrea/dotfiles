@@ -18,52 +18,6 @@
     (let (kill-buffer-hook kill-buffer-query-functions)
       (kill-buffer))))
 
-;;;; my-use-package
-
-(defmacro my-use-package (pack &rest args)
-  "Fallback replacement for `use-package' on older Emacs versions.
-
-Provides a minimal subset of `use-package' when it isn't available.
-Expands only when PACK is loadable, and reports setup errors."
-  (declare (indent defun))
-  (let ((cur nil)
-        (conds (list `(or (featurep ',pack)
-                          (locate-library ,(symbol-name pack)))))
-        customs inits configs)
-    (while args
-      (let ((x (pop args)))
-        (if (keywordp x)
-            (setq cur x)
-          (cond ((memq cur '(:if :when)) (push x conds))
-                ((eq cur :custom) (push x customs))
-                ((eq cur :init) (push x inits))
-                ((eq cur :config) (push x configs))))))
-    (let (flat)
-      (dolist (it (nreverse customs))
-        (setq flat (append flat (if (and (consp it) (consp (car it))) it (list it)))))
-      (setq customs flat))
-    (let* ((try (lambda (kw &rest body)
-                  `(condition-case-unless-debug err
-                       (progn ,@body)
-                     (error
-                      (display-warning 'my-use-package
-                                       (format "%s/%s: %s" ',pack ,kw
-                                               (error-message-string err))
-                                       :error)
-                      nil)))))
-      `(when ,(funcall try :if `(and ,@(nreverse conds)))
-         ,@(mapcar (lambda (x)
-                     (funcall try :custom
-                              `(customize-set-variable ',(car x) ,@(cdr x))))
-                   customs)
-         ,@(when inits (list (apply try :init (nreverse inits))))
-         ,@(when configs `((eval-after-load ',pack
-                             ',(apply try :config (nreverse configs)))))))))
-
-(unless (fboundp 'use-package)
-  (message "No use-package found, using compatibility shim")
-  (defalias 'use-package 'my-use-package))
-
 ;;;; before-file
 
 (defconst my-before-file
