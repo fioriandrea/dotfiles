@@ -310,7 +310,7 @@
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Frequently-Asked-Questions.html
   (vc-handled-backends '(Git))
   (debug-ignored-errors
-   (cons 'remote-file-error debug-ignored-errors)))
+   (seq-union '(remote-file-error) debug-ignored-errors)))
 
 (use-package icomplete
   :init
