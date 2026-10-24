@@ -302,6 +302,13 @@
     (connection-local-set-profiles
      `(:application tramp :protocol ,protocol)
      'no-remote-auto-save-profile))
+  ;; Disable vc for tramp
+  (connection-local-set-profile-variables
+   'tramp-no-vc
+   '((vc-handled-backends . nil)))
+  (connection-local-set-profiles
+   '(:application tramp)
+   'tramp-no-vc)
   :custom
   (tramp-show-ad-hoc-proxies t)
   (tramp-use-scp-direct-remote-copying t)
