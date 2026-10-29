@@ -498,7 +498,7 @@
   (dired-clean-up-buffers-too t)
   (dired-recursive-deletes 'top)
   (dired-recursive-copies 'always)
-  (dired-auto-revert-buffer 'dired-directory-changed-p)
+  (dired-auto-revert-buffer 'ignore)
   (dired-listing-switches "-alh")
   (dired-mouse-drag-files t)
   (dired-free-space 'separate)
