@@ -467,6 +467,10 @@
   :custom
   (outline-minor-mode-cycle t))
 
+(use-package shr
+  :custom
+  (shr-use-colors nil))
+
 (use-package proced
   :custom
   (proced-filter 'all)
