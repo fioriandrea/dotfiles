@@ -460,6 +460,7 @@
   (org-startup-truncated nil)
   (org-html-validation-link nil)
   (org-edit-src-content-indentation 0)
+  (org-highlight-latex-and-related nil)
   (org-goto-auto-isearch nil)
   (org-use-speed-commands t))
 
