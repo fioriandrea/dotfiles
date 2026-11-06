@@ -457,6 +457,9 @@
    :map org-mode-map
    ("C-c z" . org-toggle-link-display))
   :custom
+  (org-hide-emphasis-markers nil)
+  (org-hide-macro-markers nil)
+  (org-hide-leading-stars nil)
   (org-startup-truncated nil)
   (org-html-validation-link nil)
   (org-edit-src-content-indentation 0)
