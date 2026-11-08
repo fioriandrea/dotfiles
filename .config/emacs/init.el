@@ -176,6 +176,10 @@
   ;; `no-ding' makes keyboard macros never quit
   (isearch-wrap-pause t))
 
+(use-package replace
+  :custom
+  (query-replace-skip-read-only nil))
+
 (use-package window
   :config
   (defun my-window-alone-p (window &rest _args)
