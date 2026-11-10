@@ -478,6 +478,10 @@
   :custom
   (outline-minor-mode-cycle t))
 
+(use-package hideshow
+  :custom
+  (hs-isearch-open t))
+
 (use-package shr
   :custom
   (shr-use-colors nil))
