@@ -171,6 +171,7 @@
 
 (use-package isearch
   :custom
+  (search-invisible 'open)
   (isearch-lazy-count t)
   (isearch-lazy-highlight t)
   ;; `no-ding' makes keyboard macros never quit
