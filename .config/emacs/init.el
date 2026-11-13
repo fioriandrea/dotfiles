@@ -490,6 +490,7 @@
 (use-package proced
   :custom
   (proced-filter 'all)
+  (proced-goal-attribute nil)
   (proced-enable-color-flag nil)
   (proced-show-remote-processes t)
   (proced-format 'short))
